@@ -36,5 +36,5 @@ binding = "AI"
 crons = ["0 0 * * *"]  # Daily at midnight UTC
 
 [vars]
-ENVIRONMENT = "development"
+ENVIRONMENT = "production"
 SCOPEBLIND_JWKS_URL = "https://api.scopeblind.com/.well-known/jwks.json"

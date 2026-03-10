@@ -83,7 +83,7 @@ export default {
                 if (url.pathname === '/api/charter') {
                     return corsJson({
                         mission: 'A contestable, checkable public record for humans and AI.',
-                        charter_url: 'https://github.com/tomjwxf/acta/blob/main/CHARTER.md',
+                        charter_url: 'https://github.com/VeritasActa/acta/blob/main/CHARTER.md',
                         invariants: [
                             'Contributions are typed, each type carries an explicit burden',
                             'Every object has authorship provenance and revision history',

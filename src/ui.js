@@ -316,7 +316,7 @@ function layout(title, body) {
         <a href="/">Feed</a>
         <a href="/about">Charter</a>
         <a href="/moderation-log">Moderation</a>
-        <a href="https://github.com/tomjwxf/acta" target="_blank">GitHub</a>
+        <a href="https://github.com/VeritasActa/acta" target="_blank">GitHub</a>
       </nav>
     </div>
   </header>
