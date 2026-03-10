@@ -20,7 +20,7 @@ new_classes = ["LedgerChain", "DeviceBudget"]
 # KV Namespaces
 [[kv_namespaces]]
 binding = "ACTA_KV"
-id = "placeholder-create-via-wrangler"
+id = "4dafdf16172f40f68d40cd2a84018b28"
 
 # R2 Bucket (archival)
 # [[r2_buckets]]
