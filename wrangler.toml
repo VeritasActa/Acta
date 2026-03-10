@@ -15,7 +15,7 @@ class_name = "DeviceBudget"
 # Migrations for Durable Objects
 [[migrations]]
 tag = "v1"
-new_classes = ["LedgerChain", "DeviceBudget"]
+new_sqlite_classes = ["LedgerChain", "DeviceBudget"]
 
 # KV Namespaces
 [[kv_namespaces]]
