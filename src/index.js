@@ -18,7 +18,7 @@ import { replicateToKV, getEntryFromKV, getTopicForEntry, listTopics, getFeedFro
 import { classifyContent, createRejectionReceipt, logSilentDrop, queueForHumanReview } from './moderation.js';
 import { resolveIdentity } from './identity.js';
 import { checkDuplicate, recordSubmission } from './duplicate-detection.js';
-import { handleScheduled } from './chain-publication.js';
+import { handleScheduled, getAnchorPublicKey } from './chain-publication.js';
 import { renderHTML } from './ui.js';
 
 // Re-export Durable Objects for wrangler
@@ -83,16 +83,18 @@ export default {
                 if (url.pathname === '/api/charter') {
                     return corsJson({
                         mission: 'A contestable, checkable public record for humans and AI.',
-                        charter_url: 'https://github.com/VeritasActa/acta/blob/main/CHARTER.md',
+                        charter_url: 'https://github.com/VeritasActa/Acta/blob/main/CHARTER.md',
                         invariants: [
                             'Contributions are typed, each type carries an explicit burden',
                             'Every object has authorship provenance and revision history',
                             'Claims and decisions can be challenged',
                             'No entity can dominate attention through scale',
                             'Agents are disclosed delegates, not default peers',
-                            'The record maintains fidelity, provenance, checkability, and integrity',
+                            'The record maintains fidelity, traceability, checkability, and integrity',
                             'Resolution and supersession are explicit',
-                            'No automated system may make irreversible epistemic decisions',
+                            'No automated system exercises epistemic discretion',
+                            'Core procedures are public, versioned, and equally applied',
+                            'Verification and exit do not depend on operator permission',
                         ],
                     });
                 }
@@ -136,6 +138,31 @@ export default {
                 // Moderation log API
                 if (url.pathname === '/api/moderation-log') {
                     return corsJson(await getModerationEntries(env));
+                }
+
+                // Signed anchor — latest daily checkpoint
+                if (url.pathname === '/api/anchor/latest') {
+                    const raw = await env.ACTA_KV?.get('anchor:latest', { type: 'json' });
+                    if (!raw) return corsJson({ error: 'no_anchors_yet' }, { status: 404 });
+                    return corsJson(raw, {
+                        headers: { 'Cache-Control': 'public, max-age=3600' },
+                    });
+                }
+
+                // Public verification key for anchor signatures
+                if (url.pathname === '/.well-known/acta-anchor-key') {
+                    const publicKey = await getAnchorPublicKey(env);
+                    if (!publicKey) {
+                        return corsJson({ error: 'signing_not_configured' }, { status: 404 });
+                    }
+                    return corsJson({
+                        algorithm: 'Ed25519',
+                        public_key: publicKey,
+                        usage: 'Verify acta:anchor checkpoint signatures. See tools/verify.js',
+                        charter: 'https://github.com/VeritasActa/Acta/blob/main/CHARTER.md',
+                    }, {
+                        headers: { 'Cache-Control': 'public, max-age=86400' },
+                    });
                 }
             }
 
