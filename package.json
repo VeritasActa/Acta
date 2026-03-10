@@ -2,6 +2,7 @@
   "name": "acta",
   "version": "0.1.0",
   "description": "A contestable, checkable, versioned public record",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "wrangler dev",

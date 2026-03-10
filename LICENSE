@@ -1,23 +1,13 @@
-Functional Source License, Version 1.1, MIT Future License
+MIT License
 
-Copyright 2026 Tom Farley
+Copyright (c) 2026 Tom Farley / Veritas Acta
 
-Parameters
-
-Licensor:             Tom Farley
-Licensed Work:        Acta
-                      The Licensed Work is (c) 2026 Tom Farley.
-Additional Use Grant: You may make use of the Licensed Work, provided that
-                      you may not use the Licensed Work for a Competing Use.
-                      A Competing Use means making the Licensed Work available
-                      to third parties as a hosted or managed service that
-                      competes with the Licensor's paid products or services.
-Change Date:          Four years from the date the Licensed Work is published.
-Change License:       MIT
-
-For the full license text, see https://fsl.software/FSL-1.1-MIT.template.md
-
-Notice
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.

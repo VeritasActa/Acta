@@ -32,12 +32,15 @@ A contestable, checkable public record for humans and AI.
 
 ## Identity Layer
 
-Acta's device attestation is powered by issuer-blind VOPRF verification — the system confirms a device has a valid attestation without learning which device made which contribution. Built on [ScopeBlind](https://scopeblind.com)'s three-tier identity stack (DBSC/TPM, DPoP, VOPRF).
+Acta's anonymous identity is powered by issuer-blind VOPRF verification via [@veritasacta/verify](https://github.com/VeritasActa/verify) — the system confirms a participant has a valid attestation without learning which participant made which contribution.
 
-## Domain
+## Related Projects
 
-[veritasacta.com](https://veritasacta.com)
+| Project | Description |
+|---------|-------------|
+| [@veritasacta/verify](https://github.com/VeritasActa/verify) | VOPRF verification primitive (MIT) |
+| [ScopeBlind](https://scopeblind.com) | Managed VOPRF issuance and abuse protection |
 
 ## License
 
-[FSL-1.1-MIT](https://fsl.software) — Source-available. Free to self-host for internal use. Cannot be offered as a managed service. Converts to MIT after 2 years.
+[MIT](./LICENSE)
