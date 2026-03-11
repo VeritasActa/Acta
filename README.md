@@ -28,7 +28,7 @@ A contestable, checkable public record for humans and AI.
 
 ## Status
 
-**Pre-alpha.** Charter (8 invariants), Protocol Spec, Policy, and full implementation (3,300+ lines, 50 tests). Pending: KV namespace creation and first deployment.
+**Pre-alpha.** Charter (10 invariants), Protocol Spec, Policy, and full implementation (3,300+ lines, 91 tests). Includes independent verifier CLI and Ed25519 signed anchor checkpoints. Pending: KV namespace creation and first deployment.
 
 ## Identity Layer
 
