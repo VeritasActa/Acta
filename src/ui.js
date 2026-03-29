@@ -1332,13 +1332,13 @@ function layout(title, body) {
   <meta property="og:description" content="Open protocol for verifiable machine decision evidence. Ed25519-signed receipts, selective disclosure, causal DAGs. MIT-licensed verifier. IETF Internet-Draft published.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veritasacta.com">
-  <meta property="og:image" content="https://www.scopeblind.com/og-card.png">
+  <meta property="og:image" content="https://veritasacta.com/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Veritas Acta — Open Evidence Protocol for Machine Decisions">
   <meta name="twitter:description" content="Open protocol for verifiable machine decision evidence. Ed25519-signed receipts, selective disclosure, causal DAGs. MIT-licensed verifier.">
-  <meta name="twitter:image" content="https://www.scopeblind.com/og-card.png">
+  <meta name="twitter:image" content="https://veritasacta.com/og-card.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2318181b'/%3E%3Ctext x='16' y='23' text-anchor='middle' fill='%23d4d4d8' font-family='Georgia,serif' font-size='16' font-weight='bold' letter-spacing='1'%3EVA%3C/text%3E%3C/svg%3E">
@@ -2869,7 +2869,7 @@ function ontologyPage() {
         <div style="font-family:var(--brand);font-size:32px;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;">Ontology v0.1</div>
         <p style="color:var(--text-muted);font-size:14px;">The evidence protocol for machine decisions.</p>
         <p style="color:var(--text-dim);font-size:12px;margin-top:6px;font-family:var(--mono);">
-          Source: <a href="https://github.com/scopeblind/scopeblind/tree/main/packages/acta-protocol">@veritasacta/protocol</a> · MIT License
+          Source: <a href="https://github.com/VeritasActa/Acta">@veritasacta/protocol</a> · MIT License
         </p>
       </div>
 
@@ -2985,13 +2985,13 @@ function ontologyPage() {
           </div>
           <div class="quickstart-card">
             <h3>Governance</h3>
-            <p>Namespace rules, versioning policy, RFC process. See <a href="https://github.com/scopeblind/scopeblind/blob/main/packages/acta-protocol/docs/governance.md">governance.md</a>.</p>
+            <p>Namespace rules, versioning policy, RFC process. See <a href="https://github.com/VeritasActa/Acta/blob/main/docs/policy.md">governance.md</a>.</p>
           </div>
         </div>
       </div>
 
       <div style="margin-top:24px;padding:16px;font-size:13px;color:var(--text-dim);text-align:center;">
-        Veritas Acta is an open protocol. <a href="https://github.com/scopeblind/scopeblind/tree/main/packages/acta-protocol">MIT licensed</a>.
+        Veritas Acta is an open protocol. <a href="https://github.com/VeritasActa/Acta">MIT licensed</a>.
       </div>
     </main>
   `);
