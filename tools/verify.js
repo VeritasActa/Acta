@@ -254,7 +254,10 @@ async function verifyAnchor(anchor, expectedPublicKeyHex) {
     };
   }
 
-  const message = new TextEncoder().encode(jcsSerialize(payload));
+  // The signing code includes public_key in the signed payload,
+  // so we must re-add it before verifying.
+  const signedPayload = { ...payload, public_key };
+  const message = new TextEncoder().encode(jcsSerialize(signedPayload));
   const sigBytes = hexToBytes(signature);
   const pubBytes = hexToBytes(public_key);
 
@@ -321,7 +324,7 @@ function printAnchorResult(result, source) {
   console.log(`\n  acta-verify --anchor\n  Source: ${source}\n`);
 
   if (result.valid === false) {
-    console.log(`  \x1b[31m\u2717\x1b[0m  ${result.error}`);
+    console.log(`  \x1b[31m\u2717\x1b[0m  ${result.error || 'Anchor signature invalid'}`);
   } else if (result.signature_valid === null) {
     console.log(`  \x1b[32m\u2713\x1b[0m  Merkle root verified (recomputed from chain heads)`);
     console.log(`  \x1b[33m\u26a0\x1b[0m  ${result.warning}`);
