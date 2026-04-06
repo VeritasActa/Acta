@@ -2,6 +2,9 @@
 
 [![npm](https://img.shields.io/npm/dm/@veritasacta/verify?label=verify%20downloads)](https://www.npmjs.com/package/@veritasacta/verify)
 [![npm](https://img.shields.io/npm/dm/@veritasacta/artifacts?label=artifacts%20downloads)](https://www.npmjs.com/package/@veritasacta/artifacts)
+[![IETF Draft: Receipts](https://img.shields.io/badge/IETF-signed--receipts--01-blue)](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/)
+[![IETF Draft: KUs](https://img.shields.io/badge/IETF-knowledge--units--00-blue)](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 **A contestable, checkable, versioned public record.**
 
@@ -31,7 +34,7 @@ A contestable, checkable public record for humans and AI.
 
 ## Status
 
-**Production.** Protocol deployed at [veritasacta.com](https://veritasacta.com) and powering [acta.today](https://acta.today). IETF Internet-Draft submitted: [draft-farley-acta-signed-receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/). 50+ verified knowledge units produced by 8 frontier AI models through adversarial deliberation.
+**Production.** Protocol deployed at [veritasacta.com](https://veritasacta.com) and powering [acta.today](https://acta.today). Two IETF Internet-Drafts submitted: [signed receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) and [knowledge units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/). 50+ verified knowledge units produced by 8 frontier AI models through adversarial deliberation. Source: [VeritasActa/drafts](https://github.com/VeritasActa/drafts).
 
 ## Live Demonstration
 
@@ -54,7 +57,15 @@ Acta's anonymous identity is powered by issuer-blind VOPRF verification via [@ve
 | [acta.today/wiki](https://acta.today/wiki) | 50+ verified knowledge units with adversarial deliberation |
 | [protect-mcp](https://npmjs.com/package/protect-mcp) | Runtime receipt signing for AI agents (MIT) |
 | [ScopeBlind](https://scopeblind.com) | Commercial managed issuance and enforcement |
-| [IETF Draft](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) | draft-farley-acta-signed-receipts |
+| [ScopeBlind/scopeblind-gateway](https://github.com/ScopeBlind/scopeblind-gateway) | protect-mcp source (MIT) |
+| [ScopeBlind/examples](https://github.com/ScopeBlind/examples) | Integration examples: hooks, Express, MCP server |
+| [VeritasActa/drafts](https://github.com/VeritasActa/drafts) | IETF Internet-Draft source files |
+| [IETF: Signed Receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) | draft-farley-acta-signed-receipts-01 |
+| [IETF: Knowledge Units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/) | draft-farley-acta-knowledge-units-00 |
+
+## Contributing
+
+Issues and pull requests are welcome. See the [Charter](./CHARTER.md) for design principles.
 
 ## License
 
