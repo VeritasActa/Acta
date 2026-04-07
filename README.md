@@ -56,6 +56,7 @@ Acta's anonymous identity is powered by issuer-blind VOPRF verification via [@ve
 | [acta.today](https://acta.today) | Verified multi-model knowledge base — living demonstration |
 | [acta.today/wiki](https://acta.today/wiki) | 50+ verified knowledge units with adversarial deliberation |
 | [protect-mcp](https://npmjs.com/package/protect-mcp) | Runtime receipt signing for AI agents (MIT) |
+| [protect-mcp-adk](https://pypi.org/project/protect-mcp-adk/) | Google ADK receipt signing plugin (MIT, Python) |
 | [ScopeBlind](https://scopeblind.com) | Commercial managed issuance and enforcement |
 | [ScopeBlind/scopeblind-gateway](https://github.com/ScopeBlind/scopeblind-gateway) | protect-mcp source (MIT) |
 | [ScopeBlind/examples](https://github.com/ScopeBlind/examples) | Integration examples: hooks, Express, MCP server |
