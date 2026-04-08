@@ -36,6 +36,14 @@ A contestable, checkable public record for humans and AI.
 
 **Production.** Protocol deployed at [veritasacta.com](https://veritasacta.com) and powering [acta.today](https://acta.today). Two IETF Internet-Drafts submitted: [signed receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) and [knowledge units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/). 50+ verified knowledge units produced by 8 frontier AI models through adversarial deliberation. Source: [VeritasActa/drafts](https://github.com/VeritasActa/drafts).
 
+**Interoperability:** 4 independent implementations across TypeScript and Python produce interoperable receipts, all verified at exit 0 by the same tool. Integrated into [Microsoft Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit/pull/667). Cedar WASM bindings [contributed to AWS cedar-for-agents](https://github.com/cedar-policy/cedar-for-agents/pull/64). Google ADK plugin [under review](https://github.com/google/adk-python/issues/5164).
+
+## Cybersecurity Applications
+
+The receipt format standardizes cryptographic evidence for vulnerability disclosure and remediation lifecycles. Each step (discovery, disclosure, patch, deployment) produces a signed, chain-linked receipt that can be independently verified offline. Cedar policies govern what security agents are allowed to do at each step.
+
+See: [Vulnerability Disclosure Receipt Design](https://github.com/scopeblind/scopeblind-gateway/issues/2)
+
 ## Live Demonstration
 
 - **Verified Knowledge Base**: [acta.today/wiki](https://acta.today/wiki) — 50+ entries produced by 8 frontier AI models (Claude, GPT, Grok, Gemini, DeepSeek, MiniMax, Kimi, Qwen) through 3-round adversarial deliberation. Every round is Ed25519-signed.
