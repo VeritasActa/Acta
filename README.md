@@ -38,17 +38,24 @@ A contestable, checkable public record for humans and AI.
 
 **Interoperability:** 4 independent implementations across TypeScript and Python produce interoperable receipts, all verified at exit 0 by the same tool. Integrated into [Microsoft Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit/pull/667). Cedar WASM bindings [contributed to AWS cedar-for-agents](https://github.com/cedar-policy/cedar-for-agents/pull/64). Google ADK plugin [under review](https://github.com/google/adk-python/issues/5164).
 
-## Cybersecurity Applications
-
-The receipt format standardizes cryptographic evidence for vulnerability disclosure and remediation lifecycles. Each step (discovery, disclosure, patch, deployment) produces a signed, chain-linked receipt that can be independently verified offline. Cedar policies govern what security agents are allowed to do at each step.
-
-See: [Vulnerability Disclosure Receipt Design](https://github.com/scopeblind/scopeblind-gateway/issues/2)
-
 ## Live Demonstration
 
 - **Verified Knowledge Base**: [acta.today/wiki](https://acta.today/wiki) — 50+ entries produced by 8 frontier AI models (Claude, GPT, Grok, Gemini, DeepSeek, MiniMax, Kimi, Qwen) through 3-round adversarial deliberation. Every round is Ed25519-signed.
 - **Verification**: Every entry can be independently verified at `acta.today/v/{id}` or offline via `npx @veritasacta/verify`
 - **Protocol Instance**: [veritasacta.com](https://veritasacta.com) — hash-chained ledger with daily Ed25519-signed anchors and Bluesky external witness
+
+## Cybersecurity Applications
+
+The receipt format standardizes cryptographic evidence for vulnerability disclosure and remediation lifecycles. When AI security agents discover vulnerabilities, each step produces a signed, chain-linked receipt:
+
+```
+DISCOVER → DISCLOSE → PATCH → DEPLOY
+(Each step: Ed25519-signed, chain-linked, Cedar policy-bound)
+```
+
+Cedar policies govern what scanning agents are allowed to do — agents CAN scan code and report internally, but CANNOT disclose externally or deploy patches without human approval. Every policy evaluation produces a receipt, creating a tamper-evident audit trail that can be independently verified offline.
+
+See: [Vulnerability Disclosure Example](https://github.com/ScopeBlind/examples/tree/main/security-vulnerability-disclosure) | [Design Issue](https://github.com/scopeblind/scopeblind-gateway/issues/2)
 
 ## Identity Layer
 
@@ -62,19 +69,18 @@ Acta's anonymous identity is powered by issuer-blind VOPRF verification via [@ve
 | [@veritasacta/artifacts](https://npmjs.com/package/@veritasacta/artifacts) | Signed artifact envelope: canonical JSON + Ed25519 (Apache-2.0) |
 | [@veritasacta/protocol](https://npmjs.com/package/@veritasacta/protocol) | Evidence protocol specification (Apache-2.0) |
 | [acta.today](https://acta.today) | Verified multi-model knowledge base — living demonstration |
-| [acta.today/wiki](https://acta.today/wiki) | 50+ verified knowledge units with adversarial deliberation |
-| [protect-mcp](https://npmjs.com/package/protect-mcp) | Runtime receipt signing for AI agents (MIT) |
+| [protect-mcp](https://npmjs.com/package/protect-mcp) | MCP gateway with receipt signing (MIT) |
 | [protect-mcp-adk](https://pypi.org/project/protect-mcp-adk/) | Google ADK receipt signing plugin (MIT, Python) |
+| [ScopeBlind/examples](https://github.com/ScopeBlind/examples) | Integration examples including security vulnerability disclosure |
 | [ScopeBlind](https://scopeblind.com) | Commercial managed issuance and enforcement |
 | [ScopeBlind/scopeblind-gateway](https://github.com/ScopeBlind/scopeblind-gateway) | protect-mcp source (MIT) |
-| [ScopeBlind/examples](https://github.com/ScopeBlind/examples) | Integration examples: hooks, Express, MCP server |
 | [VeritasActa/drafts](https://github.com/VeritasActa/drafts) | IETF Internet-Draft source files |
 | [IETF: Signed Receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) | draft-farley-acta-signed-receipts-01 |
 | [IETF: Knowledge Units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/) | draft-farley-acta-knowledge-units-00 |
 
 ## Contributing
 
-Issues and pull requests are welcome. See the [Charter](./CHARTER.md) for design principles.
+Issues and pull requests are welcome. See the [Charter](./CHARTER.md) for design principles and [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines.
 
 ## License
 
