@@ -22,7 +22,7 @@ We welcome new implementations of the IETF draft receipt format. Four independen
 
 To validate interoperability, your receipts should verify at exit 0 against:
 ```bash
-npx @veritasacta/verify@0.2.5 your-receipt.json --key <public-key-hex>
+npx @veritasacta/verify@0.3.0 your-receipt.json --key <public-key-hex>
 ```
 
 ### Cedar Policies

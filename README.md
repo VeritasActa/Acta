@@ -61,11 +61,23 @@ See: [Vulnerability Disclosure Example](https://github.com/ScopeBlind/examples/t
 
 Acta's anonymous identity is powered by issuer-blind VOPRF verification via [@veritasacta/verify](https://github.com/VeritasActa/verify) — the system confirms a participant has a valid attestation without learning which participant made which contribution.
 
+## Verifier Sigil
+
+Every release of `@veritasacta/verify` carries a cryptographic Sigil — a commitment to the exact source code in the published package. The verifier verifies itself:
+
+```bash
+npx @veritasacta/verify --self-check
+# ✓ Canonical verifier — Slow Reed
+#   Sigil: dd0443f0 · Source matches commitment
+```
+
+Forks can rename themselves, but they cannot produce a matching Sigil without the project's private key. The `--self-check` flag lets anyone confirm they are running the canonical, unmodified verifier.
+
 ## Related Projects
 
 | Project | Description |
 |---------|-------------|
-| [@veritasacta/verify](https://npmjs.com/package/@veritasacta/verify) | Offline receipt verification CLI (Apache-2.0) |
+| [@veritasacta/verify](https://npmjs.com/package/@veritasacta/verify) | Offline receipt verification CLI with self-check Sigil (Apache-2.0) |
 | [@veritasacta/artifacts](https://npmjs.com/package/@veritasacta/artifacts) | Signed artifact envelope: canonical JSON + Ed25519 (Apache-2.0) |
 | [@veritasacta/protocol](https://npmjs.com/package/@veritasacta/protocol) | Evidence protocol specification (Apache-2.0) |
 | [acta.today](https://acta.today) | Verified multi-model knowledge base — living demonstration |
