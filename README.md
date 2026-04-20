@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/dm/@veritasacta/verify?label=verify%20downloads)](https://www.npmjs.com/package/@veritasacta/verify)
 [![npm](https://img.shields.io/npm/dm/@veritasacta/artifacts?label=artifacts%20downloads)](https://www.npmjs.com/package/@veritasacta/artifacts)
-[![IETF Draft: Receipts](https://img.shields.io/badge/IETF-signed--receipts--01-blue)](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/)
+[![IETF Draft: Receipts](https://img.shields.io/badge/IETF-signed--receipts--02-blue)](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/)
 [![IETF Draft: KUs](https://img.shields.io/badge/IETF-knowledge--units--00-blue)](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -34,9 +34,9 @@ A contestable, checkable public record for humans and AI.
 
 ## Status
 
-**Production.** Protocol deployed at [veritasacta.com](https://veritasacta.com) and powering [acta.today](https://acta.today). Two IETF Internet-Drafts submitted: [signed receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) and [knowledge units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/). 50+ verified knowledge units produced by 8 frontier AI models through adversarial deliberation. Source: [VeritasActa/drafts](https://github.com/VeritasActa/drafts).
+**Production.** Protocol deployed at [veritasacta.com](https://veritasacta.com) and powering [acta.today](https://acta.today). Current verifier release: **`@veritasacta/verify@0.5.0`** (Sigil: **Bold Arrow**, fingerprint `c52bc546`). Unified binary handles Ed25519 signed receipts, VOPRF anonymous credentials (full Schnorr dual-DLEQ verification), Knowledge Unit bundles, and selective-disclosure receipts. Two IETF Internet-Drafts active: [signed receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) (draft-02 going to datatracker this week with 15 named conformant implementations) and [knowledge units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/). 50+ verified knowledge units produced by 8 frontier AI models through adversarial deliberation. Source: [VeritasActa/drafts](https://github.com/VeritasActa/drafts).
 
-**Interoperability:** 4 independent implementations across TypeScript, Python, and Rust produce interoperable receipts. [8 cross-engine receipts](https://github.com/ScopeBlind/examples/tree/main/interop/composition-test) from 2 governance engines (ScopeBlind Cedar + APS delegation) verified by 1 offline tool. 2 IETF Internet-Drafts ([signed receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/), [APS](https://datatracker.ietf.org/doc/draft-pidlisnyi-aps/)) reference the same envelope format. Merged into [Microsoft AGT](https://github.com/microsoft/agent-governance-toolkit/pull/667). Cedar WASM bindings [under review at AWS](https://github.com/cedar-policy/cedar-for-agents/pull/64).
+**Interoperability:** 15 conformant implementations in draft-02 Implementation Status, including two genuinely external adopters ([Signet / Prismer-AI](https://github.com/VeritasActa/agt-integration-profile/tree/main/conformance/signet) self-certified by @willamhou, and [hermes-decision-receipts](https://github.com/ScopeBlind/hermes-decision-receipts) bridging aeoess / Agent Passport System). Cross-engine receipts verify at exit 0 from a single offline verifier. Three PRs merged into Microsoft Agent Governance Toolkit: [Tutorial 33](https://github.com/microsoft/agent-governance-toolkit/pull/1197), [sb-runtime integration doc](https://github.com/microsoft/agent-governance-toolkit/pull/1202), [sb-runtime-skill provider shim](https://github.com/microsoft/agent-governance-toolkit/pull/1203). Cedar WASM bindings [merged at AWS](https://github.com/cedar-policy/cedar-for-agents/pull/64).
 
 ## Live Demonstration
 
@@ -67,8 +67,8 @@ Every release of `@veritasacta/verify` carries a cryptographic Sigil — a commi
 
 ```bash
 npx @veritasacta/verify --self-check
-# ✓ Canonical verifier — Slow Reed
-#   Sigil: dd0443f0 · Source matches commitment
+# ✓ Canonical verifier — Bold Arrow
+#   Sigil: c52bc546 · Source matches commitment (25 files)
 ```
 
 Forks can rename themselves, but they cannot produce a matching Sigil without the project's private key. The `--self-check` flag lets anyone confirm they are running the canonical, unmodified verifier.
