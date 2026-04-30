@@ -1391,6 +1391,7 @@ function layout(title, body) {
         <a href="/">Feed</a>
         <a href="/about">Charter</a>
         <a href="/moderation-log">Moderation</a>
+        <a href="/examples/agent-governance">Examples</a>
         <a href="/docs">Docs</a>
         <a href="/verify">Verify</a>
         <a href="/blog">Blog</a>
@@ -3211,6 +3212,10 @@ node tools/conformance.js https://veritasacta.com</pre>
             <span class="docs-cell-desc" style="flex:3;"><a href="/.well-known/acta-instance.json">/.well-known/acta-instance.json</a> — passive federation discovery</span>
           </div>
           <div class="docs-row">
+            <span class="docs-cell-type" style="font-weight:600;">Agent Governance Declaration</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="/.well-known/agent-governance">/.well-known/agent-governance</a>: disclosure pattern for agent-assisted production and receipt examples</span>
+          </div>
+          <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">MCP Server</span>
             <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta-mcp">acta-mcp</a> — AI agent interface (contribute, query, discover, verify, export)</span>
           </div>
@@ -3220,6 +3225,85 @@ node tools/conformance.js https://veritasacta.com</pre>
           </div>
         </div>
       </div>
+    </main>
+  `);
+}
+
+function agentGovernanceExamplesPage() {
+  return layout('Agent Governance Examples', `
+    <main class="container" style="padding-top:48px;padding-bottom:72px;">
+      <div style="margin-bottom:34px;">
+        <div class="hero-eyebrow" style="margin-bottom:18px;"><span class="dot"></span> Working examples</div>
+        <h1 style="font-family:var(--brand);font-size:34px;line-height:1.15;margin-bottom:14px;color:var(--ink);">Agent governance you can inspect and verify.</h1>
+        <p style="color:var(--text-muted);font-size:15px;line-height:1.75;max-width:680px;">
+          A small public pattern for projects using AI agents in production: disclose the usage, publish a machine-readable governance declaration, and attach signed receipts for the actions that matter.
+        </p>
+      </div>
+
+      <div class="quickstart-grid" style="margin-bottom:38px;">
+        <div class="quickstart-card">
+          <h3>Declare agent usage</h3>
+          <p>Expose a short <code>.well-known/agent-governance</code> document that security tools, auditors, and downstream users can read.</p>
+          <a href="/.well-known/agent-governance">Open live declaration</a>
+        </div>
+        <div class="quickstart-card">
+          <h3>Map to Security Insights</h3>
+          <p>Security metadata stays lightweight. The declaration carries the detailed agent governance and receipt links.</p>
+          <a href="https://github.com/VeritasActa/Acta/blob/main/examples/security-insights-agent-assisted-production.yml">View YAML example</a>
+        </div>
+        <div class="quickstart-card">
+          <h3>Verify receipt fixtures</h3>
+          <p>Two examples are signed with real Ed25519 keys and checked by a standalone verifier script.</p>
+          <a href="https://github.com/VeritasActa/Acta/tree/main/examples">Browse examples</a>
+        </div>
+      </div>
+
+      <section class="docs-section">
+        <h2 class="docs-section-title">The composition</h2>
+        <p class="docs-section-body">Use metadata for discovery and receipts for proof. This keeps the disclosure easy for maintainers while giving auditors a concrete artifact to verify offline.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:18px;">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Step 1</div>
+            <strong>Security Insights</strong>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-top:8px;">Declare that agent-assisted production is used and point to the governance declaration.</p>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:18px;">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Step 2</div>
+            <strong>.well-known declaration</strong>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-top:8px;">List governed operations, human review requirements, and receipt formats.</p>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:18px;">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Step 3</div>
+            <strong>Signed receipts</strong>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-top:8px;">Attach verifiable evidence for decisions, executions, and supervisor observations.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="docs-section" style="margin-top:34px;">
+        <h2 class="docs-section-title">Verifier command</h2>
+        <p class="docs-section-body">The examples are intentionally small and deterministic. Regenerate them, then verify signatures and receipt hashes from a clean checkout.</p>
+        <pre style="background:var(--panel-bg);color:var(--panel-text-bright);padding:16px 18px;border-radius:var(--rad);font-family:var(--mono);font-size:12px;line-height:1.7;overflow-x:auto;margin-top:16px;">git clone https://github.com/VeritasActa/Acta
+cd Acta
+npm ci
+npm run verify:examples</pre>
+      </section>
+
+      <section class="docs-section" style="margin-top:34px;">
+        <h2 class="docs-section-title">Current fixtures</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:18px;">
+            <h3 style="font-size:15px;margin-bottom:8px;">Agent Shell supervisor</h3>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:12px;">A separate supervisor signs what command ran, which environment commitment applied, and what response digest came back.</p>
+            <a href="https://github.com/VeritasActa/Acta/tree/main/examples/agent-shell-supervisor">Open fixture</a>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:18px;">
+            <h3 style="font-size:15px;margin-bottom:8px;">DefenseClaw decision</h3>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:12px;">A policy decision receipt signs the tool name, deny decision, policy digest, chain link, and reason.</p>
+            <a href="https://github.com/VeritasActa/Acta/tree/main/examples/defenseclaw-decision-receipt">Open fixture</a>
+          </div>
+        </div>
+      </section>
     </main>
   `);
 }
@@ -3911,6 +3995,7 @@ export function renderHTML(page, data = {}) {
     case 'topic': return topicPage(data);
     case 'about': return aboutPage(data || {});
     case 'docs': return docsPage();
+    case 'agent-governance-examples': return agentGovernanceExamplesPage();
     case 'verify': return verifyPage();
     case 'ontology': return ontologyPage();
     case 'blog': return blogPage();

@@ -31,6 +31,7 @@ A contestable, checkable public record for humans and AI.
 | [Protocol Spec](./docs/protocol-spec.md) | Object types, schemas, state machines, transition rules |
 | [Policy](./docs/policy.md) | Tunable parameters — budgets, thresholds, timing |
 | [Technical Architecture](./docs/tech-architecture.md) | Implementation: what to build, how, and why |
+| [Agent Governance Examples](./docs/examples.md) | `.well-known/agent-governance`, Security Insights mapping, and signed receipt fixtures |
 
 ## Status
 

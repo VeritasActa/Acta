@@ -47,3 +47,9 @@ If `ExecuteResponse` grows this field, it should carry context such as `self-rep
 ```bash
 go run make_sample.go
 ```
+
+Then run the repository-level example verifier:
+
+```bash
+npm run verify:examples
+```

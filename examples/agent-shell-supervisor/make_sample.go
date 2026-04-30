@@ -43,10 +43,14 @@ func canonical(v any) string {
 	}
 }
 
-func withoutSignature(r map[string]any) map[string]any {
+func withoutFields(r map[string]any, fields ...string) map[string]any {
+	omit := map[string]bool{}
+	for _, f := range fields {
+		omit[f] = true
+	}
 	out := make(map[string]any, len(r))
 	for k, v := range r {
-		if k == "signature" {
+		if omit[k] {
 			continue
 		}
 		out[k] = v
@@ -96,7 +100,7 @@ func main() {
 	}
 	receipt["receipt_id"] = digest(receipt)
 
-	signable := withoutSignature(receipt)
+	signable := withoutFields(receipt, "signature")
 	sig := ed25519.Sign(priv, []byte(canonical(signable)))
 	receipt["signature"] = map[string]any{
 		"alg":        "Ed25519",

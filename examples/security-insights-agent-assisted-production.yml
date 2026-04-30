@@ -1,0 +1,23 @@
+project:
+  name: Example Agent-Governed Project
+  url: https://github.com/example/agent-governed-project
+
+repository:
+  url: https://github.com/example/agent-governed-project
+
+security-contacts:
+  - type: email
+    value: security@example.com
+
+agent-assisted-production:
+  used: true
+  governance-declaration: https://example.com/.well-known/agent-governance
+  human-review: true
+  governed-operations:
+    - code-generation
+    - code-review
+    - security-analysis
+    - policy-evaluation
+  receipt-examples:
+    - https://github.com/VeritasActa/Acta/tree/main/examples/agent-shell-supervisor
+    - https://github.com/VeritasActa/Acta/tree/main/examples/defenseclaw-decision-receipt
