@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/agent-shell-supervisor-receipt.schema.json",
+  "title": "Agent Shell Supervisor Execution Receipt",
+  "type": "object",
+  "required": [
+    "acta_version",
+    "receipt_type",
+    "receipt_id",
+    "subject",
+    "observed_at",
+    "command",
+    "working_directory",
+    "environment",
+    "response",
+    "observer",
+    "signature"
+  ],
+  "properties": {
+    "acta_version": { "type": "string" },
+    "receipt_type": { "const": "acta:exec-observation" },
+    "receipt_id": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "subject": { "const": "grpc_exec.ExecuteResponse" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "command": {
+      "type": "object",
+      "required": ["argv", "digest"],
+      "properties": {
+        "argv": { "type": "array", "items": { "type": "string" } },
+        "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "working_directory": {
+      "type": "object",
+      "required": ["path_hint", "digest"],
+      "properties": {
+        "path_hint": { "type": "string" },
+        "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "required": ["commitment", "context", "allowlist"],
+      "properties": {
+        "commitment": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "context": { "enum": ["self-reported", "supervisor-attested", "third-party-attested"] },
+        "allowlist": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "response": {
+      "type": "object",
+      "required": ["exit_code", "digest"],
+      "properties": {
+        "exit_code": { "type": "integer" },
+        "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "observer": {
+      "type": "object",
+      "required": ["id", "trust_domain"],
+      "properties": {
+        "id": { "type": "string" },
+        "trust_domain": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "kid", "public_key", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "kid": { "type": "string" },
+        "public_key": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sig": { "type": "string", "pattern": "^[a-f0-9]{128}$" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
