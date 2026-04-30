@@ -34,10 +34,6 @@ function withoutFields(value, fields) {
   return Object.fromEntries(Object.entries(value).filter(([key]) => !omit.has(key)));
 }
 
-function stripSha256(value) {
-  return value.startsWith('sha256:') ? value.slice('sha256:'.length) : value;
-}
-
 function hexToBytes(hex) {
   if (!/^[0-9a-fA-F]+$/.test(hex) || hex.length % 2 !== 0) {
     throw new Error(`invalid hex string: ${hex}`);
@@ -64,6 +60,9 @@ async function verifyAgentShellSupervisor() {
 
   const idPayload = withoutFields(receipt, ['receipt_id', 'signature']);
   assert(receipt.receipt_id === digest(idPayload), `${path}: receipt_id mismatch`);
+  assert(receipt.subject === 'grpc_exec.ExecuteResponse', `${path}: unexpected subject`);
+  assert(receipt.environment?.context === 'supervisor-attested', `${path}: unexpected environment context`);
+  assert(receipt.environment?.owner === 'wsb-launcher.local', `${path}: unexpected environment owner`);
 
   const signable = withoutFields(receipt, ['signature']);
   verifySignature({
@@ -76,28 +75,8 @@ async function verifyAgentShellSupervisor() {
   console.log(`ok ${path}`);
 }
 
-async function verifyDefenseClawDecisionReceipt() {
-  const path = 'examples/defenseclaw-decision-receipt/sample-decision-receipt.json';
-  const receipt = await readJson(path);
-  const expectedHash = (await readFile('examples/defenseclaw-decision-receipt/expected-full-receipt-hash.txt', 'utf8')).trim();
-
-  const signable = withoutFields(receipt, ['signature', 'public_key']);
-  verifySignature({
-    message: canonical(signable),
-    signatureHex: receipt.signature,
-    publicKeyHex: receipt.public_key,
-    label: path,
-  });
-
-  assert(expectedHash === digest(receipt), `${path}: full receipt hash mismatch`);
-  assert(stripSha256(expectedHash).length === 64, `${path}: expected hash is not sha256 length`);
-
-  console.log(`ok ${path}`);
-}
-
 async function main() {
   await verifyAgentShellSupervisor();
-  await verifyDefenseClawDecisionReceipt();
   console.log('ok all example receipts verified');
 }
 

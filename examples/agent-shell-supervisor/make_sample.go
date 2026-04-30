@@ -77,6 +77,7 @@ func main() {
 	env := map[string]any{
 		"commitment": digest(map[string]any{"PATH": "/usr/bin:/bin", "PYTHONPATH": "tests"}),
 		"context":    "supervisor-attested",
+		"owner":      "wsb-launcher.local",
 		"allowlist":  []any{"PATH", "PYTHONPATH"},
 	}
 	response := map[string]any{

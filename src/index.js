@@ -50,53 +50,6 @@ function corsHtml(body, init = {}) {
     return new Response(body, { ...init, headers });
 }
 
-const AGENT_GOVERNANCE_DECLARATION = {
-    schema_version: "0.1",
-    project: {
-        name: "Veritas Acta",
-        repository: "https://github.com/VeritasActa/Acta",
-        security_insights: "https://github.com/VeritasActa/Acta/blob/main/examples/security-insights-agent-assisted-production.yml",
-    },
-    agent_assisted_production: {
-        used: true,
-        human_review: true,
-        governed_operations: [
-            "code-generation",
-            "code-review",
-            "security-analysis",
-            "policy-evaluation",
-        ],
-        tools: [
-            "OpenAI Codex",
-            "GitHub Copilot",
-            "custom policy agents",
-        ],
-        policy: {
-            approval_required_for: [
-                "network access",
-                "credential access",
-                "production deployment",
-                "security-relevant code changes",
-            ],
-            prohibited_actions: [
-                "autonomous secret exfiltration",
-                "unreviewed production deployment",
-            ],
-        },
-        receipts: {
-            emitted: true,
-            formats: [
-                "Veritas Acta receipt v0.1",
-                "in-toto attestation predicate mapping",
-            ],
-            public_examples: [
-                "https://github.com/VeritasActa/Acta/tree/main/examples/agent-shell-supervisor",
-                "https://github.com/VeritasActa/Acta/tree/main/examples/defenseclaw-decision-receipt",
-            ],
-        },
-    },
-};
-
 // ── Main Handler ────────────────────────────────────────────────────
 
 // ── Privacy-Preserving Usage Counters ───────────────────────────────
@@ -106,7 +59,7 @@ function classifyRequest(method, pathname) {
     if (method === 'OPTIONS') return null;
     if (pathname === '/') return 'page:home';
     if (pathname.startsWith('/topic/')) return 'page:topic';
-    if (pathname === '/about' || pathname === '/docs' || pathname === '/verify' || pathname === '/ontology' || pathname === '/privacy' || pathname === '/examples/agent-governance') return 'page:other';
+    if (pathname === '/about' || pathname === '/docs' || pathname === '/verify' || pathname === '/ontology' || pathname === '/privacy') return 'page:other';
     if (pathname.startsWith('/blog')) return 'page:blog';
     if (pathname === '/api/contribute') return 'api:contribute';
     if (pathname === '/api/respond') return 'api:respond';
@@ -214,8 +167,6 @@ Three merged PRs, authored by @tomjwxf, reviewed by @imran-siddique:
 ## Normative documentation
 
 - Protocol identity: https://veritasacta.com/.well-known/acta-instance.json
-- Agent governance examples: https://veritasacta.com/examples/agent-governance
-- Agent governance declaration: https://veritasacta.com/.well-known/agent-governance
 - Charter: https://github.com/VeritasActa/Acta/blob/main/CHARTER.md
 - AGT integration profile: https://github.com/VeritasActa/agt-integration-profile
 - Conformance test vectors: https://github.com/ScopeBlind/agent-governance-testvectors
@@ -248,12 +199,10 @@ Three merged PRs, authored by @tomjwxf, reviewed by @imran-siddique:
   <url><loc>https://veritasacta.com/about</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://veritasacta.com/docs</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://veritasacta.com/verify</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veritasacta.com/examples/agent-governance</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://veritasacta.com/ontology</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veritasacta.com/privacy</loc><lastmod>${today}</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
   <url><loc>https://veritasacta.com/blog</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veritasacta.com/.well-known/acta-instance.json</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veritasacta.com/.well-known/agent-governance</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://veritasacta.com/llms.txt</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
 </urlset>`;
                 return new Response(sitemap, {
@@ -262,12 +211,6 @@ Three merged PRs, authored by @tomjwxf, reviewed by @imran-siddique:
                         'Cache-Control': 'public, max-age=3600',
                         ...CORS_HEADERS,
                     },
-                });
-            }
-
-            if (request.method === 'GET' && (url.pathname === '/.well-known/agent-governance' || url.pathname === '/.well-known/agent-governance.json')) {
-                return corsJson(AGENT_GOVERNANCE_DECLARATION, {
-                    headers: { 'Cache-Control': 'public, max-age=3600' },
                 });
             }
 
@@ -459,10 +402,6 @@ Three merged PRs, authored by @tomjwxf, reviewed by @imran-siddique:
 
             if (request.method === 'GET' && url.pathname === '/docs') {
                 return corsHtml(renderHTML('docs'));
-            }
-
-            if (request.method === 'GET' && url.pathname === '/examples/agent-governance') {
-                return corsHtml(renderHTML('agent-governance-examples'));
             }
 
             if (request.method === 'GET' && url.pathname === '/verify') {
