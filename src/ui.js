@@ -3589,7 +3589,71 @@ function blogPage() {
         <p style="color:var(--text-muted);font-size:15px;line-height:1.6;">Technical deep-dives on the Veritas Acta evidence protocol, cryptographic receipts, and verifiable machine decisions.</p>
       </div>
 
-      <article style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--panel-border);background:var(--panel-bg);">
+      <article id="x-algorithm-receipts" style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--panel-border);background:var(--panel-bg);">
+        <div style="margin-bottom:12px;">
+          <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;">receipts</span>
+          <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">recommender-systems</span>
+          <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">xai</span>
+          <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">transparency</span>
+          <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">verifiable-execution</span>
+        </div>
+        <h2 style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;">Open source shows what could run. Receipts prove what did run.</h2>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">16 May 2026 &middot; 6 min read</p>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">A worked example of verifiable recommender-system execution, built around xAI's published For You algorithm.</p>
+
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.7;">
+          <p>When xAI published the For You feed algorithm to <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">xai-org/x-algorithm</code> on 15 May 2026, the headline was transparency. The release answers a real question: what code is candidate to run when X ranks your timeline?</p>
+          <p style="margin-top:12px;">It doesn't answer the next one: <strong style="color:var(--text);">was this code, in this version, with these model artifacts and this config, what ran when your feed was ranked at 09:24 this morning?</strong></p>
+          <p style="margin-top:12px;">That's not a complaint. Publishing the code is genuinely useful. But "the code is open" and "this output came from that code" are different claims. The first is a property of the repository. The second is a property of a specific execution. Closing the gap between them is what cryptographic execution receipts do.</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">What the gap looks like</h3>
+          <p>A recommender ranking is a function of four things: the code (the ranker source, version-controlled); the model artifacts (trained weights, ONNX/torchscript files); the configuration (feature flags, thresholds, A/B assignments); and the input (the user's interaction features at ranking time).</p>
+          <p style="margin-top:12px;">The output is an ordered list of items. The published repo gives you (1). It does not give you a way to bind any specific output to a specific (1, 2, 3, 4) tuple. Without that binding, "the algorithm is open" can be true while the running system uses different weights, a tweaked config, or a different code path entirely. Nobody is accusing anyone of doing that. The point is that the open repo, on its own, cannot rule it out.</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">What a receipt binds</h3>
+          <p>A post-ranking receipt is a small signed object emitted after the ranker runs. It commits to: <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">algorithm_commit</code> (git SHA of the running code), <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">model_artifacts</code> (SHA-256 of every loaded model file), <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">config_hash</code>, <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">input_commitment</code> (Merkle root over user features, private), <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">output_root</code> (Merkle root over the ranked output), and an optional <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">opened_outputs</code> disclosure of top-N items.</p>
+          <p style="margin-top:12px;">Signed once with Ed25519. Wire format is RFC 8785 (JCS) over the payload. Verification is offline; no vendor cloud required.</p>
+          <p style="margin-top:12px;">The receipt does not reveal the user's private history. It commits to it. An authorised auditor with the right opening can verify the commitment matches the data they hold. Everyone else sees only that something was committed, and that the ranking was produced by exactly that code, models, and config.</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">The worked example</h3>
+          <p><a href="https://github.com/VeritasActa/x-algorithm-receipts" style="color:var(--accent);">VeritasActa/x-algorithm-receipts</a> is an Apache-2.0 wrapper around the published Phoenix pipeline. It ships two execution paths: a mock mode that generates a synthetic Phoenix-style ranking event and signs it (instant verification, no 2.9 GB artifact download), and a real mode that runs <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">phoenix/run_pipeline.py</code> against a local clone of <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">xai-org/x-algorithm</code> with the upstream artifacts in place.</p>
+          <pre style="background:#0c111d;color:#e6e3d5;padding:12px;border-radius:6px;font-family:monospace;font-size:12px;overflow-x:auto;margin:12px 0;"><code>npm install
+npm run demo
+npx @veritasacta/verify examples/x-feed-demo.receipt.json --jwks examples/demo.jwks
+node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
+          <p>Three commands. No accounts, no API keys, no cloud calls. The verifier is open-source Apache-2.0 on npm (<code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">@veritasacta/verify</code>). The receipt format is documented as an active IETF Internet-Draft (<code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">draft-farley-acta-signed-receipts</code>).</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">Real mode and reproducibility</h3>
+          <p>The repo ships a real-mode receipt at <a href="https://github.com/VeritasActa/x-algorithm-receipts/blob/main/examples/x-feed-real.receipt.json" style="color:var(--accent);">examples/x-feed-real.receipt.json</a>, bound to a real ranking pass against <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">xai-org/x-algorithm@c3ef3307</code>. The wrapper executed <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">uv run run_pipeline.py</code> against the actual 2.9 GB Phoenix artifacts, hashed all 8 model and config files, captured the ranked output, and signed the event.</p>
+          <p style="margin-top:12px;">A reproducibility pair lives in <a href="https://github.com/VeritasActa/x-algorithm-receipts/tree/main/examples/reproducibility-pair" style="color:var(--accent);">examples/reproducibility-pair/</a>: two independent runs with the same input produce identical <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">input_commitment</code> and <code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">output_root</code>, while the timestamps and signatures differ as expected. This is the property no production recommender currently exposes externally: cryptographically checkable reproducibility.</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">Tamper detection</h3>
+          <p>Flip one character anywhere in the signed payload and the verifier rejects the receipt with a spec-cited error (<code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">invalid_signature</code>, draft-farley-acta-signed-receipts-03 &sect;6.1). There is no way to selectively edit the payload without re-signing it, and re-signing requires the private key held by the original issuer.</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">What this proves, and what it doesn't</h3>
+          <p>Receipts prove that a specific output came from a specific code, model, config, and input. They do not prove the output is fair, truthful, beneficial, that the model was trained on legally sourced data, or that the algorithm is good for users. Those are different audit problems. They require different methods. Conflating them is how "AI governance" becomes vague enough to mean nothing.</p>
+          <p style="margin-top:12px;">What receipts do solve is the substrate. You cannot answer fairness, truthfulness, or social benefit questions until you can first answer "is the thing you measured the thing that actually ran." Today, for production recommender systems, the answer is no. The receipt closes that one specific gap, precisely.</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">Browser verifier</h3>
+          <p>Drop a receipt and JWKS at <a href="https://www.scopeblind.com/verify-receipt" style="color:var(--accent);">scopeblind.com/verify-receipt</a> to verify in your browser. Pure client-side, no servers contacted.</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">Where this fits</h3>
+          <p>Cryptographic execution receipts are not a recommender-specific idea. The same primitive shows up across AI agent decisions (Lesson 18 of <a href="https://github.com/microsoft/ai-agents-for-beginners/tree/main/18-securing-ai-agents" style="color:var(--accent);">microsoft/ai-agents-for-beginners</a>, AWS <a href="https://github.com/cedar-policy/cedar-for-agents" style="color:var(--accent);">cedar-for-agents</a> policy-evaluation traces), supply chain readings, SLSA-aligned software provenance, and ScopeBlind's own continuous-control attestations (<a href="https://www.scopeblind.com/trust/ledger" style="color:var(--accent);">scopeblind.com/trust/ledger</a>). The wire format is the same in every case. The recommender profile (<code style="font-family:monospace;background:rgba(45,212,191,0.08);padding:1px 4px;border-radius:3px;">recommender.post_ranking.v1</code>) is one of several profiles being standardised through the IETF.</p>
+
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">A caveat</h3>
+          <p>Receipts are an engineering primitive, not a regulatory artifact. Whether a deployment of receipt-emitting recommenders satisfies DSA Article 27, AI Act Article 12, or any specific national requirement depends on retention, access control, the auditor's authority, and the regulator's view. Do not read this post as legal advice. Read it as: here is a working cryptographic layer you can adopt or extend.</p>
+
+          <div style="margin-top:24px;padding-top:12px;border-top:1px solid var(--panel-border);font-size:11px;color:var(--text-muted);">
+            Also on: <a href="https://scopeblind.com/blog/x-algorithm-receipts" style="color:var(--text-muted);">ScopeBlind</a> &middot;
+            <a href="https://github.com/VeritasActa/x-algorithm-receipts" style="color:var(--text-muted);">VeritasActa/x-algorithm-receipts</a> &middot;
+            <a href="https://www.npmjs.com/package/@veritasacta/verify" style="color:var(--text-muted);">@veritasacta/verify</a> &middot;
+            <a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/" style="color:var(--text-muted);">IETF draft</a> &middot;
+            <a href="https://www.scopeblind.com/verify-receipt" style="color:var(--text-muted);">browser verifier</a>
+          </div>
+        </div>
+      </article>
+
+      <article id="cedar-for-agents-merge" style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--panel-border);background:var(--panel-bg);">
         <div style="margin-bottom:12px;">
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;">cedar</span>
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">aws</span>
