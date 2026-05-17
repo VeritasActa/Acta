@@ -3589,7 +3589,7 @@ function blogPage() {
         <p style="color:var(--text-muted);font-size:15px;line-height:1.6;">Technical deep-dives on the Veritas Acta evidence protocol, cryptographic receipts, and verifiable machine decisions.</p>
       </div>
 
-      <article id="x-algorithm-receipts" style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--panel-border);background:var(--panel-bg);">
+      <article id="x-algorithm-receipts" style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--border);background:var(--surface);">
         <div style="margin-bottom:12px;">
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;">receipts</span>
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">recommender-systems</span>
@@ -3643,7 +3643,7 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
           <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">A caveat</h3>
           <p>Receipts are an engineering primitive, not a regulatory artifact. Whether a deployment of receipt-emitting recommenders satisfies DSA Article 27, AI Act Article 12, or any specific national requirement depends on retention, access control, the auditor's authority, and the regulator's view. Do not read this post as legal advice. Read it as: here is a working cryptographic layer you can adopt or extend.</p>
 
-          <div style="margin-top:24px;padding-top:12px;border-top:1px solid var(--panel-border);font-size:11px;color:var(--text-muted);">
+          <div style="margin-top:24px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);">
             Also on: <a href="https://scopeblind.com/blog/x-algorithm-receipts" style="color:var(--text-muted);">ScopeBlind</a> &middot;
             <a href="https://github.com/VeritasActa/x-algorithm-receipts" style="color:var(--text-muted);">VeritasActa/x-algorithm-receipts</a> &middot;
             <a href="https://www.npmjs.com/package/@veritasacta/verify" style="color:var(--text-muted);">@veritasacta/verify</a> &middot;
@@ -3653,7 +3653,7 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
         </div>
       </article>
 
-      <article id="cedar-for-agents-merge" style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--panel-border);background:var(--panel-bg);">
+      <article id="cedar-for-agents-merge" style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--border);background:var(--surface);">
         <div style="margin-bottom:12px;">
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;">cedar</span>
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">aws</span>
@@ -3702,7 +3702,7 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
 
           <p style="margin-top:12px;">Each move pushes the protocol layer closer to being a standards-grade, framework-neutral substrate for agent authorization and audit.</p>
 
-          <div style="margin-top:24px;padding-top:12px;border-top:1px solid var(--panel-border);font-size:11px;color:var(--text-muted);">
+          <div style="margin-top:24px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);">
             Also on: <a href="https://scopeblind.com/blog/cedar-for-agents-merge" style="color:var(--text-muted);">ScopeBlind</a> &middot;
             <a href="https://github.com/cedar-policy/cedar-for-agents/pull/73" style="color:var(--text-muted);">PR #73</a> &middot;
             <a href="https://github.com/VeritasActa/cedar-agent-schemas" style="color:var(--text-muted);">cedar-agent-schemas</a> &middot;
@@ -3711,7 +3711,7 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
         </div>
       </article>
 
-      <article style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--panel-border);background:var(--panel-bg);">
+      <article style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--border);background:var(--surface);">
         <div style="margin-bottom:12px;">
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;">architecture</span>
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">verification</span>
@@ -3830,12 +3830,12 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
           <p style="margin-top:16px;color:var(--text);font-weight:600;">Verify it yourself: <a href="/verify" style="color:var(--accent);">browser lab</a> or <code style="font-size:12px;background:var(--panel-bg);padding:2px 6px;border-radius:3px;">npx @veritasacta/verify receipt.json</code></p>
         </div>
 
-        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--panel-border);font-size:10px;color:var(--text-dim);">
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:10px;color:var(--text-dim);">
           2026-04-05 &middot; 8 min read &middot; Tom Farley
         </div>
       </article>
 
-      <article style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--panel-border);background:var(--panel-bg);">
+      <article style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--border);background:var(--surface);">
         <div style="margin-bottom:12px;">
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;">receipts</span>
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">verification</span>
@@ -3902,12 +3902,12 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
           </div>
         </div>
 
-        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--panel-border);font-size:10px;color:var(--text-dim);">
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:10px;color:var(--text-dim);">
           2026-03-27 &middot; 6 min read &middot; Tom Farley
         </div>
       </article>
 
-      <article style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--panel-border);background:var(--panel-bg);">
+      <article style="margin-bottom:48px;padding:24px;border-radius:12px;border:1px solid var(--border);background:var(--surface);">
         <div style="margin-bottom:12px;">
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;">protocol</span>
           <span style="font-size:10px;font-family:monospace;color:var(--accent);background:rgba(45,212,191,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;">agents</span>
@@ -3961,7 +3961,7 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
           <p style="margin-top:16px;color:var(--text);font-weight:600;">Start with <a href="/" style="color:var(--accent);">the public record</a>. <a href="/verify" style="color:var(--accent);">Verify it yourself</a>. Build on top of it.</p>
         </div>
 
-        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--panel-border);font-size:10px;color:var(--text-dim);">
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:10px;color:var(--text-dim);">
           2026-03-28 &middot; 5 min read &middot; Tom Farley
         </div>
       </article>
