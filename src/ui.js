@@ -1994,7 +1994,13 @@ node tools/verify.js chain.json</pre>
           <div class="protocol-card-body">Blind AI agent battles with verified results. Battle outcomes, debate artifacts, and leaderboard snapshots are published as Acta evidence — creating a public, verifiable record of agent capability.</div>
           <a href="https://blindllm.com" target="_blank" rel="noopener noreferrer" class="protocol-card-link">blindllm.com →</a>
         </div>
-        <div class="showcase-card" style="border-left-color:var(--link);">
+        <div class="showcase-card" style="border-left-color:var(--green);">
+          <div class="protocol-card-num">HARDWARE · ETCF 2026</div>
+          <div class="protocol-card-title">ScopeBlind cold-chain evidence tag</div>
+          <div class="protocol-card-body">A disposable sensor where every reading is hardware-signed by an ATECC608B secure element (ECDSA P-256) and Merkle-batched into an Acta receipt chain. Verifiable offline on any NFC phone, without trusting the device vendor's cloud. The first hardware producer of Acta receipts.</div>
+          <a href="https://www.scopeblind.com/cold-chain" target="_blank" rel="noopener noreferrer" class="protocol-card-link">See the project →</a>
+        </div>
+        <div class="showcase-card" style="border-left-color:var(--link); grid-column:1 / -1;">
           <div class="protocol-card-num">SPEC</div>
           <div class="protocol-card-title">IETF Internet-Drafts</div>
           <div class="protocol-card-body">Two formal specifications: signed decision receipts (Ed25519 + JCS canonicalization, four receipt types, trust tiers) and knowledge units (multi-model deliberation schema, consensus levels, lifecycle management). Source on <a href="https://github.com/VeritasActa/drafts" style="color:var(--link);">GitHub</a>.</div>
