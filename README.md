@@ -97,7 +97,7 @@ The Acta receipt format is being embedded in hardware as well as software:
 
 - **ScopeBlind cold-chain evidence tag** -- a disposable sensor where every reading is hardware-signed by an ATECC608B secure element (ECDSA P-256) and Merkle-batched into a verifiable chain. Same Acta receipt format, different domain. See [scopeblind.com/cold-chain](https://www.scopeblind.com/cold-chain).
 - **protect-mcp** -- AI agent governance with signed decision receipts. See [scopeblind.com/docs/protect-mcp](https://www.scopeblind.com/docs/protect-mcp).
-- **Microsoft AI Agents for Beginners** -- Acta receipts referenced in [Lesson 18: Securing AI Agents](https://github.com/microsoft/ai-agents-for-beginners/blob/main/18-securing-ai-agents/README.md) of the official curriculum (33K+ ★).
+- **Microsoft AI Agents for Beginners** -- Acta receipts referenced in [Lesson 18: Securing AI Agents](https://github.com/microsoft/ai-agents-for-beginners/blob/main/18-securing-ai-agents/README.md) of the official curriculum (64K+ ★).
 
 ## Contributing
 
