@@ -1995,10 +1995,10 @@ node tools/verify.js chain.json</pre>
           <a href="https://blindllm.com" target="_blank" rel="noopener noreferrer" class="protocol-card-link">blindllm.com →</a>
         </div>
         <div class="showcase-card" style="border-left-color:var(--green);">
-          <div class="protocol-card-num">HARDWARE · ETCF 2026</div>
-          <div class="protocol-card-title">ScopeBlind cold-chain evidence tag</div>
-          <div class="protocol-card-body">A disposable sensor where every reading is hardware-signed by an ATECC608B secure element (ECDSA P-256) and Merkle-batched into an Acta receipt chain. Verifiable offline on any NFC phone, without trusting the device vendor's cloud. The first hardware producer of Acta receipts.</div>
-          <a href="https://www.scopeblind.com/cold-chain" target="_blank" rel="noopener noreferrer" class="protocol-card-link">See the project →</a>
+          <div class="protocol-card-num">FINANCE · LIVE</div>
+          <div class="protocol-card-title">ScopeBlind Legate (finance mandate gate)</div>
+          <div class="protocol-card-body">A mandate gate for AI agents on a trading desk: every decision, including what the gate blocked, is an Acta receipt a risk committee or allocator verifies offline. Two-minute demo films, a live record viewer, and a standalone offline verifier (npx legate-verify) for its co-signed cross-firm artifacts.</div>
+          <a href="https://legate.scopeblind.com/record" target="_blank" rel="noopener noreferrer" class="protocol-card-link">See the project →</a>
         </div>
         <div class="showcase-card" style="border-left-color:var(--link); grid-column:1 / -1;">
           <div class="protocol-card-num">SPEC</div>

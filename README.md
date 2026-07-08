@@ -34,7 +34,7 @@ A contestable, checkable public record for humans and AI.
 
 ## Status
 
-**Production.** Protocol deployed at [veritasacta.com](https://veritasacta.com) and powering [acta.today](https://acta.today). Current verifier release: **`@veritasacta/verify@0.5.0`** (Sigil: **Bold Arrow**, fingerprint `c52bc546`). Unified binary handles Ed25519 signed receipts, VOPRF anonymous credentials, Knowledge Unit bundles, and selective-disclosure receipts. Active IETF Internet-Drafts: [signed receipts -01](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) and [knowledge units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/). Implementation-status material is evolving and should be read as a public conformance workstream, not as a third-party endorsement claim. Source: [VeritasActa/drafts](https://github.com/VeritasActa/drafts).
+**Production.** Protocol deployed at [veritasacta.com](https://veritasacta.com) and powering [acta.today](https://acta.today). Current verifier release: **`@veritasacta/verify@0.9.2`** (Sigil: **Bold Arrow**, fingerprint `c52bc546`). Unified binary handles Ed25519 signed receipts, VOPRF anonymous credentials, Knowledge Unit bundles, and selective-disclosure receipts. Active IETF Internet-Drafts: [signed receipts -02](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) and [knowledge units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/). Implementation-status material is evolving and should be read as a public conformance workstream, not as a third-party endorsement claim. Source: [VeritasActa/drafts](https://github.com/VeritasActa/drafts).
 
 **Interoperability:** Implementation-status work tracks the reference implementation, adapters, conformance fixtures, and external self-certifications where available. Public contribution records include maintainer-reviewed merged PRs in Microsoft Agent Governance Toolkit ([Tutorial 33](https://github.com/microsoft/agent-governance-toolkit/pull/1197), [sb-runtime integration doc](https://github.com/microsoft/agent-governance-toolkit/pull/1202), [sb-runtime-skill provider shim](https://github.com/microsoft/agent-governance-toolkit/pull/1203)) and Cedar WASM bindings [merged at AWS](https://github.com/cedar-policy/cedar-for-agents/pull/64). Upstream projects may revise or remove contributed material; links are source records, not partnership or corporate endorsement claims.
 
@@ -87,7 +87,7 @@ Forks can rename themselves, but they cannot produce a matching Sigil without th
 | [ScopeBlind](https://scopeblind.com) | Commercial managed issuance and enforcement |
 | [ScopeBlind/scopeblind-gateway](https://github.com/ScopeBlind/scopeblind-gateway) | protect-mcp source (MIT) |
 | [VeritasActa/drafts](https://github.com/VeritasActa/drafts) | IETF Internet-Draft source files |
-| [IETF: Signed Receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) | draft-farley-acta-signed-receipts-01 |
+| [IETF: Signed Receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) | draft-farley-acta-signed-receipts-02 |
 | [IETF: Knowledge Units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/) | draft-farley-acta-knowledge-units-00 |
 
 
@@ -95,9 +95,9 @@ Forks can rename themselves, but they cannot produce a matching Sigil without th
 
 The Acta receipt format is being embedded in hardware as well as software:
 
-- **ScopeBlind cold-chain evidence tag** -- a disposable sensor where every reading is hardware-signed by an ATECC608B secure element (ECDSA P-256) and Merkle-batched into a verifiable chain. Same Acta receipt format, different domain. See [scopeblind.com/cold-chain](https://www.scopeblind.com/cold-chain).
+- **ScopeBlind Legate** -- a mandate gate for AI agents on a trading desk where every decision (including denials) is an Acta receipt, verifiable offline by a risk committee or allocator. Two-minute demo films at [legate.scopeblind.com/record](https://legate.scopeblind.com/record); cross-firm artifacts (standing covenant exports, co-signed certificates) verify with the standalone [`legate-verify`](https://www.npmjs.com/package/legate-verify) CLI.
 - **protect-mcp** -- AI agent governance with signed decision receipts. See [scopeblind.com/docs/protect-mcp](https://www.scopeblind.com/docs/protect-mcp).
-- **Microsoft AI Agents for Beginners** -- Acta receipts referenced in [Lesson 18: Securing AI Agents](https://github.com/microsoft/ai-agents-for-beginners/blob/main/18-securing-ai-agents/README.md) of the official curriculum (64K+ ★).
+- **Microsoft AI Agents for Beginners** -- Acta receipts referenced in [Lesson 18: Securing AI Agents](https://github.com/microsoft/ai-agents-for-beginners/blob/main/18-securing-ai-agents/README.md) of the official curriculum (68K+ ★).
 
 ## Contributing
 
