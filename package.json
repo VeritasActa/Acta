@@ -9,7 +9,8 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "test": "vitest",
-    "verify": "node tools/verify.js"
+    "verify": "node tools/verify.js",
+    "verify:examples": "node tools/verify-examples.js"
   },
   "dependencies": {
     "@noble/curves": "^1.9.7"

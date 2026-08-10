@@ -1,0 +1,43 @@
+{
+  "acta_version": "0.1",
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "pytest",
+      "tests/test_policy.py"
+    ],
+    "digest": "sha256:d8ad885e20e03f5d1180eb01b4bdfe2075eecec31232daed47b6ee758a90acaf"
+  },
+  "environment": {
+    "allowlist": [
+      "PATH",
+      "PYTHONPATH"
+    ],
+    "commitment": "sha256:ec9c819d304bd0e353373645303d9d5fc29cb9bf584a68d48a2657e04b49222d",
+    "context": "supervisor-attested",
+    "owner": "wsb-launcher.local"
+  },
+  "observed_at": "2026-04-30T00:00:00Z",
+  "observer": {
+    "id": "agent-shell-supervisor.local",
+    "trust_domain": "local-supervisor"
+  },
+  "receipt_id": "sha256:191f26ad301c198e3e1e9c3dca74aaabbd0010fb5efbd1a8517f91ffddf77b84",
+  "receipt_type": "acta:exec-observation",
+  "response": {
+    "digest": "sha256:0aca7e06260b79b4f15791b83f17775f1538d9fcfb4c08b56718a653e185ec93",
+    "exit_code": 0
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "kid": "did:key:example-agent-shell-supervisor",
+    "public_key": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664",
+    "sig": "c8126d965ebb0b179b65e17d10d388c0e4320ca708dc43cba2676d4e69d4d5ddaf60adaee5d5d0773bc724ce4d8c58556f2becf463c98dbb2bd519045f27c106"
+  },
+  "subject": "grpc_exec.ExecuteResponse",
+  "working_directory": {
+    "digest": "sha256:74b92206b71369e383d267a2c7f1031549d4568771aacc44db4c41993ccdc59e",
+    "path_hint": "/workspace/project"
+  }
+}
