@@ -322,7 +322,7 @@ footer a { color: var(--link); }
 
 <footer>
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-    <span><strong style="font-family:var(--brand);letter-spacing:0.04em;">Veritas Acta</strong> &mdash; open protocol for verifiable machine decisions</span>
+    <span><strong style="font-family:var(--brand);letter-spacing:0.04em;">Veritas Acta</strong>: open protocol for verifiable machine decisions</span>
     <span>
       <a href="https://github.com/VeritasActa">GitHub</a> &middot;
       <a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/">IETF Draft</a> &middot;
@@ -499,14 +499,14 @@ async function runVerification(input) {
           allPass = false;
         }
       } else {
-        checks.push({ pass: 'warn', label: 'Ed25519 signature', detail: 'Browser does not support Ed25519 \u2014 verify with: npx @veritasacta/verify receipt.json' });
+        checks.push({ pass: 'warn', label: 'Ed25519 signature', detail: 'Browser does not support Ed25519: verify with: npx @veritasacta/verify receipt.json' });
       }
     }
   } else {
     var which = [];
     if (!parsed.signature) which.push('signature');
     if (!parsed.public_key) which.push('public_key');
-    checks.push({ pass: 'warn', label: 'Ed25519 signature', detail: 'no ' + which.join(' or ') + ' field \u2014 structural checks only' });
+    checks.push({ pass: 'warn', label: 'Ed25519 signature', detail: 'no ' + which.join(' or ') + ' field: structural checks only' });
   }
 
   return { checks: checks, allPass: allPass, parsed: parsed };
@@ -554,7 +554,7 @@ function renderResult(result) {
     var icon = c.pass === true ? '\u2713' : (c.pass === 'warn' ? '\u26a0' : '\u2717');
     li.innerHTML = '<span class="check-icon">[' + icon + ']</span>' +
       '<span class="check-label">' + escHtml(c.label) + '</span>' +
-      '<span class="check-detail">\u2014 ' + escHtml(c.detail) + '</span>';
+      '<span class="check-detail">:  ' + escHtml(c.detail) + '</span>';
     checksList.appendChild(li);
   });
 

@@ -1602,7 +1602,7 @@ function homePage(data) {
       <!-- Live record (collapsed, only if populated) -->
       <details>
         <summary style="font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;padding:8px 0;">
-          Live instance \u2014 ${topics.length} topics, ${totalEntries} entries
+          Live instance: ${topics.length} topics, ${totalEntries} entries
         </summary>
         <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;">
           ${topics.slice(0, 8).map(t => `
@@ -1775,7 +1775,7 @@ npx <span class="cmd-highlight">protect-mcp</span> --policy allow-read
 
 <span class="cmd-comment"># Every tool call produces a signed Acta receipt</span>
 <span class="cmd-comment"># Portable, independently verifiable, no account needed</span></pre>
-          <p class="snippet-desc">Wraps your MCP server with ScopeBlind policies. Every decision \u2014 allow, deny, scope reduction \u2014 becomes a signed receipt on the Acta chain.</p>
+          <p class="snippet-desc">Wraps your MCP server with ScopeBlind policies. Every decision: allow, deny, scope reduction: becomes a signed receipt on the Acta chain.</p>
         </div>
         <div id="snippet-verify" class="snippet-panel">
           <button class="snippet-copy" onclick="copySnippet('verify')">Copy</button>
@@ -3863,10 +3863,10 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
           <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">The blind comparison problem</h3>
           <p>Consider what a trustworthy AI comparison requires:</p>
           <ol style="padding-left:20px;margin:8px 0;">
-            <li><strong style="color:var(--text);">Blindness</strong> &mdash; Neither the user nor the models should know which is "A" vs "B".</li>
-            <li><strong style="color:var(--text);">Immutability</strong> &mdash; Results cannot be altered without detection.</li>
-            <li><strong style="color:var(--text);">Verifiability</strong> &mdash; A third party can confirm the comparison happened as described.</li>
-            <li><strong style="color:var(--text);">Completeness</strong> &mdash; The record captures the full decision chain.</li>
+            <li><strong style="color:var(--text);">Blindness</strong>: Neither the user nor the models should know which is "A" vs "B".</li>
+            <li><strong style="color:var(--text);">Immutability</strong>: Results cannot be altered without detection.</li>
+            <li><strong style="color:var(--text);">Verifiability</strong>: A third party can confirm the comparison happened as described.</li>
+            <li><strong style="color:var(--text);">Completeness</strong>: The record captures the full decision chain.</li>
           </ol>
 
           <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">The three-layer architecture</h3>
