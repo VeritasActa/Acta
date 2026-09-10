@@ -131,7 +131,7 @@ Unified binary, auto-detects input format, single offline CLI:
 
 ## IETF Internet-Drafts
 
-- draft-farley-acta-signed-receipts-02 — https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/
+- draft-farley-acta-signed-receipts-03 — https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/
 - draft-farley-acta-knowledge-units-00 — https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/
 
 ## Conformant implementations (15 in draft-02 Implementation Status)

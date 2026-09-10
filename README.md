@@ -87,7 +87,7 @@ Forks can rename themselves, but they cannot produce a matching Sigil without th
 | [ScopeBlind](https://scopeblind.com) | Commercial managed issuance and enforcement |
 | [ScopeBlind/scopeblind-gateway](https://github.com/ScopeBlind/scopeblind-gateway) | protect-mcp source (MIT) |
 | [VeritasActa/drafts](https://github.com/VeritasActa/drafts) | IETF Internet-Draft source files |
-| [IETF: Signed Receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) | draft-farley-acta-signed-receipts-02 |
+| [IETF: Signed Receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) | draft-farley-acta-signed-receipts-03 |
 | [IETF: Knowledge Units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/) | draft-farley-acta-knowledge-units-00 |
 
 
