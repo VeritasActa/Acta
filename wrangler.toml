@@ -35,6 +35,21 @@ binding = "AI"
 [triggers]
 crons = ["0 0 * * *"]  # Daily at midnight UTC
 
+# Custom domain routing
+[[routes]]
+pattern = "veritasacta.com/*"
+zone_name = "veritasacta.com"
+
+[[routes]]
+pattern = "www.veritasacta.com/*"
+zone_name = "veritasacta.com"
+
+# Module rules for importing static assets as text
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+fallthrough = false
+
 [vars]
 ENVIRONMENT = "production"
 SCOPEBLIND_JWKS_URL = "https://api.scopeblind.com/.well-known/jwks.json"

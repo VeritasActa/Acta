@@ -2,7 +2,7 @@
   "name": "acta",
   "version": "0.1.0",
   "description": "A contestable, checkable, versioned public record",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "private": true,
   "scripts": {

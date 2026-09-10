@@ -94,6 +94,15 @@ export function validateContribution(type, payload) {
         return { valid: false, errors: [{ field: 'type', error: `Must be one of: ${CONTRIBUTION_TYPES.join(', ')}` }] };
     }
 
+    // ASCII-only keys enforcement (JCS canonicalization safety)
+    // Our JCS uses lexicographic Object.keys().sort(), which is correct for ASCII
+    // but diverges from RFC 8785 for Unicode. Rejecting non-ASCII keys at ingest
+    // makes our canonicalization globally deterministic across all languages.
+    const keyErrors = validateAsciiKeys(payload, 'payload');
+    if (keyErrors.length > 0) {
+        return { valid: false, errors: keyErrors };
+    }
+
     // Common: body is always required
     if (!payload.body || typeof payload.body !== 'string' || payload.body.trim().length < 1) {
         errors.push({ field: 'body', error: 'Required, must be a non-empty string' });
@@ -113,6 +122,12 @@ export function validateContribution(type, payload) {
         case 'question':
             // No additional burden — questions are free
             break;
+    }
+
+    // Optional provenance metadata (AI authorship disclosure)
+    if (payload.provenance) {
+        const provResult = validateProvenance(payload.provenance);
+        if (!provResult.valid) errors.push(...provResult.errors);
     }
 
     return errors.length ? { valid: false, errors } : { valid: true };
@@ -199,6 +214,12 @@ export function validateResponse(type, payload) {
         return { valid: false, errors: [{ field: 'type', error: `Must be one of: ${RESPONSE_TYPES.join(', ')}` }] };
     }
 
+    // ASCII-only keys enforcement (JCS canonicalization safety)
+    const keyErrors = validateAsciiKeys(payload, 'payload');
+    if (keyErrors.length > 0) {
+        return { valid: false, errors: keyErrors };
+    }
+
     // Common: target_id is always required for responses
     if (!payload.target_id || typeof payload.target_id !== 'string') {
         errors.push({ field: 'target_id', error: 'Required. Must reference the contribution this responds to.' });
@@ -226,6 +247,12 @@ export function validateResponse(type, payload) {
         case 'resolution':
             errors.push(...validateResolution(payload));
             break;
+    }
+
+    // Optional provenance metadata (AI authorship disclosure)
+    if (payload.provenance) {
+        const provResult = validateProvenance(payload.provenance);
+        if (!provResult.valid) errors.push(...provResult.errors);
     }
 
     return errors.length ? { valid: false, errors } : { valid: true };
@@ -294,6 +321,80 @@ export function validateSourceEnvelope(source) {
     }
 
     return { valid: false, errors: [{ field: 'source', error: 'Must be a URL string or a source evidence envelope object.' }] };
+}
+
+// ── Provenance Validators ──────────────────────────────────────────
+// Optional metadata about how a contribution was authored (model, prompt hashes, etc.)
+// Enables reproducibility and AI authorship disclosure without requiring it.
+
+// ── ASCII-Only Key Enforcement ──────────────────────────────────────
+// JCS canonicalization safety: our implementation uses lexicographic
+// Object.keys().sort() which is correct for ASCII but may diverge from
+// RFC 8785 for Unicode keys. By rejecting non-ASCII keys at ingest,
+// we make canonicalization globally deterministic across all languages.
+
+const ASCII_KEY_PATTERN = /^[\x20-\x7E]+$/;
+
+/**
+ * Recursively validate that all object keys are ASCII-only.
+ * @param {*} obj - value to check
+ * @param {string} path - dot-separated path for error reporting
+ * @returns {Array} validation errors
+ */
+function validateAsciiKeys(obj, path) {
+    if (obj === null || obj === undefined || typeof obj !== 'object') return [];
+    if (Array.isArray(obj)) {
+        const errors = [];
+        obj.forEach((item, i) => {
+            errors.push(...validateAsciiKeys(item, `${path}[${i}]`));
+        });
+        return errors;
+    }
+
+    const errors = [];
+    for (const key of Object.keys(obj)) {
+        if (!ASCII_KEY_PATTERN.test(key)) {
+            errors.push({
+                field: `${path}.${key}`,
+                error: `Object keys must contain only printable ASCII characters (0x20-0x7E). Non-ASCII key: "${key}"`,
+            });
+        }
+        errors.push(...validateAsciiKeys(obj[key], `${path}.${key}`));
+    }
+    return errors;
+}
+
+const DISCLOSURE_LEVELS = ['private', 'reproducible', 'full'];
+
+export function validateProvenance(provenance) {
+    if (!provenance) return { valid: true };
+    if (typeof provenance !== 'object' || Array.isArray(provenance)) {
+        return { valid: false, errors: [{ field: 'provenance', error: 'Must be an object if provided.' }] };
+    }
+
+    const errors = [];
+
+    if (provenance.authored_with_model !== undefined && typeof provenance.authored_with_model !== 'string') {
+        errors.push({ field: 'provenance.authored_with_model', error: 'Must be a string (model identifier).' });
+    }
+    if (provenance.system_prompt_hash !== undefined) {
+        if (typeof provenance.system_prompt_hash !== 'string' || !/^[a-f0-9]{64}$/.test(provenance.system_prompt_hash)) {
+            errors.push({ field: 'provenance.system_prompt_hash', error: 'Must be a SHA-256 hex string (64 chars).' });
+        }
+    }
+    if (provenance.prompt_hash !== undefined) {
+        if (typeof provenance.prompt_hash !== 'string' || !/^[a-f0-9]{64}$/.test(provenance.prompt_hash)) {
+            errors.push({ field: 'provenance.prompt_hash', error: 'Must be a SHA-256 hex string (64 chars).' });
+        }
+    }
+    if (provenance.tool_version !== undefined && typeof provenance.tool_version !== 'string') {
+        errors.push({ field: 'provenance.tool_version', error: 'Must be a string.' });
+    }
+    if (provenance.disclosure_level !== undefined && !DISCLOSURE_LEVELS.includes(provenance.disclosure_level)) {
+        errors.push({ field: 'provenance.disclosure_level', error: `Must be one of: ${DISCLOSURE_LEVELS.join(', ')}` });
+    }
+
+    return errors.length ? { valid: false, errors } : { valid: true };
 }
 
 function validateEvidence(payload) {
@@ -396,6 +497,19 @@ const DEFAULT_CHALLENGE_DECAY_HOURS = 168;
  * @param {Array} responses - response entries linked to this contribution
  * @param {object} options - { challenge_decay_hours: number }
  */
+/**
+ * Check if a response entry targets a specific entry ID.
+ * The target is stored in linked_to[0] (primary) or payload.target_id (fallback).
+ */
+function targetsEntry(response, entryId) {
+    if (!entryId) return false;
+    const linked = response.linked_to || [];
+    if (linked.includes(entryId)) return true;
+    if (response.payload?.target_id === entryId) return true;
+    if (response.target_id === entryId) return true; // legacy compat
+    return false;
+}
+
 export function computeState(contribution, responses, options = {}) {
     const type = contribution.subtype;
     const decayHours = options.challenge_decay_hours || DEFAULT_CHALLENGE_DECAY_HOURS;
@@ -435,6 +549,10 @@ function computeQuestionState(question, responses) {
 
 function computeClaimState(claim, responses, decayHours) {
     // Claims NEVER resolve. They can be: open, contested, superseded, tombstoned.
+    //
+    // NOTE: `responses` is pre-filtered by the caller to entries whose
+    // linked_to includes claim.entry_id. The target_id of a response lives
+    // in linked_to[0] or payload.target_id, NOT as a top-level field.
 
     // Check for supersession
     const superseded = responses.some(
@@ -446,15 +564,18 @@ function computeClaimState(claim, responses, decayHours) {
 
     // Get all challenges against the claim itself
     const challenges = responses.filter(
-        r => r.subtype === 'challenge' && r.target_id === claim.entry_id
+        r => r.subtype === 'challenge' && targetsEntry(r, claim.entry_id)
     );
 
     // Check which challenges are active (not stale via shot clock)
     const now = Date.now();
     const activeChallenges = challenges.filter(challenge => {
         // Find refuting evidence responses to this challenge
+        // NOTE: responses to the challenge have linked_to=[challenge.entry_id],
+        // which may not be in the pre-filtered array. If not found,
+        // the challenge is treated as active (unanswered).
         const refutingResponses = responses.filter(
-            r => r.target_id === challenge.entry_id &&
+            r => targetsEntry(r, challenge.entry_id) &&
                 (r.subtype === 'evidence' || r.subtype === 'update')
         );
 
@@ -476,7 +597,7 @@ function computeClaimState(claim, responses, decayHours) {
         // Has the challenger countered since the response?
         const challengerCountered = responses.some(
             r => r.subtype === 'challenge' &&
-                r.target_id !== claim.entry_id && // Not this original challenge
+                !targetsEntry(r, claim.entry_id) && // Not targeting the claim directly
                 new Date(r.timestamp).getTime() > earliestResponse
         );
 
@@ -521,7 +642,7 @@ function computePredictionState(prediction, responses) {
 
         // Check if resolution has been challenged
         const resolutionChallenged = responses.some(
-            r => r.subtype === 'challenge' && r.target_id === lastResolution.entry_id
+            r => r.subtype === 'challenge' && targetsEntry(r, lastResolution.entry_id)
         );
 
         if (resolutionChallenged) {
@@ -542,6 +663,23 @@ function computePredictionState(prediction, responses) {
         };
     }
 
+    // Check for direct challenges to the prediction itself (before resolution)
+    const directChallenges = responses.filter(
+        r => r.subtype === 'challenge' && targetsEntry(r, prediction.entry_id)
+    );
+    if (directChallenges.length > 0) {
+        return { state: 'contested', display_hint: null };
+    }
+
+    // Check evidence for display hint
+    const evidence = responses.filter(r => r.subtype === 'evidence');
+    let displayHint = null;
+    if (evidence.length > 0) {
+        const supporting = evidence.filter(r => r.payload?.stance === 'supporting').length;
+        const refuting = evidence.filter(r => r.payload?.stance === 'refuting').length;
+        if (supporting > 0 && refuting === 0) displayHint = 'supported';
+    }
+
     // Check if past resolution date
     if (prediction.payload?.resolution_date) {
         const resolutionDate = new Date(prediction.payload.resolution_date);
@@ -550,5 +688,5 @@ function computePredictionState(prediction, responses) {
         }
     }
 
-    return { state: 'open', display_hint: null };
+    return { state: 'open', display_hint: displayHint };
 }

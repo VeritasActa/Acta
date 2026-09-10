@@ -1,5 +1,5 @@
 /**
- * Chain Head Publication — Signed Anchoring
+ * Chain Head Publication: Signed Anchoring
  *
  * Scheduled handler (cron trigger) that computes a Merkle root
  * of all topic chain heads, signs it with Ed25519, and stores
@@ -11,23 +11,24 @@
  *   in a specific state at a specific time.
  *
  *   The Ed25519 signature means anyone can verify the anchor offline
- *   using only the public key — no trust in the operator required.
+ *   using only the public key: no trust in the operator required.
  *
  *   NOTE: This produces signed checkpoints. External witnessing
  *   (publishing to an operator-independent location) is a separate
- *   concern — see Phase 2 below.
+ *   concern: see Phase 2 below.
  *
  *   Charter invariant #6:  independently verifiable
  *   Charter invariant #10: verify without relying on any single operator
  *
  * Secrets required:
- *   ANCHOR_SIGNING_KEY — Ed25519 private key (64 hex chars = 32 bytes)
+ *   ANCHOR_SIGNING_KEY: Ed25519 private key (64 hex chars = 32 bytes)
  *
  * @license MIT
  */
 
 import { ed25519 } from '@noble/curves/ed25519';
 import { jcsSerialize } from './durable-objects/ledger-chain.js';
+import { PROTOCOL_IDENTITY, INSTANCE_POLICY } from './protocol-identity.js';
 
 // ── Hex utilities ───────────────────────────────────────────────────
 
@@ -111,7 +112,7 @@ export function verifyAnchorSignature(anchor) {
 }
 
 /**
- * Scheduled handler — called by cron trigger.
+ * Scheduled handler: called by cron trigger.
  * Computes, signs, and stores a Merkle root of all topic chain heads.
  */
 export async function handleScheduled(env) {
@@ -152,7 +153,7 @@ export async function handleScheduled(env) {
     // 3. Compute Merkle root
     const merkleRoot = await computeMerkleRoot(chainHeads);
 
-    // 4. Build anchor payload
+    // 4. Build anchor payload (includes protocol identity + instance policy)
     const payload = {
         version: 1,
         type: 'acta:anchor',
@@ -160,6 +161,10 @@ export async function handleScheduled(env) {
         merkle_root: merkleRoot,
         chain_heads: chainHeads,
         topic_count: chainHeads.length,
+        // Protocol identity: cryptographically commits anchor to the protocol
+        ...PROTOCOL_IDENTITY,
+        // Instance policy: separate from identity, operator-tunable
+        ...INSTANCE_POLICY,
     };
 
     // 5. Sign with Ed25519 if key is configured
