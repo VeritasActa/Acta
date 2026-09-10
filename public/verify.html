@@ -554,7 +554,7 @@ function renderResult(result) {
     var icon = c.pass === true ? '\u2713' : (c.pass === 'warn' ? '\u26a0' : '\u2717');
     li.innerHTML = '<span class="check-icon">[' + icon + ']</span>' +
       '<span class="check-label">' + escHtml(c.label) + '</span>' +
-      '<span class="check-detail">:  ' + escHtml(c.detail) + '</span>';
+      '<span class="check-detail">' + escHtml(c.detail) + '</span>';
     checksList.appendChild(li);
   });
 
