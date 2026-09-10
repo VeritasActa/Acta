@@ -495,7 +495,7 @@ footer a:hover { color: var(--text); }
 .hero-action-card:nth-child(2) { animation-delay: 0.12s; }
 .hero-action-card:nth-child(3) { animation-delay: 0.19s; }
 
-/* Built on Acta — visually distinct showcase cards */
+/* Built on Acta: visually distinct showcase cards */
 .showcase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 56px; }
 .showcase-card { padding: 26px; padding-left: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rad); border-left: 3px solid var(--border-hover); position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: all 0.2s; display: flex; flex-direction: column; }
 .showcase-card:hover { border-color: var(--border-hover); box-shadow: 0 4px 16px rgba(0,0,0,0.06); transform: translateY(-2px); }
@@ -738,7 +738,7 @@ function loadChainActivity() {
         'Last anchor: <strong>' + ago + '</strong> · ' + topics + ' topics verified · Merkle root';
       document.getElementById('chain-activity-hash').textContent = root + '…';
     })
-    .catch(() => { /* silent — non-critical */ });
+    .catch(() => { /* silent: non-critical */ });
 }
 
 function timeAgoShort(date) {
@@ -1326,9 +1326,9 @@ function layout(title, body) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Veritas Acta — Contestable Public Record</title>
+  <title>Veritas Acta: Contestable Public Record</title>
   <meta name="description" content="A contestable, checkable public record for humans and AI. Typed contributions, structured challenges, hash-chained ledger, independent verification.">
-  <meta property="og:title" content="Veritas Acta — Open Evidence Protocol for Machine Decisions">
+  <meta property="og:title" content="Veritas Acta: Open Evidence Protocol for Machine Decisions">
   <meta property="og:description" content="Open protocol for verifiable machine decision evidence. Ed25519-signed receipts, multi-model knowledge units, causal DAGs. Apache-2.0 verifier. Two IETF Internet-Drafts published.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veritasacta.com">
@@ -1336,7 +1336,7 @@ function layout(title, body) {
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Veritas Acta — Open Evidence Protocol for Machine Decisions">
+  <meta name="twitter:title" content="Veritas Acta: Open Evidence Protocol for Machine Decisions">
   <meta name="twitter:description" content="Open protocol for verifiable machine decision evidence. Ed25519-signed receipts, selective disclosure, causal DAGs. Apache-2.0 verifier.">
   <meta name="twitter:image" content="https://veritasacta.com/og-card.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1482,17 +1482,17 @@ function homePage(data) {
   return layout('A contestable, checkable public record for humans and AI', `
     <main class="container">
 
-      <!-- Charter — why this exists -->
+      <!-- Charter: why this exists -->
       <div class="hero">
         <h1>A contestable, checkable<br>public record for<br><span class="hero-accent">humans and AI.</span></h1>
-        <p>Information systems that can be captured — by profit, politics, or unilateral control — distort what participants know and undermine their ability to coordinate. Acta is an open protocol for structured, signed, independently verifiable records — designed so that no single entity can rewrite history.</p>
+        <p>Information systems that can be captured: by profit, politics, or unilateral control: distort what participants know and undermine their ability to coordinate. Acta is an open protocol for structured, signed, independently verifiable records: designed so that no single entity can rewrite history.</p>
         <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;">
           <a href="/verify" style="display:inline-block;padding:12px 24px;background:var(--ink);color:var(--bg);border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;">Verify a receipt</a>
           <a href="/about" style="display:inline-block;padding:12px 24px;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;font-size:14px;font-weight:500;text-decoration:none;">Read the full charter</a>
         </div>
       </div>
 
-      <!-- The 10 invariants — what makes this Acta -->
+      <!-- The 10 invariants: what makes this Acta -->
       <div class="section-header">Permanent Invariants</div>
       <p class="section-subhead">These define what Acta is. If any cease to be true, the system is no longer Acta. The mechanisms that enforce them will evolve. The commitments do not.</p>
 
@@ -1508,7 +1508,7 @@ function homePage(data) {
           <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">2</span>
           <div>
             <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Every object has authorship provenance and revision history</div>
-            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Who contributed it, when, in response to what, how it has been updated — all publicly readable.</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Who contributed it, when, in response to what, how it has been updated: all publicly readable.</div>
           </div>
         </div>
         <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
@@ -1536,7 +1536,7 @@ function homePage(data) {
           <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">6</span>
           <div>
             <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">The record maintains integrity</div>
-            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">No entity — including the operator — can silently alter the record. Removal is explicit and auditable. Integrity is independently verifiable.</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">No entity: including the operator: can silently alter the record. Removal is explicit and auditable. Integrity is independently verifiable.</div>
           </div>
         </div>
         <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
@@ -1569,7 +1569,7 @@ function homePage(data) {
         </div>
       </div>
 
-      <!-- Verify — prove it yourself -->
+      <!-- Verify: prove it yourself -->
       <div style="padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);text-align:center;margin-bottom:48px;">
         <h2 style="font-family:var(--brand);font-size:22px;margin-bottom:8px;">Don\u2019t trust us. Verify.</h2>
         <p style="color:var(--text-muted);font-size:14px;line-height:1.6;margin-bottom:20px;max-width:480px;margin-left:auto;margin-right:auto;">
@@ -1680,7 +1680,7 @@ function homePage(data) {
       <div class="hero">
         <a href="/about" class="hero-eyebrow" style="text-decoration:none;color:var(--link);cursor:pointer;"><span class="dot"></span> Open Evidence Protocol</a>
         <h1>The evidence layer for<br><span class="hero-accent">AI accountability.</span></h1>
-        <p>When the platform that made the decision also controls the evidence, the evidence is worthless. Acta is an open protocol for structured, signed, independently verifiable records — designed so that no single entity can rewrite history.</p>
+        <p>When the platform that made the decision also controls the evidence, the evidence is worthless. Acta is an open protocol for structured, signed, independently verifiable records: designed so that no single entity can rewrite history.</p>
         <div class="hero-actions">
           <a href="#topic-directory" class="hero-action-card" onclick="activateTopicFilter('contested', this)" style="border-left:3px solid var(--blue);">
             <div class="hero-action-kicker" style="color:var(--blue);">Explore</div>
@@ -1690,7 +1690,7 @@ function homePage(data) {
           <a href="/verify" class="hero-action-card" style="border-left:3px solid var(--link);">
             <div class="hero-action-kicker" style="color:var(--link);">Verify</div>
             <div class="hero-action-title">Check a receipt or chain</div>
-            <div class="hero-action-body">Paste a signed receipt into the browser verifier — or run <code>npx @veritasacta/verify</code> for offline proof.</div>
+            <div class="hero-action-body">Paste a signed receipt into the browser verifier: or run <code>npx @veritasacta/verify</code> for offline proof.</div>
           </a>
           <a href="#contribute-section" class="hero-action-card" style="border-left:3px solid var(--purple);">
             <div class="hero-action-kicker" style="color:var(--purple);">Contribute</div>
@@ -1830,7 +1830,7 @@ curl -X POST https://veritasacta.com/api/contribute \\
       <div class="section-header">${predictions.length > 0 ? 'Topic Directory' : 'The Record'}</div>
       ${featured ? `
       <div class="featured-record">
-        <p style="color:var(--text-muted);font-size:13px;margin-bottom:14px;line-height:1.5;">A claim was made. A challenge cited a specific basis. The record moved to <span style="font-weight:600;color:var(--amber);">contested</span> — visible to everyone, removable by no one.</p>
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:14px;line-height:1.5;">A claim was made. A challenge cited a specific basis. The record moved to <span style="font-weight:600;color:var(--amber);">contested</span>: visible to everyone, removable by no one.</p>
         <div class="featured-label">Featured \u00b7 contested ${esc(featured.contribution.subtype)} in ${esc(featured.topic)}</div>
         <div class="featured-card">
           <div>
@@ -1893,7 +1893,7 @@ curl -X POST https://veritasacta.com/api/contribute \\
         ` : ''}
         <div class="instance-row">
           <span class="ir-label">Latest Anchor</span>
-          <span class="ir-value ${anchor ? 'active' : 'none'}">${anchor ? anchor.timestamp + ' · Merkle root: ' + (anchor.merkle_root || '').slice(0, 16) + '...' : 'Pending — first anchor at next UTC midnight'}</span>
+          <span class="ir-value ${anchor ? 'active' : 'none'}">${anchor ? anchor.timestamp + ' · Merkle root: ' + (anchor.merkle_root || '').slice(0, 16) + '...' : 'Pending: first anchor at next UTC midnight'}</span>
         </div>
         <div class="instance-row">
           <span class="ir-label">Signing Key</span>
@@ -1965,11 +1965,11 @@ node tools/verify.js chain.json</pre>
 {<br>
   <span class="receipt-field" data-anno="Unique identifier for this entry in the chain. Used to link responses, challenges, and evidence to specific contributions." data-label="entry_id"><span class="receipt-key">"entry_id"</span>: <span class="receipt-str">"a7f3c1d2-8e4b-4f9a-b6c1-2d3e4f5a6b7c"</span></span>,<br>
   <span class="receipt-field" data-anno="JCS-canonicalized SHA-256 hash of this entry's content. Proves the entry hasn't been modified since creation. Recomputable by anyone." data-label="entry_hash"><span class="receipt-key">"entry_hash"</span>: <span class="receipt-str">"e3b0c44298fc1c14..."</span></span>,<br>
-  <span class="receipt-field" data-anno="SHA-256 hash of the previous entry in this topic's chain. Creates an immutable linked sequence — if any earlier entry is altered, all subsequent hashes break." data-label="prev_hash"><span class="receipt-key">"prev_hash"</span>: <span class="receipt-str">"d4a06a1b2c3d4e5f..."</span></span>,<br>
+  <span class="receipt-field" data-anno="SHA-256 hash of the previous entry in this topic's chain. Creates an immutable linked sequence: if any earlier entry is altered, all subsequent hashes break." data-label="prev_hash"><span class="receipt-key">"prev_hash"</span>: <span class="receipt-str">"d4a06a1b2c3d4e5f..."</span></span>,<br>
   <span class="receipt-field" data-anno="Position in the topic chain. Monotonically increasing. Combined with prev_hash, proves complete ordering of all entries." data-label="sequence"><span class="receipt-key">"sequence"</span>: <span class="receipt-num">7</span></span>,<br>
   <span class="receipt-field" data-anno="ISO 8601 timestamp recorded by the operator. External witnesses (Bluesky posts) provide independent time anchoring." data-label="timestamp"><span class="receipt-key">"timestamp"</span>: <span class="receipt-str">"2026-03-26T04:39:28.878Z"</span></span>,<br>
   <span class="receipt-field" data-anno="Contribution type determines the evidence burden. 'prediction' requires resolution_date, oracle, and falsifiable criteria per Charter Invariant 1." data-label="type"><span class="receipt-key">"type"</span>: <span class="receipt-str">"contribution"</span>, <span class="receipt-key">"subtype"</span>: <span class="receipt-str">"prediction"</span></span>,<br>
-  <span class="receipt-field" data-anno="Per-topic pseudonym derived via VOPRF (Verifiable Oblivious Pseudorandom Function). Unlinkable across topics — the same person gets different pseudonyms in different topics." data-label="author"><span class="receipt-key">"author"</span>: { <span class="receipt-key">"type"</span>: <span class="receipt-str">"human"</span>, <span class="receipt-key">"topic_pseudonym"</span>: <span class="receipt-str">"h_7x3k"</span> }</span>,<br>
+  <span class="receipt-field" data-anno="Per-topic pseudonym derived via VOPRF (Verifiable Oblivious Pseudorandom Function). Unlinkable across topics: the same person gets different pseudonyms in different topics." data-label="author"><span class="receipt-key">"author"</span>: { <span class="receipt-key">"type"</span>: <span class="receipt-str">"human"</span>, <span class="receipt-key">"topic_pseudonym"</span>: <span class="receipt-str">"h_7x3k"</span> }</span>,<br>
   <span class="receipt-field" data-anno="The actual content of the contribution. For predictions: the claim body, resolution date, oracle source, and falsifiable criteria." data-label="payload"><span class="receipt-key">"payload"</span>: { <span class="receipt-key">"body"</span>: <span class="receipt-str">"GPT-5 will score >90% on ARC-AGI..."</span>, <span class="receipt-key">"resolution_date"</span>: <span class="receipt-str">"2026-06-01"</span> }</span><br>
 }
         </div>
@@ -1985,13 +1985,13 @@ node tools/verify.js chain.json</pre>
         <div class="showcase-card" style="border-left-color:var(--blue);">
           <div class="protocol-card-num">IMPLEMENTATION</div>
           <div class="protocol-card-title">ScopeBlind</div>
-          <div class="protocol-card-body">Machine access control with signed receipts. <code>protect-mcp</code> wraps MCP servers with per-tool policies. Every decision produces an Acta-signed receipt — portable, independently verifiable, no account needed.</div>
+          <div class="protocol-card-body">Machine access control with signed receipts. <code>protect-mcp</code> wraps MCP servers with per-tool policies. Every decision produces an Acta-signed receipt: portable, independently verifiable, no account needed.</div>
           <a href="https://scopeblind.com" target="_blank" rel="noopener noreferrer" class="protocol-card-link">scopeblind.com →</a>
         </div>
         <div class="showcase-card" style="border-left-color:var(--purple);">
           <div class="protocol-card-num">APPLICATION</div>
           <div class="protocol-card-title">BlindLLM</div>
-          <div class="protocol-card-body">Blind AI agent battles with verified results. Battle outcomes, debate artifacts, and leaderboard snapshots are published as Acta evidence — creating a public, verifiable record of agent capability.</div>
+          <div class="protocol-card-body">Blind AI agent battles with verified results. Battle outcomes, debate artifacts, and leaderboard snapshots are published as Acta evidence: creating a public, verifiable record of agent capability.</div>
           <a href="https://blindllm.com" target="_blank" rel="noopener noreferrer" class="protocol-card-link">blindllm.com →</a>
         </div>
         <div class="showcase-card" style="border-left-color:var(--green);">
@@ -2032,9 +2032,9 @@ node tools/verify.js chain.json</pre>
         <summary class="deep-dive-summary">Why this exists</summary>
         <div class="deep-dive-body">
           <div class="charter-summary" style="margin-bottom:0;">
-            <p class="charter-summary-lead">AI agents are making real decisions — calling APIs, spending money, committing code. But nobody can independently prove what an agent actually did. Dashboards show you logs. Logs can be edited. Scanners check before install, but once code runs, there's no standard way to prove it behaved.</p>
-            <p class="charter-summary-lead">Evidence is only credible if it doesn't depend on the platform that created it. Acta defines how to structure, sign, and verify evidence so that anyone — regulator, auditor, competitor, or the public — can check it without trusting the operator.</p>
-            <p class="charter-summary-lead" style="margin-bottom:24px;">The protocol is built on permanent invariants — not operator-tunable policies, but commitments that define the system's identity. The canonical <a href="/.well-known/acta-instance.json" style="color:var(--text);font-family:var(--mono);font-size:13px;">charter hash</a> is published in the machine-readable manifest. Anyone can <a href="https://github.com/VeritasActa/Acta/blob/main/CHARTER.md" style="color:var(--text);">download the charter</a>, compute its SHA-256, and verify the instance is publishing the charter it claims.</p>
+            <p class="charter-summary-lead">AI agents are making real decisions: calling APIs, spending money, committing code. But nobody can independently prove what an agent actually did. Dashboards show you logs. Logs can be edited. Scanners check before install, but once code runs, there's no standard way to prove it behaved.</p>
+            <p class="charter-summary-lead">Evidence is only credible if it doesn't depend on the platform that created it. Acta defines how to structure, sign, and verify evidence so that anyone: regulator, auditor, competitor, or the public: can check it without trusting the operator.</p>
+            <p class="charter-summary-lead" style="margin-bottom:24px;">The protocol is built on permanent invariants: not operator-tunable policies, but commitments that define the system's identity. The canonical <a href="/.well-known/acta-instance.json" style="color:var(--text);font-family:var(--mono);font-size:13px;">charter hash</a> is published in the machine-readable manifest. Anyone can <a href="https://github.com/VeritasActa/Acta/blob/main/CHARTER.md" style="color:var(--text);">download the charter</a>, compute its SHA-256, and verify the instance is publishing the charter it claims.</p>
             <div class="charter-invariants">
               <div class="charter-inv">
                 <span class="charter-inv-num">3</span>
@@ -2047,7 +2047,7 @@ node tools/verify.js chain.json</pre>
                 <span class="charter-inv-num">6</span>
                 <div>
                   <div class="charter-inv-title">The record maintains integrity</div>
-                  <div class="charter-inv-body">No entity — including the operator — can silently alter the record. When content must be removed, its removal is explicit and auditable.</div>
+                  <div class="charter-inv-body">No entity: including the operator: can silently alter the record. When content must be removed, its removal is explicit and auditable.</div>
                 </div>
               </div>
               <div class="charter-inv">
@@ -2065,7 +2065,7 @@ node tools/verify.js chain.json</pre>
                 </div>
               </div>
             </div>
-            <a href="/about" class="charter-summary-link">Read the full Charter — all 10 invariants →</a>
+            <a href="/about" class="charter-summary-link">Read the full Charter: all 10 invariants →</a>
           </div>
         </div>
       </details>
@@ -2174,7 +2174,7 @@ function renderTrackRecords(trackRecords) {
 
   return `<div class="track-record-section">
     <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text-muted);">Track Records</h3>
-    <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;">Per-pseudonym prediction accuracy. Pseudonyms are topic-scoped — the same contributor has different IDs on different topics.</p>
+    <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;">Per-pseudonym prediction accuracy. Pseudonyms are topic-scoped: the same contributor has different IDs on different topics.</p>
     ${cards}
   </div>`;
 }
@@ -2196,7 +2196,7 @@ function topicPage(data) {
 
   // Display-level deduplication: skip contributions with identical body text,
   // keeping the first occurrence (which has the responses linked to it).
-  // Chain integrity is preserved — duplicates still exist in the ledger.
+  // Chain integrity is preserved: duplicates still exist in the ledger.
   const seenBodies = new Set();
   const uniqueContributions = contributions.filter(c => {
     const body = (c.body_preview || c.payload?.body || '').trim();
@@ -2260,7 +2260,7 @@ function topicPage(data) {
         </div>
       </div>` : ''}
       ${entriesHtml}
-      ${dupCount > 0 ? `<div style="padding:10px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rad);font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-bottom:16px;">${dupCount} duplicate contribution${dupCount > 1 ? 's' : ''} hidden. Chain integrity preserved — <a href="/api/export/${encodeURIComponent(topic)}">export full chain</a> to see all entries.</div>` : ''}
+      ${dupCount > 0 ? `<div style="padding:10px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rad);font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-bottom:16px;">${dupCount} duplicate contribution${dupCount > 1 ? 's' : ''} hidden. Chain integrity preserved: <a href="/api/export/${encodeURIComponent(topic)}">export full chain</a> to see all entries.</div>` : ''}
       ${renderTrackRecords(trackRecords)}
       ${contributeForm(topic)}
       <div class="mobile-action-bar">
@@ -2699,7 +2699,7 @@ function renderCharterMarkdown(md) {
       inBlockquote = false;
     }
 
-    // Empty line — close paragraph
+    // Empty line: close paragraph
     if (trimmed === '') {
       if (inParagraph) { html += '</p>'; inParagraph = false; }
       continue;
@@ -2957,7 +2957,7 @@ function docsPage() {
             <span class="docs-cell-states">open → contested → resolved (confirmed / refuted)</span>
           </div>
         </div>
-        <p class="docs-section-body" style="margin-top:12px;">State transitions are computed from the response graph, not stored as mutable fields. A claim moves to "contested" when a structurally valid challenge is linked to it. This is deterministic — anyone can recompute the state from the chain.</p>
+        <p class="docs-section-body" style="margin-top:12px;">State transitions are computed from the response graph, not stored as mutable fields. A claim moves to "contested" when a structurally valid challenge is linked to it. This is deterministic: anyone can recompute the state from the chain.</p>
       </div>
 
       <div id="response-matrix" class="docs-section">
@@ -2990,7 +2990,7 @@ function docsPage() {
             <span class="docs-cell-states">Outcome, source, resolution type (confirmed / refuted / answered)</span>
           </div>
         </div>
-        <p class="docs-section-body" style="margin-top:12px;">Challenges have a 7-day shot clock. If the original contributor doesn't respond, the claim transitions to "unsubstantiated." Claims never resolve — they can only be superseded or contested. This is by design: factual claims don't have binary outcomes.</p>
+        <p class="docs-section-body" style="margin-top:12px;">Challenges have a 7-day shot clock. If the original contributor doesn't respond, the claim transitions to "unsubstantiated." Claims never resolve: they can only be superseded or contested. This is by design: factual claims don't have binary outcomes.</p>
       </div>
 
       <div id="chain-integrity" class="docs-section">
@@ -3008,7 +3008,7 @@ function docsPage() {
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:20px;margin:16px 0;">
           <div style="font-weight:700;font-size:14px;margin-bottom:12px;">Daily anchors</div>
-          <p style="font-size:13px;color:var(--text-muted);line-height:1.65;">At midnight UTC, the operator computes a Merkle root of all chain heads, signs it with an Ed25519 key, and publishes the signed anchor. The anchor is witnessed externally on Bluesky — a platform the operator does not control.</p>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.65;">At midnight UTC, the operator computes a Merkle root of all chain heads, signs it with an Ed25519 key, and publishes the signed anchor. The anchor is witnessed externally on Bluesky: a platform the operator does not control.</p>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);padding:20px;margin:16px 0;">
           <div style="font-weight:700;font-size:14px;margin-bottom:12px;">Protocol identity</div>
@@ -3118,7 +3118,7 @@ node tools/conformance.js https://veritasacta.com</pre>
       <div id="identity" class="docs-section">
         <h2 class="docs-section-title">Identity & Budget</h2>
         <p class="docs-section-body">Identity is provided by <a href="https://scopeblind.com">ScopeBlind</a> via DPoP tokens or pass-tokens. Each device gets 10 tokens per day across all topics. Contributions cost 2 tokens; responses cost 1. This prevents attention flooding (Charter invariant #4) without requiring accounts.</p>
-        <p class="docs-section-body">Authors are identified by per-topic pseudonyms — cryptographically derived, unlinkable across topics. Device IDs are never stored in the ledger.</p>
+        <p class="docs-section-body">Authors are identified by per-topic pseudonyms: cryptographically derived, unlinkable across topics. Device IDs are never stored in the ledger.</p>
       </div>
 
       <div id="provenance" class="docs-section">
@@ -3146,7 +3146,7 @@ node tools/conformance.js https://veritasacta.com</pre>
             <span class="docs-cell-desc" style="flex:2;">One of: private, reproducible, full</span>
           </div>
         </div>
-        <p class="docs-section-body" style="margin-top:12px;">Provenance is included in the payload hash — it becomes part of the immutable record. This enables future compose features and agent authorship transparency without requiring disclosure.</p>
+        <p class="docs-section-body" style="margin-top:12px;">Provenance is included in the payload hash: it becomes part of the immutable record. This enables future compose features and agent authorship transparency without requiring disclosure.</p>
       </div>
 
       <div id="mcp" class="docs-section">
@@ -3171,7 +3171,7 @@ node tools/conformance.js https://veritasacta.com</pre>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;font-family:var(--mono);font-size:12px;">acta_discover</span>
-            <span class="docs-cell-desc" style="flex:2;">Find actionable work — contested records, claims needing evidence, approaching resolutions</span>
+            <span class="docs-cell-desc" style="flex:2;">Find actionable work: contested records, claims needing evidence, approaching resolutions</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;font-family:var(--mono);font-size:12px;">acta_verify</span>
@@ -3190,39 +3190,39 @@ node tools/conformance.js https://veritasacta.com</pre>
         <div class="docs-table">
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">Charter</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/Acta/blob/main/CHARTER.md">CHARTER.md</a> — permanent invariants, mission, what the system is</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/Acta/blob/main/CHARTER.md">CHARTER.md</a>: permanent invariants, mission, what the system is</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">Protocol Spec</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/Acta/blob/main/docs/protocol-spec.md">protocol-spec.md</a> — schemas, state machines, chain format</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/Acta/blob/main/docs/protocol-spec.md">protocol-spec.md</a>: schemas, state machines, chain format</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">Policy</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/Acta/blob/main/docs/policy.md">policy.md</a> — moderation tiers, budget rules, rate limits</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/Acta/blob/main/docs/policy.md">policy.md</a>: moderation tiers, budget rules, rate limits</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">Source Code</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta">github.com/VeritasActa/acta</a> — MIT license, Cloudflare Workers</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta">github.com/VeritasActa/acta</a>: MIT license, Cloudflare Workers</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">Offline Verifier</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta/blob/main/tools/verify.js">tools/verify.js</a> — recompute all hashes and verify anchors</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta/blob/main/tools/verify.js">tools/verify.js</a>: recompute all hashes and verify anchors</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">Conformance Checker</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta/blob/main/tools/conformance.js">tools/conformance.js</a> — verify manifest, document hashes, endpoints, anchor signature</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta/blob/main/tools/conformance.js">tools/conformance.js</a>: verify manifest, document hashes, endpoints, anchor signature</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">Instance Manifest</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="/.well-known/acta-instance.json">/.well-known/acta-instance.json</a> — passive federation discovery</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="/.well-known/acta-instance.json">/.well-known/acta-instance.json</a>: passive federation discovery</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">MCP Server</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta-mcp">acta-mcp</a> — AI agent interface (contribute, query, discover, verify, export)</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="https://github.com/VeritasActa/acta-mcp">acta-mcp</a>: AI agent interface (contribute, query, discover, verify, export)</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;">Conformance Status</span>
-            <span class="docs-cell-desc" style="flex:3;"><a href="/api/conformance">/api/conformance</a> — operator-reported self-assessment (cached, 5min)</span>
+            <span class="docs-cell-desc" style="flex:3;"><a href="/api/conformance">/api/conformance</a>: operator-reported self-assessment (cached, 5min)</span>
           </div>
         </div>
       </div>
@@ -3245,8 +3245,8 @@ function ontologyPage() {
         <h2 class="docs-section-title">Protocol Architecture</h2>
         <p class="docs-section-body">Veritas Acta defines a canonical format for cryptographic evidence of machine decisions. Every receipt is self-contained, independently verifiable, and composable into a typed evidence graph.</p>
         <div style="background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:var(--rad);padding:16px;margin:16px 0;">
-          <pre style="color:var(--panel-text);font-family:var(--mono);font-size:12px;line-height:1.6;margin:0;"><span style="color:var(--panel-text-dim);">Layer 1: ActaClaims&lt;T&gt;</span>  — Immutable signed claims (issuer signs once, ID is permanent)
-<span style="color:var(--panel-text-dim);">Layer 2: ActaReceipt&lt;T&gt;</span> — Claims + post-signature proofs (anchors, witnesses, disclosures)</pre>
+          <pre style="color:var(--panel-text);font-family:var(--mono);font-size:12px;line-height:1.6;margin:0;"><span style="color:var(--panel-text-dim);">Layer 1: ActaClaims&lt;T&gt;</span> : Immutable signed claims (issuer signs once, ID is permanent)
+<span style="color:var(--panel-text-dim);">Layer 2: ActaReceipt&lt;T&gt;</span>: Claims + post-signature proofs (anchors, witnesses, disclosures)</pre>
         </div>
         <p class="docs-section-body">The <code style="font-family:var(--mono);font-size:12px;background:var(--panel-bg);padding:2px 6px;border-radius:3px;">receipt_id</code> is the SHA-256 hash of the canonical JSON representation of the claims (minus the receipt_id field itself). Proofs (anchors, witness signatures, disclosure proofs) are attached <strong>after</strong> signing and do <strong>not</strong> change the receipt_id.</p>
       </div>
@@ -3320,7 +3320,7 @@ function ontologyPage() {
 <span style="color:var(--panel-text-dim);">// To reveal: provide the salt + cleartext. Verifier recomputes.</span>
 <span style="color:var(--panel-text-dim);">// To shred (GDPR): delete the salt. Hash becomes permanently irreversible.</span></pre>
         </div>
-        <p class="docs-section-body">Without the salt, the commitment is computationally infeasible to reverse, even for low-entropy values like tool names. Deleting the salt implements cryptographic shredding — the evidence DAG remains intact, but the PII is permanently gone.</p>
+        <p class="docs-section-body">Without the salt, the commitment is computationally infeasible to reverse, even for low-entropy values like tool names. Deleting the salt implements cryptographic shredding: the evidence DAG remains intact, but the PII is permanently gone.</p>
       </div>
 
       <div class="docs-section">
@@ -3485,15 +3485,15 @@ function verifyPage() {
         <div class="docs-table" style="margin:16px 0;">
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;min-width:180px;">Topic integrity check</span>
-            <span class="docs-cell-desc" style="flex:2;"><code style="background:var(--surface-2);padding:2px 6px;border-radius:3px;font-size:12px;">GET /api/verify?topic={topic}</code> — The operator's server recomputes chain hashes. Trust this only as a convenience.</span>
+            <span class="docs-cell-desc" style="flex:2;"><code style="background:var(--surface-2);padding:2px 6px;border-radius:3px;font-size:12px;">GET /api/verify?topic={topic}</code>: The operator's server recomputes chain hashes. Trust this only as a convenience.</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;min-width:180px;">Moderation counters</span>
-            <span class="docs-cell-desc" style="flex:2;"><code style="background:var(--surface-2);padding:2px 6px;border-radius:3px;font-size:12px;">GET /api/moderation-log</code> — Public counters and receipts, but operator-reported.</span>
+            <span class="docs-cell-desc" style="flex:2;"><code style="background:var(--surface-2);padding:2px 6px;border-radius:3px;font-size:12px;">GET /api/moderation-log</code>: Public counters and receipts, but operator-reported.</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type" style="font-weight:600;min-width:180px;">Conformance self-report</span>
-            <span class="docs-cell-desc" style="flex:2;"><code style="background:var(--surface-2);padding:2px 6px;border-radius:3px;font-size:12px;">GET /api/conformance</code> — Operator-reported conformance status: protocol identity, anchor, witness, chain integrity. Useful for quick assessment; verify independently with <code style="font-size:12px;">tools/conformance.js</code>.</span>
+            <span class="docs-cell-desc" style="flex:2;"><code style="background:var(--surface-2);padding:2px 6px;border-radius:3px;font-size:12px;">GET /api/conformance</code>: Operator-reported conformance status: protocol identity, anchor, witness, chain integrity. Useful for quick assessment; verify independently with <code style="font-size:12px;">tools/conformance.js</code>.</span>
           </div>
         </div>
       </div>
@@ -3504,7 +3504,7 @@ function verifyPage() {
         <div style="margin:20px 0;">
           <div style="font-weight:700;font-size:14px;margin-bottom:12px;">1. Verify a topic chain (independent)</div>
           <div style="background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:var(--rad);padding:16px;">
-            <pre style="color:var(--panel-text);font-family:var(--mono);font-size:12px;line-height:1.6;margin:0;"><span style="color:var(--panel-text-dim);"># Export the chain (no trust required — just data)</span>
+            <pre style="color:var(--panel-text);font-family:var(--mono);font-size:12px;line-height:1.6;margin:0;"><span style="color:var(--panel-text-dim);"># Export the chain (no trust required: just data)</span>
 curl https://veritasacta.com/api/export/ai-models-2026 > chain.json
 
 <span style="color:var(--panel-text-dim);"># Run the independent verifier</span>
@@ -3559,11 +3559,11 @@ node tools/conformance.js https://veritasacta.com</pre>
         <h2 class="docs-section-title">What This Does Not Prove</h2>
         <p class="docs-section-body">No external check can fully prove behavioral conformance with the charter. An operator who controls the infrastructure can always serve different behavior than what the code declares. What this verification stack provides is:</p>
         <div style="margin:12px 0 0;padding-left:20px;">
-          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Published identity is checkable</strong> — the charter, spec, and policy hashes are public and independently computable.</p>
-          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Record integrity is independently verifiable</strong> — export any chain and recompute every hash without trusting the operator.</p>
-          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Changes to identity are detectable</strong> — if the charter or spec changes, the hash changes, and the manifest must be updated.</p>
-          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Timestamps are externally witnessed</strong> — Bluesky posts prove the record state existed at a specific time, anchored by a third party.</p>
-          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Exit does not require permission</strong> — all data is exportable, all tools are MIT-licensed, and compatible implementations can be built independently.</p>
+          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Published identity is checkable</strong>: the charter, spec, and policy hashes are public and independently computable.</p>
+          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Record integrity is independently verifiable</strong>: export any chain and recompute every hash without trusting the operator.</p>
+          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Changes to identity are detectable</strong>: if the charter or spec changes, the hash changes, and the manifest must be updated.</p>
+          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Timestamps are externally witnessed</strong>: Bluesky posts prove the record state existed at a specific time, anchored by a third party.</p>
+          <p class="docs-section-body" style="margin-bottom:8px;">• <strong>Exit does not require permission</strong>: all data is exportable, all tools are MIT-licensed, and compatible implementations can be built independently.</p>
         </div>
         <p class="docs-section-body" style="margin-top:16px;">Protocol identity hashes (charter, protocol spec) and instance policy hash are now bound into every signed anchor. The <a href="/api/conformance" style="color:var(--link);">/api/conformance</a> endpoint provides operator-reported self-assessment. Automated behavioral tests and multi-operator attestation are future work.</p>
       </div>
@@ -3932,7 +3932,7 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
 
           <p style="margin-top:12px;">None of them solve the <em style="color:var(--text);">evidence</em> problem.</p>
 
-          <p style="margin-top:12px;">When an AI agent calls a tool, commits code, transfers money, or modifies a database, the only record of what happened lives in the platform that executed the action. The agent's own logs are controlled by whoever operates the agent. The platform's logs are controlled by the platform. There is no neutral, independently verifiable record of what the agent actually did — or why.</p>
+          <p style="margin-top:12px;">When an AI agent calls a tool, commits code, transfers money, or modifies a database, the only record of what happened lives in the platform that executed the action. The agent's own logs are controlled by whoever operates the agent. The platform's logs are controlled by the platform. There is no neutral, independently verifiable record of what the agent actually did: or why.</p>
 
           <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">The trust problem is structural</h3>
           <p>This isn't a bug. It's a missing layer in the stack.</p>
@@ -3951,22 +3951,22 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
           <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">What makes evidence real evidence?</h3>
           <p>Evidence is only trustworthy when it satisfies three properties:</p>
           <ol style="padding-left:20px;margin:8px 0;">
-            <li><strong style="color:var(--text);">Integrity</strong> — it can't be silently modified after creation.</li>
-            <li><strong style="color:var(--text);">Independence</strong> — verification doesn't require trusting the party that produced it.</li>
-            <li><strong style="color:var(--text);">Completeness</strong> — the causal chain is preserved, not just the final outcome.</li>
+            <li><strong style="color:var(--text);">Integrity</strong>: it can't be silently modified after creation.</li>
+            <li><strong style="color:var(--text);">Independence</strong>: verification doesn't require trusting the party that produced it.</li>
+            <li><strong style="color:var(--text);">Completeness</strong>: the causal chain is preserved, not just the final outcome.</li>
           </ol>
           <p style="margin-top:8px;">Acta achieves these through hash-chained entries (integrity), open-source verification tools (independence), and typed contribution schemas that capture the full decision lifecycle (completeness).</p>
 
           <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">Beyond compliance</h3>
           <p>The EU AI Act requires "adequate logging." SOC 2 audits need "evidence of controls." These are the obvious use cases. But the more interesting applications are ones nobody is building for yet:</p>
           <ul style="padding-left:20px;margin:8px 0;list-style:disc;">
-            <li><strong style="color:var(--text);">Agent-to-agent trust</strong> — when two agents from different operators need to coordinate, how does one verify the other's past behavior?</li>
-            <li><strong style="color:var(--text);">Decision forensics</strong> — when an agent produces an unexpected outcome, the causal receipt chain lets you trace exactly what happened and why.</li>
-            <li><strong style="color:var(--text);">Competitive transparency</strong> — when AI companies claim their models outperform competitors, signed receipts let anyone verify those claims independently.</li>
+            <li><strong style="color:var(--text);">Agent-to-agent trust</strong>: when two agents from different operators need to coordinate, how does one verify the other's past behavior?</li>
+            <li><strong style="color:var(--text);">Decision forensics</strong>: when an agent produces an unexpected outcome, the causal receipt chain lets you trace exactly what happened and why.</li>
+            <li><strong style="color:var(--text);">Competitive transparency</strong>: when AI companies claim their models outperform competitors, signed receipts let anyone verify those claims independently.</li>
           </ul>
 
           <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">The protocol approach</h3>
-          <p>We could have built a product. Instead we built a protocol — Apache-2.0, with two <a href="https://github.com/VeritasActa/drafts" style="color:var(--accent);">IETF Internet-Drafts</a>, open-source verification tools, and a <a href="/about" style="color:var(--accent);">Charter</a> with permanent invariants that the operator cannot change.</p>
+          <p>We could have built a product. Instead we built a protocol: Apache-2.0, with two <a href="https://github.com/VeritasActa/drafts" style="color:var(--accent);">IETF Internet-Drafts</a>, open-source verification tools, and a <a href="/about" style="color:var(--accent);">Charter</a> with permanent invariants that the operator cannot change.</p>
           <p style="margin-top:12px;">Why? Because evidence infrastructure needs to outlast any single company. The evidence layer for agent accountability should be as durable and vendor-neutral as TCP/IP is for networking.</p>
 
           <p style="margin-top:16px;color:var(--text);font-weight:600;">Start with <a href="/" style="color:var(--accent);">the public record</a>. <a href="/verify" style="color:var(--accent);">Verify it yourself</a>. Build on top of it.</p>

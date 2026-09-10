@@ -1,7 +1,7 @@
 /**
  * Schema validators for Acta typed contributions and responses.
  *
- * These are pure functions — deterministic, no LLM, no external calls.
+ * These are pure functions: deterministic, no LLM, no external calls.
  * They implement Tier 1 enforcement from the Protocol Spec.
  */
 
@@ -64,7 +64,7 @@ export function validateResponseTarget(responseType, targetEntry) {
                 valid: false,
                 error: `${responseType} cannot target a ${targetEntry.subtype}. ` +
                     (responseType === 'resolution'
-                        ? 'Claims never resolve — the protocol shows argument structure, not verdicts.'
+                        ? 'Claims never resolve: the protocol shows argument structure, not verdicts.'
                         : `Allowed targets: ${matrix.contribution.join(', ')}`),
             };
         }
@@ -120,7 +120,7 @@ export function validateContribution(type, payload) {
             errors.push(...validatePrediction(payload));
             break;
         case 'question':
-            // No additional burden — questions are free
+            // No additional burden: questions are free
             break;
     }
 
@@ -271,7 +271,7 @@ export function validateSourceEnvelope(source) {
         return { valid: false, errors: [{ field: 'source', error: 'Required. Verifiable reference (URL, DOI, public record).' }] };
     }
 
-    // Plain string (backwards compatible) — treat as source_url only
+    // Plain string (backwards compatible): treat as source_url only
     if (typeof source === 'string') {
         return {
             valid: true,
@@ -414,7 +414,7 @@ function validateEvidence(payload) {
 }
 
 /**
- * Challenge validation — ASYMMETRIC FRICTION.
+ * Challenge validation: ASYMMETRIC FRICTION.
  * Challenges have stricter SCHEMA requirements than other responses to prevent
  * semantic DDoS (Brandolini's Law countermeasure). Token cost is the same (1).
  */
@@ -491,7 +491,7 @@ const DEFAULT_CHALLENGE_DECAY_HOURS = 168;
 /**
  * Compute the current state of a contribution based on its responses.
  * "supported" is a DISPLAY HINT, not an official state transition.
- * The protocol shows evidence structure — it never declares truth.
+ * The protocol shows evidence structure: it never declares truth.
  *
  * @param {object} contribution - the contribution entry
  * @param {Array} responses - response entries linked to this contribution
@@ -580,7 +580,7 @@ function computeClaimState(claim, responses, decayHours) {
         );
 
         if (refutingResponses.length === 0) {
-            // No response to this challenge — it's active (unaddressed)
+            // No response to this challenge: it's active (unaddressed)
             return true;
         }
 
@@ -602,7 +602,7 @@ function computeClaimState(claim, responses, decayHours) {
         );
 
         if (hoursSinceResponse > decayHours && !challengerCountered) {
-            // Shot clock expired — challenge is stale, claim heals
+            // Shot clock expired: challenge is stale, claim heals
             return false;
         }
 
