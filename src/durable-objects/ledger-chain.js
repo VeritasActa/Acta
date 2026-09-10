@@ -6,8 +6,8 @@
  * while allowing parallel writes across topics.
  *
  * Hash architecture (from adversarial analysis):
- *   payload_hash  = JCS-SHA256(payload)        — content identity
- *   entry_hash    = JCS-SHA256(envelope)        — chain linkage
+ *   payload_hash  = JCS-SHA256(payload)       : content identity
+ *   entry_hash    = JCS-SHA256(envelope)       : chain linkage
  *   envelope      = { prev_hash, timestamp, topic, type, subtype, author_hash, payload_hash }
  *
  *   On tombstone: payload is purged, but payload_hash and entry_hash are preserved.
@@ -230,7 +230,7 @@ export class LedgerChain {
   }
 
   /**
-   * Tombstone an entry — purge payload, preserve hash chain integrity.
+   * Tombstone an entry: purge payload, preserve hash chain integrity.
    * The dual-hash architecture means tombstoning NEVER breaks the chain:
    * payload is deleted but payload_hash and entry_hash are preserved.
    */
@@ -250,8 +250,8 @@ export class LedgerChain {
     const tombstoned = {
       entry_id: entry.entry_id,
       prev_hash: entry.prev_hash,
-      payload_hash: entry.payload_hash,  // Preserved — chain integrity intact
-      entry_hash: entry.entry_hash,      // Preserved — chain linkage intact
+      payload_hash: entry.payload_hash,  // Preserved: chain integrity intact
+      entry_hash: entry.entry_hash,      // Preserved: chain linkage intact
       sequence: entry.sequence,
       timestamp: entry.timestamp,
       tombstone: {
