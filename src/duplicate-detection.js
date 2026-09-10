@@ -1,10 +1,10 @@
 /**
- * Duplicate Detection — Tier 1 deterministic check.
+ * Duplicate Detection: Tier 1 deterministic check.
  *
  * Policy §4.1: >80% content similarity from same device within 24h → reject.
  *
  * Uses a simple n-gram similarity (Jaccard index on word trigrams).
- * Not fuzzy ML — deterministic and fast.
+ * Not fuzzy ML: deterministic and fast.
  */
 
 /**
@@ -66,7 +66,7 @@ export async function recordSubmission(env, ctx, entry, entryId) {
         const trimmed = recent.slice(-20);
 
         await kv.put(recentKey, JSON.stringify(trimmed), {
-            expirationTtl: 86400, // 24h TTL — auto-cleans
+            expirationTtl: 86400, // 24h TTL: auto-cleans
         });
     };
 

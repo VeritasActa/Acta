@@ -1,5 +1,5 @@
 /**
- * KV Index — Replication layer for fast reads.
+ * KV Index: Replication layer for fast reads.
  *
  * After a ledger entry is committed to the hash chain (source of truth),
  * we replicate index data to KV for fast global reads:
@@ -10,7 +10,7 @@
  *   topics:list                → [{ topic, entry_count, last_entry_at }, ...]
  *   contributions:{topic}      → [entry_id, ...] (contributions only, for feed)
  *
- * KV is eventually consistent — the Ledger Chain DO is the source of truth.
+ * KV is eventually consistent: the Ledger Chain DO is the source of truth.
  * KV is for reads. DO is for writes.
  */
 
@@ -22,7 +22,7 @@
 export async function replicateToKV(env, ctx, entry, chainResult) {
     const work = async () => {
         const kv = env.ACTA_KV;
-        if (!kv) return; // KV not configured — skip silently
+        if (!kv) return; // KV not configured: skip silently
 
         const entryMeta = {
             entry_id: chainResult.entry_id,
@@ -43,20 +43,20 @@ export async function replicateToKV(env, ctx, entry, chainResult) {
             moderation_tags: entry.moderation_tags || [],
         };
 
-        // 1. Entry index — fast lookup by entry_id
+        // 1. Entry index: fast lookup by entry_id
         await kv.put(
             `entry:${chainResult.entry_id}`,
             JSON.stringify(entryMeta),
             { expirationTtl: 86400 * 365 } // 1 year
         );
 
-        // 2. Topic entries list — append entry_id
+        // 2. Topic entries list: append entry_id
         const topicEntriesKey = `topic:${entry.topic}:entries`;
         const existing = await kv.get(topicEntriesKey, { type: 'json' }) || [];
         existing.push(chainResult.entry_id);
         await kv.put(topicEntriesKey, JSON.stringify(existing));
 
-        // 3. Topic metadata — count, last entry
+        // 3. Topic metadata: count, last entry
         await kv.put(`topic:${entry.topic}:meta`, JSON.stringify({
             topic: entry.topic,
             entry_count: existing.length,
@@ -72,7 +72,7 @@ export async function replicateToKV(env, ctx, entry, chainResult) {
             await kv.put(contribKey, JSON.stringify(contribs));
         }
 
-        // 5. Global topics list — update
+        // 5. Global topics list: update
         await updateTopicsList(kv, entry.topic, existing.length, entryMeta.timestamp);
     };
 
@@ -114,7 +114,7 @@ export async function listTopics(env) {
 
 /**
  * Get feed entries for a topic from KV (fast global reads).
- * Returns entry metadata (not full payloads — those come from the DO).
+ * Returns entry metadata (not full payloads: those come from the DO).
  */
 export async function getFeedFromKV(env, topic, { offset = 0, limit = 20 } = {}) {
     const kv = env.ACTA_KV;

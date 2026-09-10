@@ -1,5 +1,5 @@
 /**
- * Tier 2 Moderation — LLM-assisted content classification.
+ * Tier 2 Moderation: LLM-assisted content classification.
  *
  * Rules (from Protocol Spec):
  *   ✓ LLMs may classify, tag, and flag
@@ -20,10 +20,10 @@ import { jcsSerialize } from './durable-objects/ledger-chain.js';
 
 // ── Hard-Reject Categories (Bifurcated) ────────────────────────────
 
-// Tier 1B: Silent drop — no public receipt (legally mandated)
+// Tier 1B: Silent drop: no public receipt (legally mandated)
 const TIER_1B_SILENT = ['csam', 'malware', 'credible_violent_threat'];
 
-// Tier 1A: Public receipt — challengeable
+// Tier 1A: Public receipt: challengeable
 const TIER_1A_RECEIPT = ['doxxing', 'impersonation'];
 
 const ALL_HARD_REJECT = [...TIER_1B_SILENT, ...TIER_1A_RECEIPT];
@@ -43,10 +43,10 @@ const CONTENT_TAGS = [
  * Classify content using Workers AI.
  *
  * Returns:
- *   { action: 'accept', tags: [...] }                    — enters ledger with tags
- *   { action: 'tier_1a_reject', category, content_hash } — public receipt, challengeable
- *   { action: 'tier_1b_reject', category }               — silent drop, no receipt
- *   { action: 'accept', tags: [] }                       — clean, no tags
+ *   { action: 'accept', tags: [...] }                   : enters ledger with tags
+ *   { action: 'tier_1a_reject', category, content_hash }: public receipt, challengeable
+ *   { action: 'tier_1b_reject', category }              : silent drop, no receipt
+ *   { action: 'accept', tags: [] }                      : clean, no tags
  */
 export async function classifyContent(env, entry) {
     if (!env.AI) {
@@ -227,7 +227,7 @@ export async function logSilentDrop(env, classification) {
         timestamp: new Date().toISOString(),
     }), { expirationTtl: 86400 * 90 }); // 90 day retention
 
-    // Public counter — visible at /api/moderation-log
+    // Public counter: visible at /api/moderation-log
     const count = parseInt(await kv.get('moderation:tier1b_count') || '0');
     await kv.put('moderation:tier1b_count', String(count + 1));
 }
