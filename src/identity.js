@@ -266,8 +266,67 @@ async function verifyES256(message, signatureB64, jwk) {
 }
 
 async function verifyWithJWKS(token, jwksUrl) {
-    // TODO: Implement full JWKS fetch + EdDSA verification
-    return true;
+    // Fetch JWKS and verify EdDSA (Ed25519) JWT signature
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return false;
+
+        const header = JSON.parse(b64urlDecode(parts[0]));
+        if (!header.kid && !header.alg) return false;
+
+        // Fetch JWKS (with 5s timeout)
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const resp = await fetch(jwksUrl, { signal: controller.signal });
+        clearTimeout(timeout);
+
+        if (!resp.ok) {
+            console.error(`[IDENTITY] JWKS fetch failed: ${resp.status}`);
+            return false; // Fail closed — reject if we can't verify
+        }
+
+        const jwks = await resp.json();
+        if (!jwks.keys || !Array.isArray(jwks.keys)) return false;
+
+        // Find matching key by kid or first Ed25519/EdDSA key
+        const matchingKey = header.kid
+            ? jwks.keys.find(k => k.kid === header.kid)
+            : jwks.keys.find(k => k.kty === 'OKP' && k.crv === 'Ed25519');
+
+        if (!matchingKey) {
+            console.error('[IDENTITY] No matching key found in JWKS');
+            return false;
+        }
+
+        // Verify signature
+        const signingInput = `${parts[0]}.${parts[1]}`;
+        const signatureBytes = b64urlToBytes(parts[2]);
+        const messageBytes = new TextEncoder().encode(signingInput);
+
+        if (matchingKey.kty === 'OKP' && matchingKey.crv === 'Ed25519') {
+            // EdDSA (Ed25519) — use Web Crypto
+            const keyData = b64urlToBytes(matchingKey.x);
+            const key = await crypto.subtle.importKey(
+                'raw',
+                keyData,
+                { name: 'Ed25519' },
+                false,
+                ['verify']
+            );
+            return await crypto.subtle.verify('Ed25519', key, signatureBytes, messageBytes);
+        }
+
+        if (matchingKey.kty === 'EC' && matchingKey.crv === 'P-256') {
+            // ES256 fallback
+            return await verifyES256(signingInput, parts[2], matchingKey);
+        }
+
+        console.error(`[IDENTITY] Unsupported key type: ${matchingKey.kty}/${matchingKey.crv}`);
+        return false;
+    } catch (err) {
+        console.error('[IDENTITY] JWKS verification error:', err.message);
+        return false; // Fail closed
+    }
 }
 
 function computeTokenHash(token) {

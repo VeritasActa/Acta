@@ -28,6 +28,7 @@
 
 import { ed25519 } from '@noble/curves/ed25519';
 import { jcsSerialize } from './durable-objects/ledger-chain.js';
+import { PROTOCOL_IDENTITY, INSTANCE_POLICY } from './protocol-identity.js';
 
 // ── Hex utilities ───────────────────────────────────────────────────
 
@@ -152,7 +153,7 @@ export async function handleScheduled(env) {
     // 3. Compute Merkle root
     const merkleRoot = await computeMerkleRoot(chainHeads);
 
-    // 4. Build anchor payload
+    // 4. Build anchor payload (includes protocol identity + instance policy)
     const payload = {
         version: 1,
         type: 'acta:anchor',
@@ -160,6 +161,10 @@ export async function handleScheduled(env) {
         merkle_root: merkleRoot,
         chain_heads: chainHeads,
         topic_count: chainHeads.length,
+        // Protocol identity — cryptographically commits anchor to the protocol
+        ...PROTOCOL_IDENTITY,
+        // Instance policy — separate from identity, operator-tunable
+        ...INSTANCE_POLICY,
     };
 
     // 5. Sign with Ed25519 if key is configured

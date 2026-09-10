@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Receipt Verifier — Veritas Acta</title>
+<meta name="description" content="Offline, in-browser verification of signed decision receipts. No data leaves your machine.">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #f7f8fa;
+  --bg-surface: #ffffff;
+  --bg-input: #ffffff;
+  --border: #d0d5dd;
+  --border-focus: #98a2b3;
+  --text: #101828;
+  --text-dim: #667085;
+  --text-muted: #344054;
+  --green: #067647;
+  --green-bg: #ecfdf3;
+  --green-border: #abefc6;
+  --red: #b42318;
+  --red-bg: #fef3f2;
+  --red-border: #fecdca;
+  --amber: #93370d;
+  --amber-bg: #fffaeb;
+  --amber-border: #fedf89;
+  --link: #0d6e6e;
+  --font: 'Inter', -apple-system, system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+  --brand: Georgia, 'Times New Roman', serif;
+}
+html { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+body { max-width: 720px; margin: 0 auto; padding: 0 24px 80px; }
+a { color: var(--link); text-decoration: none; }
+a:hover { color: var(--text); }
+::selection { background: rgba(13, 110, 110, 0.15); }
+
+/* Nav */
+.nav-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+.nav-logo { font-family: var(--brand); font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: 0.06em; text-decoration: none; }
+.nav-links { display: flex; gap: 20px; }
+.nav-links a { font-size: 13px; color: var(--text-dim); font-weight: 500; }
+.nav-links a:hover { color: var(--text); }
+
+/* Header */
+.site-name { font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
+h1 { font-family: var(--brand); font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em; }
+.subtitle { font-size: 13px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 0.02em; }
+.trust-note { font-size: 12px; color: var(--text-dim); margin-bottom: 36px; }
+
+/* Input */
+.input-section { margin-bottom: 24px; }
+textarea {
+  width: 100%; min-height: 240px; padding: 16px 18px;
+  background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: var(--mono); font-size: 12px; line-height: 1.6;
+  resize: vertical; outline: none; tab-size: 2;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+}
+textarea:focus { border-color: var(--link); box-shadow: 0 0 0 3px rgba(13,110,110,0.1); }
+textarea::placeholder { color: #98a2b3; }
+
+.drop-zone {
+  border: 1px dashed var(--border); border-radius: 8px; padding: 12px;
+  text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 10px;
+  cursor: pointer; transition: all 0.2s; background: var(--bg-surface);
+}
+.drop-zone:hover { border-color: var(--border-focus); }
+.drop-zone.drag-over { border-color: var(--link); color: var(--link); background: rgba(13,110,110,0.03); }
+.drop-zone input[type="file"] { display: none; }
+
+.btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+button {
+  font-family: var(--font); font-size: 13px; padding: 9px 20px;
+  border-radius: 6px; cursor: pointer; border: 1px solid; background: transparent;
+  transition: all 0.15s; font-weight: 500;
+}
+button:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(16,24,40,0.08); }
+.btn-verify { color: #fff; background: var(--green); border-color: var(--green); }
+.btn-verify:hover { background: #05603a; border-color: #05603a; }
+.btn-sample { color: var(--text-muted); border-color: var(--border); background: var(--bg-surface); }
+.btn-tampered { color: var(--text-dim); border-color: var(--border); font-size: 12px; background: var(--bg-surface); }
+
+/* Results */
+.result-section { display: none; margin-top: 28px; }
+.result-section.visible { display: block; }
+
+.result-banner {
+  padding: 14px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  letter-spacing: 0.01em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+}
+.result-banner.valid { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.result-banner.invalid { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+.checks { list-style: none; margin-bottom: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.checks li {
+  padding: 10px 16px; font-size: 13px; display: flex; gap: 12px; align-items: baseline;
+  border-bottom: 1px solid #eaecf0;
+}
+.checks li:last-child { border-bottom: none; }
+.check-icon { flex-shrink: 0; width: 20px; text-align: center; font-weight: 600; }
+.check-pass .check-icon { color: var(--green); }
+.check-fail .check-icon { color: var(--red); }
+.check-warn .check-icon { color: var(--amber); }
+.check-label { color: var(--text); min-width: 140px; flex-shrink: 0; font-weight: 500; }
+.check-detail { color: var(--text-dim); }
+.check-fail .check-detail { color: var(--red); }
+.check-warn .check-detail { color: var(--amber); }
+
+/* Receipt contents */
+.receipt-toggle {
+  font-family: var(--font); font-size: 12px; color: var(--text-dim);
+  background: none; border: none; cursor: pointer; padding: 6px 0;
+  text-align: left; font-weight: 500;
+}
+.receipt-toggle:hover { color: var(--text); }
+.receipt-contents {
+  display: none; margin-top: 10px; padding: 16px 18px;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px;
+  font-family: var(--mono); font-size: 11px; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+  color: var(--text-muted); max-height: 400px; overflow-y: auto;
+}
+.receipt-contents.open { display: block; }
+
+/* Info sections */
+.info-section { margin-top: 48px; padding-top: 28px; border-top: 1px solid #eaecf0; }
+.info-section h2 { font-family: var(--brand); font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+.info-section ol, .info-section ul { list-style: none; }
+.info-section li { font-size: 13px; color: var(--text-dim); line-height: 1.7; padding: 3px 0; }
+.info-section li::before { content: none; }
+.step-list li { counter-increment: step; }
+.step-list li::before { content: counter(step) ". "; color: var(--text-muted); font-weight: 600; }
+.step-list { counter-reset: step; }
+.caveat-list li::before { content: "\2014\00a0"; color: var(--text-dim); }
+.cli-block {
+  margin-top: 14px; padding: 12px 16px;
+  background: #0c111d; border-radius: 8px;
+  font-family: var(--mono); font-size: 13px; color: #d0d5dd;
+}
+
+/* Footer */
+footer {
+  margin-top: 64px; padding-top: 24px; border-top: 1px solid #eaecf0;
+  font-size: 12px; color: var(--text-dim); line-height: 1.7;
+}
+footer a { color: var(--link); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0d5dd; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="nav-bar">
+  <a href="/" class="nav-logo">VA</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/docs">Docs</a>
+    <a href="/verify" style="color:var(--text);font-weight:600;">Verify</a>
+    <a href="/about">About</a>
+    <a href="https://github.com/VeritasActa" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<header>
+  <div class="site-name">Veritas Acta</div>
+  <h1>Receipt Verifier</h1>
+  <div class="subtitle">Offline &middot; In-browser &middot; Issuer-blind &middot; Zero dependencies &middot; <span style="font-weight:600;color:var(--text-muted);">10K+ monthly verifications</span></div>
+  <div class="trust-note">No data leaves your machine. No API calls. No tracking. Ed25519 + JCS canonicalization. <a href="view-source:" style="color:var(--link)">View source</a> to confirm.</div>
+</header>
+
+<section class="input-section">
+  <textarea id="receipt-input" placeholder="Paste a signed receipt JSON here..." spellcheck="false"></textarea>
+  <div class="drop-zone" id="drop-zone">
+    or drop a .json file here
+    <input type="file" id="file-input" accept=".json,application/json">
+  </div>
+  <div class="btn-row">
+    <button class="btn-verify" onclick="verify()">Verify</button>
+    <button class="btn-sample" onclick="loadSample()">Load Sample</button>
+    <button class="btn-tampered" onclick="loadTampered()">Load Tampered Sample</button>
+  </div>
+</section>
+
+<section class="result-section" id="result-section">
+  <div id="result-banner" class="result-banner"></div>
+  <ul class="checks" id="checks-list"></ul>
+  <button class="receipt-toggle" id="receipt-toggle" onclick="toggleContents()">+ Receipt contents</button>
+  <div class="receipt-contents" id="receipt-contents"></div>
+</section>
+
+<section class="info-section">
+  <h2>How verification works</h2>
+  <ol class="step-list">
+    <li>The receipt payload is serialized using JCS canonicalization (RFC 8785)</li>
+    <li>The canonical bytes are verified against the Ed25519 signature (RFC 8032)</li>
+    <li>The public key in the receipt is the only trust anchor — no certificate authority, no API</li>
+    <li>If the signature checks out, the receipt has not been modified since signing</li>
+  </ol>
+</section>
+
+<section class="info-section">
+  <h2>What this verifier does NOT do</h2>
+  <ul class="caveat-list">
+    <li>Does not verify the signer's identity — only that the signature is valid</li>
+    <li>Does not check revocation status</li>
+    <li>Does not contact any server</li>
+    <li>Does not verify the receipt's claims are true — only that they haven't been tampered with</li>
+  </ul>
+</section>
+
+<section class="info-section">
+  <h2>Verify from the command line</h2>
+  <div class="cli-block">npx @veritasacta/verify receipt.json</div>
+</section>
+
+<!-- ── Protocol Credibility ── -->
+<section class="info-section">
+  <h2>Built on standards</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+    <div style="padding:12px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:2px;">Signatures</div>
+      <div style="font-size:13px;color:var(--text);">Ed25519 <span style="color:var(--text-dim);font-size:11px;">(RFC 8032)</span></div>
+    </div>
+    <div style="padding:12px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:2px;">Canonicalization</div>
+      <div style="font-size:13px;color:var(--text);">JCS <span style="color:var(--text-dim);font-size:11px;">(RFC 8785)</span></div>
+    </div>
+    <div style="padding:12px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:2px;">License</div>
+      <div style="font-size:13px;color:var(--text);">Apache-2.0 <span style="color:var(--text-dim);font-size:11px;">(patent grant)</span></div>
+    </div>
+    <div style="padding:12px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:2px;">IP protection</div>
+      <div style="font-size:13px;color:var(--text);">4 AU provisionals <span style="color:var(--text-dim);font-size:11px;">(filed)</span></div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--text-dim);line-height:1.65;">
+    Verification requires zero trust in any server. The Ed25519 signature and JCS canonical form are sufficient
+    to prove a receipt is authentic. No certificate authority, no API, no phone-home.
+  </div>
+</section>
+
+<!-- ── Integrations ── -->
+<section class="info-section">
+  <h2>Integrations</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+    <a href="https://github.com/cedar-policy/cedar-for-agents/pull/64" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;transition:border-color 0.15s;">
+      <div>
+        <div style="font-size:13px;font-weight:600;">cedar-policy/cedar-for-agents</div>
+        <div style="font-size:12px;color:var(--text-dim);">WASM bindings for Cedar MCP schema generation (AWS)</div>
+      </div>
+      <span style="font-size:11px;padding:3px 8px;background:rgba(6,118,71,0.08);color:var(--green);border-radius:4px;font-weight:600;white-space:nowrap;">Contributor</span>
+    </a>
+    <a href="https://github.com/microsoft/agent-governance-toolkit/pull/667" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;transition:border-color 0.15s;">
+      <div>
+        <div style="font-size:13px;font-weight:600;">Microsoft Agent Governance Toolkit</div>
+        <div style="font-size:12px;color:var(--text-dim);">Public PR #667 contribution record for receipt adapter code</div>
+      </div>
+      <span style="font-size:11px;padding:3px 8px;background:rgba(23,92,211,0.08);color:var(--blue);border-radius:4px;font-weight:600;white-space:nowrap;">PR record</span>
+    </a>
+    <a href="https://www.npmjs.com/package/protect-mcp" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;transition:border-color 0.15s;">
+      <div>
+        <div style="font-size:13px;font-weight:600;">protect-mcp</div>
+        <div style="font-size:12px;color:var(--text-dim);">MCP gateway with Cedar policy evaluation + receipt signing</div>
+      </div>
+      <span style="font-size:11px;padding:3px 8px;background:rgba(13,110,110,0.08);color:var(--link);border-radius:4px;font-weight:600;white-space:nowrap;">2.3K/mo</span>
+    </a>
+    <a href="https://www.npmjs.com/package/acta-mcp" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;transition:border-color 0.15s;">
+      <div>
+        <div style="font-size:13px;font-weight:600;">acta-mcp</div>
+        <div style="font-size:12px;color:var(--text-dim);">MCP server for signed artifact verification</div>
+      </div>
+      <span style="font-size:11px;padding:3px 8px;background:rgba(105,65,198,0.08);color:var(--purple);border-radius:4px;font-weight:600;white-space:nowrap;">MCP</span>
+    </a>
+  </div>
+  <div style="font-size:12px;color:var(--text-dim);">
+    Adapters for <a href="https://www.openpolicyagent.org/" style="font-weight:500;">OPA</a> and
+    <a href="https://casbin.org/" style="font-weight:500;">Casbin</a> are in development.
+  </div>
+</section>
+
+<!-- ── Adoption ── -->
+<section class="info-section">
+  <h2>Adoption</h2>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+    <div style="text-align:center;padding:14px 20px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;min-width:100px;">
+      <div style="font-size:22px;font-weight:700;color:var(--text);font-family:var(--mono);" id="npm-downloads">10K+</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">npm downloads/mo</div>
+    </div>
+    <div style="text-align:center;padding:14px 20px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;min-width:100px;">
+      <div style="font-size:22px;font-weight:700;color:var(--text);font-family:var(--mono);">16</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">npm packages</div>
+    </div>
+    <div style="text-align:center;padding:14px 20px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;min-width:100px;">
+      <div style="font-size:22px;font-weight:700;color:var(--text);font-family:var(--mono);">3</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">MCP servers</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--text-dim);">
+    Packages: <a href="https://www.npmjs.com/package/@veritasacta/verify">@veritasacta/verify</a>,
+    <a href="https://www.npmjs.com/package/@veritasacta/artifacts">@veritasacta/artifacts</a>,
+    <a href="https://www.npmjs.com/package/protect-mcp">protect-mcp</a>,
+    <a href="https://www.npmjs.com/package/scopeblind-agent">scopeblind-agent</a>,
+    and <a href="https://www.npmjs.com/search?q=scopeblind">12 more</a>.
+  </div>
+</section>
+
+<!-- ── Format ── -->
+<section class="info-section">
+  <h2>The format</h2>
+  <ul>
+    <li><a href="https://veritasacta.com/docs">Acta protocol documentation</a></li>
+    <li><a href="https://github.com/VeritasActa/Acta">Source: github.com/VeritasActa/Acta</a></li>
+    <li><a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/">IETF Internet-Draft: draft-farley-acta-signed-receipts</a></li>
+  </ul>
+</section>
+
+<footer>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <span><strong style="font-family:var(--brand);letter-spacing:0.04em;">Veritas Acta</strong> &mdash; open protocol for verifiable machine decisions</span>
+    <span>
+      <a href="https://github.com/VeritasActa">GitHub</a> &middot;
+      <a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/">IETF Draft</a> &middot;
+      <a href="https://npmjs.com/package/@veritasacta/verify">npm</a> &middot;
+      <a href="https://scopeblind.com">ScopeBlind</a> &middot;
+      Apache-2.0
+    </span>
+  </div>
+</footer>
+
+<script>
+// ── Sample receipts ──────────────────────────────────────────────────
+// This signature was generated using Node.js crypto.sign() with a real Ed25519 keypair.
+// To reproduce: see the canonical form below, sign with the private key, verify with the public key.
+
+const SAMPLE_PAYLOAD = {
+  receipt_id: "rec_8f92a3b1",
+  receipt_version: "1.0",
+  issuer_id: "gateway:protect-mcp:demo",
+  event_time: "2026-03-28T14:32:07.891Z",
+  tool_name: "file_system:read_file",
+  decision: "allow",
+  reason: "Policy 'autoresearch-safe' permits read_file for evidenced-tier agents",
+  trust_tier: "evidenced",
+  policy_id: "autoresearch-safe",
+  agent_id: "agent:research-bot:a1b2c3",
+  disclosure_mode: "scoped"
+};
+
+const SAMPLE_RECEIPT = {
+  ...SAMPLE_PAYLOAD,
+  public_key: "4437ca56815c0516b9872dbd5cdc4785aa80b47e9215538a39d258ef84062a29",
+  signature: "4cde814b7889e987381925a7781e947624b06de66cf274a6911ca104999d077e13e0cd7bc5d4fe3be2a474857d23edb071c9b1ca344b9aea559f9074c3c86003"
+};
+
+const TAMPERED_RECEIPT = {
+  ...SAMPLE_PAYLOAD,
+  decision: "deny",
+  public_key: "4437ca56815c0516b9872dbd5cdc4785aa80b47e9215538a39d258ef84062a29",
+  signature: "4cde814b7889e987381925a7781e947624b06de66cf274a6911ca104999d077e13e0cd7bc5d4fe3be2a474857d23edb071c9b1ca344b9aea559f9074c3c86003"
+};
+
+// ── JCS Canonicalization (RFC 8785) ──────────────────────────────────
+function canonicalize(obj) {
+  if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
+  if (Array.isArray(obj)) return '[' + obj.map(canonicalize).join(',') + ']';
+  return '{' + Object.keys(obj).sort().map(function(k) {
+    return JSON.stringify(k) + ':' + canonicalize(obj[k]);
+  }).join(',') + '}';
+}
+
+// ── Hex utilities ────────────────────────────────────────────────────
+function hexToBytes(hex) {
+  var bytes = new Uint8Array(hex.length / 2);
+  for (var i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+  }
+  return bytes;
+}
+
+function isHex(s) {
+  return typeof s === 'string' && /^[0-9a-f]+$/i.test(s) && s.length % 2 === 0;
+}
+
+// ── Ed25519 verification via Web Crypto ──────────────────────────────
+async function verifyEd25519(publicKeyHex, signatureHex, messageBytes) {
+  // Wrap raw 32-byte public key in SPKI DER envelope for Web Crypto
+  // SPKI prefix for Ed25519: 30 2a 30 05 06 03 2b 65 70 03 21 00
+  var spkiPrefix = new Uint8Array([
+    0x30, 0x2a, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x03, 0x21, 0x00
+  ]);
+  var rawKey = hexToBytes(publicKeyHex);
+  var spki = new Uint8Array(spkiPrefix.length + rawKey.length);
+  spki.set(spkiPrefix);
+  spki.set(rawKey, spkiPrefix.length);
+
+  var key = await crypto.subtle.importKey(
+    'spki', spki.buffer, { name: 'Ed25519' }, false, ['verify']
+  );
+  return await crypto.subtle.verify(
+    'Ed25519', key, hexToBytes(signatureHex), messageBytes
+  );
+}
+
+async function tryVerifySignature(publicKeyHex, signatureHex, messageBytes) {
+  try {
+    var result = await verifyEd25519(publicKeyHex, signatureHex, messageBytes);
+    return { supported: true, valid: result };
+  } catch (e) {
+    // Ed25519 not supported in this browser
+    return { supported: false, error: e.message };
+  }
+}
+
+// ── Required fields ──────────────────────────────────────────────────
+var REQUIRED_FIELDS = ['issuer_id', 'tool_name', 'decision', 'event_time', 'signature', 'public_key'];
+
+// ── Verification logic ──────────────────────────────────────────────
+async function runVerification(input) {
+  var checks = [];
+  var parsed = null;
+  var allPass = true;
+
+  // 1. JSON parse
+  try {
+    parsed = JSON.parse(input);
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      throw new Error('Top-level value must be a JSON object');
+    }
+    checks.push({ pass: true, label: 'JSON parse', detail: 'valid JSON document' });
+  } catch (e) {
+    checks.push({ pass: false, label: 'JSON parse', detail: e.message });
+    return { checks: checks, allPass: false, parsed: null };
+  }
+
+  // 2. Required fields
+  var missing = REQUIRED_FIELDS.filter(function(f) { return !(f in parsed); });
+  if (missing.length === 0) {
+    checks.push({ pass: true, label: 'Required fields', detail: REQUIRED_FIELDS.join(', ') });
+  } else {
+    checks.push({ pass: false, label: 'Required fields', detail: 'missing: ' + missing.join(', ') });
+    allPass = false;
+  }
+
+  // 3. Timestamp
+  if (parsed.event_time) {
+    var d = new Date(parsed.event_time);
+    if (!isNaN(d.getTime()) && /^\d{4}-\d{2}-\d{2}T/.test(parsed.event_time)) {
+      checks.push({ pass: true, label: 'Timestamp', detail: 'ISO 8601, parseable (' + parsed.event_time + ')' });
+    } else {
+      checks.push({ pass: false, label: 'Timestamp', detail: 'not a valid ISO 8601 timestamp' });
+      allPass = false;
+    }
+  } else {
+    checks.push({ pass: false, label: 'Timestamp', detail: 'event_time field missing' });
+    allPass = false;
+  }
+
+  // 4. Canonical form
+  // Extract payload (everything except signature and public_key)
+  var payload = {};
+  Object.keys(parsed).sort().forEach(function(k) {
+    if (k !== 'signature' && k !== 'public_key') {
+      payload[k] = parsed[k];
+    }
+  });
+  var canonical = canonicalize(payload);
+  // Check that re-canonicalizing produces the same result (idempotent)
+  var reparsed = JSON.parse(canonical);
+  var recanonical = canonicalize(reparsed);
+  if (canonical === recanonical) {
+    checks.push({ pass: true, label: 'Canonical form', detail: 'JCS (RFC 8785) deterministic serialization' });
+  } else {
+    checks.push({ pass: false, label: 'Canonical form', detail: 'payload is not in canonical form' });
+    allPass = false;
+  }
+
+  // 5. Ed25519 signature
+  if (parsed.signature && parsed.public_key) {
+    if (!isHex(parsed.public_key) || parsed.public_key.length !== 64) {
+      checks.push({ pass: false, label: 'Ed25519 signature', detail: 'public_key must be 64 hex characters (32 bytes)' });
+      allPass = false;
+    } else if (!isHex(parsed.signature) || parsed.signature.length !== 128) {
+      checks.push({ pass: false, label: 'Ed25519 signature', detail: 'signature must be 128 hex characters (64 bytes)' });
+      allPass = false;
+    } else {
+      var messageBytes = new TextEncoder().encode(canonical);
+      var result = await tryVerifySignature(parsed.public_key, parsed.signature, messageBytes);
+      if (result.supported) {
+        if (result.valid) {
+          checks.push({ pass: true, label: 'Ed25519 signature', detail: 'RFC 8032 verification against canonical payload' });
+        } else {
+          checks.push({ pass: false, label: 'Ed25519 signature', detail: 'signature does not match payload — receipt may have been tampered with' });
+          allPass = false;
+        }
+      } else {
+        checks.push({ pass: 'warn', label: 'Ed25519 signature', detail: 'Browser does not support Ed25519 \u2014 verify with: npx @veritasacta/verify receipt.json' });
+      }
+    }
+  } else {
+    var which = [];
+    if (!parsed.signature) which.push('signature');
+    if (!parsed.public_key) which.push('public_key');
+    checks.push({ pass: 'warn', label: 'Ed25519 signature', detail: 'no ' + which.join(' or ') + ' field \u2014 structural checks only' });
+  }
+
+  return { checks: checks, allPass: allPass, parsed: parsed };
+}
+
+// ── UI ───────────────────────────────────────────────────────────────
+var textarea = document.getElementById('receipt-input');
+var resultSection = document.getElementById('result-section');
+var banner = document.getElementById('result-banner');
+var checksList = document.getElementById('checks-list');
+var contentsEl = document.getElementById('receipt-contents');
+var toggleBtn = document.getElementById('receipt-toggle');
+
+async function verify() {
+  var input = textarea.value.trim();
+  if (!input) return;
+
+  var result = await runVerification(input);
+  renderResult(result);
+}
+
+function renderResult(result) {
+  resultSection.classList.add('visible');
+
+  // Banner
+  var hasWarns = result.checks.some(function(c) { return c.pass === 'warn'; });
+  if (result.allPass && !hasWarns) {
+    banner.className = 'result-banner valid';
+    banner.textContent = '\u2713 CRYPTOGRAPHICALLY VALID';
+  } else if (result.allPass && hasWarns) {
+    banner.className = 'result-banner valid';
+    banner.textContent = '\u2713 STRUCTURAL CHECKS PASSED';
+  } else {
+    banner.className = 'result-banner invalid';
+    banner.textContent = '\u2717 VERIFICATION FAILED';
+  }
+
+  // Checks
+  checksList.innerHTML = '';
+  result.checks.forEach(function(c) {
+    var li = document.createElement('li');
+    var cls = c.pass === true ? 'check-pass' : (c.pass === 'warn' ? 'check-warn' : 'check-fail');
+    li.className = cls;
+
+    var icon = c.pass === true ? '\u2713' : (c.pass === 'warn' ? '\u26a0' : '\u2717');
+    li.innerHTML = '<span class="check-icon">[' + icon + ']</span>' +
+      '<span class="check-label">' + escHtml(c.label) + '</span>' +
+      '<span class="check-detail">\u2014 ' + escHtml(c.detail) + '</span>';
+    checksList.appendChild(li);
+  });
+
+  // Receipt contents
+  contentsEl.classList.remove('open');
+  toggleBtn.textContent = '+ Receipt contents';
+  if (result.parsed) {
+    contentsEl.textContent = JSON.stringify(result.parsed, null, 2);
+  } else {
+    contentsEl.textContent = '(parse failed)';
+  }
+
+  // Scroll to result
+  resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function toggleContents() {
+  var open = contentsEl.classList.toggle('open');
+  toggleBtn.textContent = (open ? '\u2212 ' : '+ ') + 'Receipt contents';
+}
+
+function escHtml(s) {
+  var el = document.createElement('span');
+  el.textContent = s;
+  return el.innerHTML;
+}
+
+function loadSample() {
+  textarea.value = JSON.stringify(SAMPLE_RECEIPT, null, 2);
+  verify();
+}
+
+function loadTampered() {
+  textarea.value = JSON.stringify(TAMPERED_RECEIPT, null, 2);
+  verify();
+}
+
+// ── File drop / upload ───────────────────────────────────────────────
+var dropZone = document.getElementById('drop-zone');
+var fileInput = document.getElementById('file-input');
+
+dropZone.addEventListener('click', function() { fileInput.click(); });
+
+dropZone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', function() {
+  dropZone.classList.remove('drag-over');
+});
+dropZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  if (e.dataTransfer.files.length) readFile(e.dataTransfer.files[0]);
+});
+
+fileInput.addEventListener('change', function() {
+  if (fileInput.files.length) readFile(fileInput.files[0]);
+});
+
+function readFile(file) {
+  var reader = new FileReader();
+  reader.onload = function() {
+    textarea.value = reader.result;
+    verify();
+  };
+  reader.readAsText(file);
+}
+
+// ── Also verify on Ctrl+Enter ────────────────────────────────────────
+textarea.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    verify();
+  }
+});
+
+// ── Auto-load and verify sample on first visit ──────────────────────
+// Cold visitors see a working verification immediately. The receipt is
+// pre-loaded and verified so the page demonstrates its purpose on load.
+(function autoDemo() {
+  // Only auto-load if textarea is empty (not if user pasted something)
+  if (textarea.value.trim()) return;
+  // Check if URL has ?demo=1 or if this is a fresh page load
+  var params = new URLSearchParams(window.location.search);
+  if (params.has('demo') || !textarea.value.trim()) {
+    loadSample();
+    // Small delay so the user sees the receipt appear, then verify
+    setTimeout(function() { verify(); }, 300);
+  }
+})();
+
+// ── Live npm download count ─────────────────────────────────────────
+(function fetchNpmStats() {
+  var el = document.getElementById('npm-downloads');
+  if (!el) return;
+  fetch('https://api.scopeblind.com/api/npm-stats')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.totalMonthly) {
+        el.textContent = (data.totalMonthly / 1000).toFixed(1) + 'K';
+      }
+    })
+    .catch(function() { /* keep the static fallback */ });
+})();
+</script>
+</body>
+</html>

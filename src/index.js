@@ -134,7 +134,7 @@ Unified binary, auto-detects input format, single offline CLI:
 - draft-farley-acta-signed-receipts-03 — https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/
 - draft-farley-acta-knowledge-units-00 — https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/
 
-## Conformant implementations (15 in draft-02 Implementation Status)
+## Implementation status (evolving public conformance workstream)
 
 - protect-mcp (ScopeBlind, reference) — https://www.npmjs.com/package/protect-mcp
 - @veritasacta/verify (verifier) — https://www.npmjs.com/package/@veritasacta/verify
@@ -144,15 +144,14 @@ Unified binary, auto-detects input format, single offline CLI:
 - bindu-scopeblind (Bindu extension) — https://github.com/ScopeBlind/bindu-scopeblind
 - hermes-decision-receipts (aeoess / APS bridge) — https://github.com/ScopeBlind/hermes-decision-receipts
 - Signet (Prismer-AI, self-certified) — https://github.com/Prismer-AI/signet
-- Microsoft Agent Governance Toolkit (consumer + integration model) — https://github.com/microsoft/agent-governance-toolkit
+- Microsoft Agent Governance Toolkit public PR record / AGT-style integration profile — https://github.com/microsoft/agent-governance-toolkit
 - AWS Cedar for Agents — https://github.com/cedar-policy/cedar-for-agents
 - Sigstore Rekor (transparency log anchor) — https://rekor.sigstore.dev
-- nono (sandbox primitive, Always Further) — https://github.com/always-further/nono
 - plus 3 framework adapters (scopeblind-langchain, scopeblind-llamaindex, @scopeblind/vercel-ai)
 
-## Microsoft AGT integration
+## Public Microsoft AGT contribution record
 
-Three merged PRs, authored by @tomjwxf, reviewed by @imran-siddique:
+Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream status should be checked in the Microsoft repository; these links are contribution records, not partnership or corporate endorsement claims:
 - Tutorial 33 — https://github.com/microsoft/agent-governance-toolkit/pull/1197
 - sb-runtime integration doc — https://github.com/microsoft/agent-governance-toolkit/pull/1202
 - sb-runtime-skill provider shim — https://github.com/microsoft/agent-governance-toolkit/pull/1203
@@ -168,7 +167,7 @@ Three merged PRs, authored by @tomjwxf, reviewed by @imran-siddique:
 
 - Protocol identity: https://veritasacta.com/.well-known/acta-instance.json
 - Charter: https://github.com/VeritasActa/Acta/blob/main/CHARTER.md
-- AGT integration profile: https://github.com/VeritasActa/agt-integration-profile
+- AGT integration profile / implementation-status profile: https://github.com/VeritasActa/agt-integration-profile
 - Conformance test vectors: https://github.com/ScopeBlind/agent-governance-testvectors
 
 ## Commercial (managed tier)
