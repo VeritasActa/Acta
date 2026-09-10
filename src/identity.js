@@ -118,7 +118,7 @@ export async function verifyPassToken(request, env) {
 
 /**
  * Derive a per-topic pseudonym from a device ID and topic.
- * Uses HMAC-SHA256(device_id, topic) — deterministic, per-topic, unlinkable.
+ * Uses HMAC-SHA256(device_id, topic): deterministic, per-topic, unlinkable.
  *
  * Same device + same topic = same pseudonym (within-topic accountability).
  * Same device + different topic = different pseudonym (cross-topic privacy).
@@ -206,7 +206,7 @@ export async function resolveIdentity(request, env, topic = null) {
         };
     }
 
-    // 4. Anonymous — IP-based (lowest trust, development only)
+    // 4. Anonymous: IP-based (lowest trust, development only)
     if (env.ENVIRONMENT === 'development') {
         const ip = request.headers.get('cf-connecting-ip') || 'localhost';
         const deviceId = await hashString(`anon:${ip}`);
@@ -282,7 +282,7 @@ async function verifyWithJWKS(token, jwksUrl) {
 
         if (!resp.ok) {
             console.error(`[IDENTITY] JWKS fetch failed: ${resp.status}`);
-            return false; // Fail closed — reject if we can't verify
+            return false; // Fail closed: reject if we can't verify
         }
 
         const jwks = await resp.json();
@@ -304,7 +304,7 @@ async function verifyWithJWKS(token, jwksUrl) {
         const messageBytes = new TextEncoder().encode(signingInput);
 
         if (matchingKey.kty === 'OKP' && matchingKey.crv === 'Ed25519') {
-            // EdDSA (Ed25519) — use Web Crypto
+            // EdDSA (Ed25519): use Web Crypto
             const keyData = b64urlToBytes(matchingKey.x);
             const key = await crypto.subtle.importKey(
                 'raw',

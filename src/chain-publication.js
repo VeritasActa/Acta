@@ -1,5 +1,5 @@
 /**
- * Chain Head Publication — Signed Anchoring
+ * Chain Head Publication: Signed Anchoring
  *
  * Scheduled handler (cron trigger) that computes a Merkle root
  * of all topic chain heads, signs it with Ed25519, and stores
@@ -11,17 +11,17 @@
  *   in a specific state at a specific time.
  *
  *   The Ed25519 signature means anyone can verify the anchor offline
- *   using only the public key — no trust in the operator required.
+ *   using only the public key: no trust in the operator required.
  *
  *   NOTE: This produces signed checkpoints. External witnessing
  *   (publishing to an operator-independent location) is a separate
- *   concern — see Phase 2 below.
+ *   concern: see Phase 2 below.
  *
  *   Charter invariant #6:  independently verifiable
  *   Charter invariant #10: verify without relying on any single operator
  *
  * Secrets required:
- *   ANCHOR_SIGNING_KEY — Ed25519 private key (64 hex chars = 32 bytes)
+ *   ANCHOR_SIGNING_KEY: Ed25519 private key (64 hex chars = 32 bytes)
  *
  * @license MIT
  */
@@ -112,7 +112,7 @@ export function verifyAnchorSignature(anchor) {
 }
 
 /**
- * Scheduled handler — called by cron trigger.
+ * Scheduled handler: called by cron trigger.
  * Computes, signs, and stores a Merkle root of all topic chain heads.
  */
 export async function handleScheduled(env) {
@@ -161,9 +161,9 @@ export async function handleScheduled(env) {
         merkle_root: merkleRoot,
         chain_heads: chainHeads,
         topic_count: chainHeads.length,
-        // Protocol identity — cryptographically commits anchor to the protocol
+        // Protocol identity: cryptographically commits anchor to the protocol
         ...PROTOCOL_IDENTITY,
-        // Instance policy — separate from identity, operator-tunable
+        // Instance policy: separate from identity, operator-tunable
         ...INSTANCE_POLICY,
     };
 

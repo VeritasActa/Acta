@@ -1,5 +1,5 @@
 /**
- * Acta — Worker Entry Point
+ * Acta: Worker Entry Point
  *
  * Routes API requests to the appropriate handlers.
  * Full pipeline: Identity → Schema → Response Matrix → Duplicate → Moderation → Budget → Ledger → KV
@@ -93,7 +93,7 @@ export default {
             return new Response(null, { status: 204, headers: CORS_HEADERS });
         }
 
-        // Fire-and-forget counter increment — never slows the response
+        // Fire-and-forget counter increment: never slows the response
         const category = classifyRequest(request.method, url.pathname);
         if (category) {
             ctx.waitUntil(incrementCounter(env, category));
@@ -109,7 +109,7 @@ export default {
 
             // ── llms.txt (machine-readable index for AI coding assistants) ──
             if (request.method === 'GET' && url.pathname === '/llms.txt') {
-                return new Response(`# Veritas Acta — Open Protocol for Signed Decision Receipts
+                return new Response(`# Veritas Acta: Open Protocol for Signed Decision Receipts
 
 > Machine-readable index for AI coding assistants, crawlers, and integration discovery. Human-readable protocol overview at https://veritasacta.com
 
@@ -124,44 +124,44 @@ export default {
 
 Unified binary, auto-detects input format, single offline CLI:
 
-- **Ed25519 signed decision receipts** — tamper-evident tool-call auditing (draft-farley-acta-signed-receipts, IETF Internet-Draft)
-- **VOPRF anonymous credentials** — full Schnorr dual-DLEQ verification (issuer-blind, unlinkable, RFC 9497)
-- **Knowledge Unit bundles** — multi-model deliberation receipts (draft-farley-acta-knowledge-units)
-- **Selective-disclosure receipts** — salted SHA-256 commitments per AIP-0002
+- **Ed25519 signed decision receipts**: tamper-evident tool-call auditing (draft-farley-acta-signed-receipts, IETF Internet-Draft)
+- **VOPRF anonymous credentials**: full Schnorr dual-DLEQ verification (issuer-blind, unlinkable, RFC 9497)
+- **Knowledge Unit bundles**: multi-model deliberation receipts (draft-farley-acta-knowledge-units)
+- **Selective-disclosure receipts**: salted SHA-256 commitments per AIP-0002
 
 ## IETF Internet-Drafts
 
-- draft-farley-acta-signed-receipts-03 — https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/
-- draft-farley-acta-knowledge-units-00 — https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/
+- draft-farley-acta-signed-receipts-03: https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/
+- draft-farley-acta-knowledge-units-00: https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/
 
 ## Implementation status (evolving public conformance workstream)
 
-- protect-mcp (ScopeBlind, reference) — https://www.npmjs.com/package/protect-mcp
-- @veritasacta/verify (verifier) — https://www.npmjs.com/package/@veritasacta/verify
-- @scopeblind/passport (identity SDK) — https://www.npmjs.com/package/@scopeblind/passport
-- protect-mcp-adk (Google ADK) — https://pypi.org/project/protect-mcp-adk/
-- sb-runtime (Rust runtime backend) — https://github.com/ScopeBlind/sb-runtime
-- bindu-scopeblind (Bindu extension) — https://github.com/ScopeBlind/bindu-scopeblind
-- hermes-decision-receipts (aeoess / APS bridge) — https://github.com/ScopeBlind/hermes-decision-receipts
-- Signet (Prismer-AI, self-certified) — https://github.com/Prismer-AI/signet
-- Microsoft Agent Governance Toolkit public PR record / AGT-style integration profile — https://github.com/microsoft/agent-governance-toolkit
-- AWS Cedar for Agents — https://github.com/cedar-policy/cedar-for-agents
-- Sigstore Rekor (transparency log anchor) — https://rekor.sigstore.dev
+- protect-mcp (ScopeBlind, reference): https://www.npmjs.com/package/protect-mcp
+- @veritasacta/verify (verifier): https://www.npmjs.com/package/@veritasacta/verify
+- @scopeblind/passport (identity SDK): https://www.npmjs.com/package/@scopeblind/passport
+- protect-mcp-adk (Google ADK): https://pypi.org/project/protect-mcp-adk/
+- sb-runtime (Rust runtime backend): https://github.com/ScopeBlind/sb-runtime
+- bindu-scopeblind (Bindu extension): https://github.com/ScopeBlind/bindu-scopeblind
+- hermes-decision-receipts (aeoess / APS bridge): https://github.com/ScopeBlind/hermes-decision-receipts
+- Signet (Prismer-AI, self-certified): https://github.com/Prismer-AI/signet
+- Microsoft Agent Governance Toolkit public PR record / AGT-style integration profile: https://github.com/microsoft/agent-governance-toolkit
+- AWS Cedar for Agents: https://github.com/cedar-policy/cedar-for-agents
+- Sigstore Rekor (transparency log anchor): https://rekor.sigstore.dev
 - plus 3 framework adapters (scopeblind-langchain, scopeblind-llamaindex, @scopeblind/vercel-ai)
 
 ## Public Microsoft AGT contribution record
 
 Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream status should be checked in the Microsoft repository; these links are contribution records, not partnership or corporate endorsement claims:
-- Tutorial 33 — https://github.com/microsoft/agent-governance-toolkit/pull/1197
-- sb-runtime integration doc — https://github.com/microsoft/agent-governance-toolkit/pull/1202
-- sb-runtime-skill provider shim — https://github.com/microsoft/agent-governance-toolkit/pull/1203
-- Worked example (open) — https://github.com/microsoft/agent-governance-toolkit/pull/1205
+- Tutorial 33: https://github.com/microsoft/agent-governance-toolkit/pull/1197
+- sb-runtime integration doc: https://github.com/microsoft/agent-governance-toolkit/pull/1202
+- sb-runtime-skill provider shim: https://github.com/microsoft/agent-governance-toolkit/pull/1203
+- Worked example (open): https://github.com/microsoft/agent-governance-toolkit/pull/1205
 
 ## Integration entry points
 
-- \`npx @veritasacta/verify init\` — zero-config onboarding, auto-detects 13 agent frameworks
-- \`npx @veritasacta/verify proxy --target "<cmd>"\` — transparent MCP proxy, signs every tool call, no code changes
-- \`npx @veritasacta/verify daemon\` — Unix socket signing API, language-agnostic
+- \`npx @veritasacta/verify init\`: zero-config onboarding, auto-detects 13 agent frameworks
+- \`npx @veritasacta/verify proxy --target "<cmd>"\`: transparent MCP proxy, signs every tool call, no code changes
+- \`npx @veritasacta/verify daemon\`: Unix socket signing API, language-agnostic
 
 ## Normative documentation
 
@@ -223,12 +223,12 @@ Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream sta
                 return corsJson({
                     protocol: "acta",
                     version: PROTOCOL_IDENTITY.protocol_version,
-                    // Protocol identity — defines the protocol
+                    // Protocol identity: defines the protocol
                     charter_hash: PROTOCOL_IDENTITY.charter_hash,
                     charter_url: DOCUMENT_URLS.charter,
                     protocol_spec_hash: PROTOCOL_IDENTITY.protocol_spec_hash,
                     protocol_spec_url: DOCUMENT_URLS.protocol_spec,
-                    // Instance policy — operator-tunable, separate from identity
+                    // Instance policy: operator-tunable, separate from identity
                     policy_hash: INSTANCE_POLICY.policy_hash,
                     policy_url: DOCUMENT_URLS.policy,
                     repository: "https://github.com/VeritasActa/acta",
@@ -551,7 +551,7 @@ Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream sta
                     return corsJson(await getModerationEntries(env));
                 }
 
-                // Signed anchor — latest daily checkpoint
+                // Signed anchor: latest daily checkpoint
                 if (url.pathname === '/api/anchor/latest') {
                     const raw = await env.ACTA_KV?.get('anchor:latest', { type: 'json' });
                     if (!raw) return corsJson({ error: 'no_anchors_yet' }, { status: 404 });
@@ -659,7 +659,7 @@ function renderPrivacyPage() {
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Privacy Policy — Veritas Acta</title>
+<title>Privacy Policy: Veritas Acta</title>
 <style>
 :root{--bg:#f4f4f0;--text:#1a1a2e;--text-muted:#6b6b80;--brand-font:'Georgia',serif;--body-font:system-ui,-apple-system,sans-serif;--max:640px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -682,7 +682,7 @@ code{font-size:13px;background:#e8e8e4;padding:1px 4px;border-radius:2px}
 
 <h2>What Veritas Acta collects</h2>
 <p>Veritas Acta is a public record protocol. Contributions to the public ledger are visible by design. The protocol collects:</p>
-<p><strong>Public data:</strong> Topic pseudonyms, contribution content, timestamps, evidence links, and cryptographic signatures. These are intentionally public and permanent — that is the purpose of a public record.</p>
+<p><strong>Public data:</strong> Topic pseudonyms, contribution content, timestamps, evidence links, and cryptographic signatures. These are intentionally public and permanent: that is the purpose of a public record.</p>
 <p><strong>Private data:</strong> Device identifiers (hashed) are used solely for budget enforcement (preventing spam). Device IDs are never published, never shared, and never correlated across topics. They exist only in the budget enforcement layer and are not stored in the public ledger.</p>
 
 <h2>What Veritas Acta does not collect</h2>
@@ -698,7 +698,7 @@ code{font-size:13px;background:#e8e8e4;padding:1px 4px;border-radius:2px}
 <p>Veritas Acta is hosted on Cloudflare Workers. Cloudflare's privacy policy applies to infrastructure-level data (IP addresses, request metadata). Veritas Acta does not add any additional tracking beyond what Cloudflare provides by default.</p>
 
 <h2>Data retention</h2>
-<p>Public ledger entries are permanent by design — that is the core promise of the protocol. Device budget data is ephemeral and may be cleared at any time. There is no mechanism to delete public ledger entries because immutability is a feature, not a limitation.</p>
+<p>Public ledger entries are permanent by design: that is the core promise of the protocol. Device budget data is ephemeral and may be cleared at any time. There is no mechanism to delete public ledger entries because immutability is a feature, not a limitation.</p>
 
 <h2>Contact</h2>
 <p>For privacy questions: <a href="mailto:hello@acta.today">hello@acta.today</a></p>
@@ -715,8 +715,8 @@ const CHARTER_GITHUB_RAW = 'https://raw.githubusercontent.com/VeritasActa/Acta/m
 const CHARTER_CACHE_KEY = 'charter:md';
 const CHARTER_CACHE_TTL = 3600; // 1 hour
 
-// Canonical fallback — exact content of CHARTER.md from this repo
-const CHARTER_FALLBACK = `# Acta — Charter
+// Canonical fallback: exact content of CHARTER.md from this repo
+const CHARTER_FALLBACK = `# Acta: Charter
 
 > This document states why Acta exists and what is permanently true about it.
 > It contains no implementation details, no tunable parameters, and no technical architecture.
@@ -729,7 +729,7 @@ A contestable, checkable public record for humans and AI.
 
 ## Why This Exists
 
-Information systems that can be captured — by profit, politics, or unilateral control — distort what participants know and undermine their ability to coordinate. As AI agents become first-class participants in online discourse, there is no neutral substrate where humans and agents can coordinate on the basis of checkable, challengeable, versioned information.
+Information systems that can be captured: by profit, politics, or unilateral control: distort what participants know and undermine their ability to coordinate. As AI agents become first-class participants in online discourse, there is no neutral substrate where humans and agents can coordinate on the basis of checkable, challengeable, versioned information.
 
 We built this because we believe all human life is equal in dignity, and that better information infrastructure leads to better coordination. That belief is our motivation, not a system rule.
 
@@ -741,19 +741,19 @@ These do not change. They define what Acta is. If any of these cease to be true,
 A question has no evidence burden. A claim requires evidence, reasoning, or explicit uncertainty. A prediction requires resolution criteria. The system distinguishes between these because different kinds of assertions deserve different standards.
 
 **2. Every object has authorship provenance and revision history.**
-Whether it was contributed by a human or an agent, when, in response to what, and how it has been updated — all recorded and publicly readable.
+Whether it was contributed by a human or an agent, when, in response to what, and how it has been updated: all recorded and publicly readable.
 
 **3. Claims and decisions can be challenged.**
 No contribution and no moderation decision is beyond challenge. The challenge mechanism is structural and always available.
 
 **4. No entity can dominate attention through scale.**
-No participant — human, agent, or operator — can use volume or resource advantage to drown out others. The mechanism for preventing this may change; the principle does not.
+No participant: human, agent, or operator: can use volume or resource advantage to drown out others. The mechanism for preventing this may change; the principle does not.
 
 **5. Agents are disclosed delegates, not default peers.**
 AI agents participate as disclosed delegates of the humans or organizations responsible for them. They are marked as such at the protocol level. Their participation is bounded and accountable to a principal. This classification may evolve as agent capabilities and accountability mechanisms evolve.
 
 **6. The record maintains fidelity, traceability, checkability, and integrity.**
-What was said is preserved. Evidence and revision history are recorded so others can evaluate independently. No entity — including the operator — can silently alter the record after the fact. When content cannot be retained for legal or safety reasons, its removal or restricted handling is explicit and auditable to the maximum extent law and safety permit. The record's integrity is independently verifiable without relying on any single operator.
+What was said is preserved. Evidence and revision history are recorded so others can evaluate independently. No entity: including the operator: can silently alter the record after the fact. When content cannot be retained for legal or safety reasons, its removal or restricted handling is explicit and auditable to the maximum extent law and safety permit. The record's integrity is independently verifiable without relying on any single operator.
 
 **7. Resolution and supersession are explicit.**
 When a prediction resolves, a question is answered, or a claim is superseded, those transitions are explicit, visible, auditable, and challengeable. Knowledge has a lifecycle; the system tracks it.
@@ -924,7 +924,7 @@ async function handleContribute(request, env, ctx) {
         return corsJson({ error: 'schema_validation_failed', action: 'return_for_revision', errors: validation.errors }, { status: 422 });
     }
 
-    // Build entry with per-topic pseudonym (public) — device_id never exposed
+    // Build entry with per-topic pseudonym (public): device_id never exposed
     const entry = {
         type: 'contribution',
         subtype: type,
@@ -953,7 +953,7 @@ async function handleContribute(request, env, ctx) {
         }, { status: 409 });
     }
 
-    // Tier 2: Content classification (before budget — don't charge for held content)
+    // Tier 2: Content classification (before budget: don't charge for held content)
     const classification = await classifyContent(env, entry);
 
     // Tier 1B: Silent drop (CSAM, malware, credible violence)
@@ -984,7 +984,7 @@ async function handleContribute(request, env, ctx) {
         await enrichSourceSnapshot(payload);
     }
 
-    // Tier 1: Budget check (after moderation — only charge for accepted content)
+    // Tier 1: Budget check (after moderation: only charge for accepted content)
     const cost = TOKEN_COSTS[type] || 2;
     const budgetResult = await checkBudget(env, deviceId, authorType, cost);
     if (!budgetResult.allowed) {
@@ -1048,7 +1048,7 @@ async function handleRespond(request, env, ctx) {
         return corsJson({ error: 'schema_validation_failed', action: 'return_for_revision', errors: validation.errors }, { status: 422 });
     }
 
-    // Tier 1: Response target matrix — check if this response type can target the given entry
+    // Tier 1: Response target matrix: check if this response type can target the given entry
     if (payload?.target_id) {
         const targetEntry = await getEntryFromKV(env, payload.target_id);
         if (targetEntry) {
@@ -1060,7 +1060,7 @@ async function handleRespond(request, env, ctx) {
                 }, { status: 422 });
             }
         }
-        // If target not found in KV (eventual consistency), allow — DO is source of truth
+        // If target not found in KV (eventual consistency), allow: DO is source of truth
     }
 
     const entry = {
@@ -1079,7 +1079,7 @@ async function handleRespond(request, env, ctx) {
         linked_to: [payload.target_id],
     };
 
-    // Tier 2: classify (before budget — don't charge for held content)
+    // Tier 2: classify (before budget: don't charge for held content)
     const classification = await classifyContent(env, entry);
 
     if (classification.action === 'tier_1b_reject') {
@@ -1107,7 +1107,7 @@ async function handleRespond(request, env, ctx) {
         await enrichSourceSnapshot(payload);
     }
 
-    // Tier 1: Budget (after moderation — only charge for accepted content)
+    // Tier 1: Budget (after moderation: only charge for accepted content)
     const cost = TOKEN_COSTS[type] || 1;
     const budgetResult = await checkBudget(env, deviceId, authorType, cost);
     if (!budgetResult.allowed) {
@@ -1221,7 +1221,7 @@ async function renderTopicPage(env, topic) {
 
 /**
  * Get chain heads for all topics (for external anchoring / witnesses).
- * Returns the latest entry hash for each topic — federation peers use this
+ * Returns the latest entry hash for each topic: federation peers use this
  * to verify chain integrity.
  */
 async function getChainHeads(env) {

@@ -1,12 +1,12 @@
 /**
- * Protocol Identity — Single source of truth for Acta protocol and instance hashes.
+ * Protocol Identity: Single source of truth for Acta protocol and instance hashes.
  *
  * Both the manifest (index.js) and anchor signing (chain-publication.js) import from here.
  * This prevents hash drift between published identity and signed anchors.
  *
  * Conceptual separation:
- *   - PROTOCOL_IDENTITY: Charter + Protocol Spec — defines the protocol itself
- *   - INSTANCE_POLICY: Policy — operator-tunable, expected to change per instance
+ *   - PROTOCOL_IDENTITY: Charter + Protocol Spec: defines the protocol itself
+ *   - INSTANCE_POLICY: Policy: operator-tunable, expected to change per instance
  *
  * @license MIT
  */

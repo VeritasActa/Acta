@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Receipt Verifier — Veritas Acta</title>
+<title>Receipt Verifier: Veritas Acta</title>
 <meta name="description" content="Offline, in-browser verification of signed decision receipts. No data leaves your machine.">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -198,7 +198,7 @@ footer a { color: var(--link); }
   <ol class="step-list">
     <li>The receipt payload is serialized using JCS canonicalization (RFC 8785)</li>
     <li>The canonical bytes are verified against the Ed25519 signature (RFC 8032)</li>
-    <li>The public key in the receipt is the only trust anchor — no certificate authority, no API</li>
+    <li>The public key in the receipt is the only trust anchor: no certificate authority, no API</li>
     <li>If the signature checks out, the receipt has not been modified since signing</li>
   </ol>
 </section>
@@ -206,10 +206,10 @@ footer a { color: var(--link); }
 <section class="info-section">
   <h2>What this verifier does NOT do</h2>
   <ul class="caveat-list">
-    <li>Does not verify the signer's identity — only that the signature is valid</li>
+    <li>Does not verify the signer's identity, only that the signature is valid</li>
     <li>Does not check revocation status</li>
     <li>Does not contact any server</li>
-    <li>Does not verify the receipt's claims are true — only that they haven't been tampered with</li>
+    <li>Does not verify the receipt's claims are true, only that they haven't been tampered with</li>
   </ul>
 </section>
 
@@ -495,7 +495,7 @@ async function runVerification(input) {
         if (result.valid) {
           checks.push({ pass: true, label: 'Ed25519 signature', detail: 'RFC 8032 verification against canonical payload' });
         } else {
-          checks.push({ pass: false, label: 'Ed25519 signature', detail: 'signature does not match payload — receipt may have been tampered with' });
+          checks.push({ pass: false, label: 'Ed25519 signature', detail: 'signature does not match payload: receipt may have been tampered with' });
           allPass = false;
         }
       } else {
