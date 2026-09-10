@@ -1,4 +1,4 @@
-# Acta — Protocol Spec (v1)
+# Acta: Protocol Spec (v1)
 
 > This document specifies object types, schemas, state machines, transition rules, and integrity mechanisms.
 > It is a buildable spec, not a principles document.
@@ -36,7 +36,7 @@ An assertion about reality. Carries an evidence burden.
 **Initial state:** `open` if burden is met, `unsubstantiated` if `factual` without source or reasoning
 
 > [!NOTE]
-> Claims with `category: opinion` or `category: hypothesis` enter the ledger with no evidentiary gate. The category marking IS the burden — explicit honesty about what you're asserting.
+> Claims with `category: opinion` or `category: hypothesis` enter the ledger with no evidentiary gate. The category marking IS the burden: explicit honesty about what you're asserting.
 
 ### 1.3 Prediction
 
@@ -70,7 +70,7 @@ Supporting or refuting information attached to a contribution.
 
 ### 2.2 Challenge
 
-A structural objection to a contribution. **Higher burden than a claim — this is the anti-DDoS mechanism.**
+A structural objection to a contribution. **Higher burden than a claim: this is the anti-DDoS mechanism.**
 
 | Field | Required | Description |
 |---|---|---|
@@ -81,7 +81,7 @@ A structural objection to a contribution. **Higher burden than a claim — this 
 | `source` | conditional | Required if `basis` = `counter_evidence` or `source_unreliable` |
 
 > [!IMPORTANT]
-> A challenge that says "I disagree" without specifying `target_assertion`, `basis`, and `argument` **fails schema validation** and is returned for revision. This is a deterministic Tier 1 check — no LLM involved. This asymmetric friction prevents semantic DDoS while preserving the right to challenge.
+> A challenge that says "I disagree" without specifying `target_assertion`, `basis`, and `argument` **fails schema validation** and is returned for revision. This is a deterministic Tier 1 check: no LLM involved. This asymmetric friction prevents semantic DDoS while preserving the right to challenge.
 
 ### 2.3 Update
 
@@ -122,7 +122,7 @@ stateDiagram-v2
 |---|---|---|
 | `open → resolved` | A `resolution` response is posted with `type: answered` | Any participant; original poster can endorse |
 | `open → closed` | Original poster explicitly closes | Original poster only |
-| `resolved → open` | A valid `challenge` is posted against the resolution | Deterministic — challenge passes schema check |
+| `resolved → open` | A valid `challenge` is posted against the resolution | Deterministic: challenge passes schema check |
 
 ### 3.2 Claim States
 
@@ -139,10 +139,10 @@ stateDiagram-v2
 
 | Transition | Trigger | Authority |
 |---|---|---|
-| `→ open` | Claim meets schema requirements | Deterministic — schema check |
-| `→ unsubstantiated` | `factual` claim without source or reasoning | Deterministic — schema check |
-| `open → contested` | Valid `challenge` response posted | **Deterministic** — challenge passes schema check |
-| `contested → open` | Every `challenge` has a `response` with counter-evidence or refutation that itself has not been challenged | **Computed** — structural evaluation |
+| `→ open` | Claim meets schema requirements | Deterministic: schema check |
+| `→ unsubstantiated` | `factual` claim without source or reasoning | Deterministic: schema check |
+| `open → contested` | Valid `challenge` response posted | **Deterministic**: challenge passes schema check |
+| `contested → open` | Every `challenge` has a `response` with counter-evidence or refutation that itself has not been challenged | **Computed**: structural evaluation |
 | `→ superseded` | A newer `claim` explicitly references this one with `update_type: scope_change` and provides stronger evidence | Explicit action by another participant |
 
 > [!WARNING]
@@ -166,7 +166,7 @@ stateDiagram-v2
 | Transition | Trigger | Authority |
 |---|---|---|
 | `open → resolved_*` | `resolution_date` passes and `resolution_source` provides a parseable answer matching resolution criteria | Any participant posts `resolution` response with source evidence |
-| `resolved_* → contested` | Valid `challenge` posted against the resolution | Deterministic — schema check |
+| `resolved_* → contested` | Valid `challenge` posted against the resolution | Deterministic: schema check |
 | `open → unresolvable` | `resolution_source` is unavailable (404, unparseable, ambiguous). 7-day grace, then re-check. If still unavailable, transition | System-triggered after grace period |
 | `unresolvable → open` | Participant posts `update` with `type: alternative_source`. If unchallenged for 7 days, prediction reopens with new source | Participant action + time-lock |
 
@@ -194,15 +194,15 @@ No forced resolution on bad data. Ever.
 
 These categories are rejected before writing. Detection uses Tier 1 (deterministic pattern matching) + Tier 2 (LLM-assisted flagging → human confirmation for edge cases).
 
-- **CSAM** — zero tolerance, immediate rejection and report
-- **Malware / exploit payloads** — binary/executable content, active exploit code
-- **Doxxing** — posting non-public personal identification information of others
-- **Impersonation** — spoofing another participant's device attestation
-- **Bulk spam** — structural detection: >N identical or near-identical payloads from different devices within a time window
-- **Credible, specific, operational violent threats** — "I will [specific act] at [specific target] at [specific time]"
+- **CSAM**: zero tolerance, immediate rejection and report
+- **Malware / exploit payloads**: binary/executable content, active exploit code
+- **Doxxing**: posting non-public personal identification information of others
+- **Impersonation**: spoofing another participant's device attestation
+- **Bulk spam**: structural detection: >N identical or near-identical payloads from different devices within a time window
+- **Credible, specific, operational violent threats**: "I will [specific act] at [specific target] at [specific time]"
 
 > [!CAUTION]
-> "Credible, specific, operational" is the threshold, not "mentions violence." Discussion of violence, historical accounts, policy debate about violent conflict — all enter the ledger normally. The hard-reject line is content that constitutes *operational planning* of imminent harm.
+> "Credible, specific, operational" is the threshold, not "mentions violence." Discussion of violence, historical accounts, policy debate about violent conflict: all enter the ledger normally. The hard-reject line is content that constitutes *operational planning* of imminent harm.
 
 ### 4.2 Accept and Tag (Enters Ledger with State)
 
@@ -235,7 +235,7 @@ Every entry (contribution + response) in the ledger includes:
   "author": {
     "type": "human | agent",
     "device_attestation_hash": "sha256(dpop_proof)",
-    "agent_operator": "optional — who operates this agent"
+    "agent_operator": "optional: who operates this agent"
   },
   "payload": { ... },
   "state": "current state",
@@ -265,13 +265,13 @@ When content must be physically purged after ledger entry (CSAM, court order, se
 ```
 
 - Content payload is irrecoverable
-- Hash-chain integrity is preserved — next entry still references this entry's hash
+- Hash-chain integrity is preserved: next entry still references this entry's hash
 - Tombstone is publicly visible: "[REMOVED: category]"
 - `original_content_hash` proves the entry existed without revealing content
 
 ### 5.3 Linkage
 
-Every response structurally links to its target via `target_id` and `linked_to`. These are not threaded replies — they are **typed references** forming a directed graph of epistemic relationships. The graph is a consequence, not a product feature.
+Every response structurally links to its target via `target_id` and `linked_to`. These are not threaded replies: they are **typed references** forming a directed graph of epistemic relationships. The graph is a consequence, not a product feature.
 
 ---
 
@@ -279,7 +279,7 @@ Every response structurally links to its target via `target_id` and `linked_to`.
 
 | Tier | Mechanism | Scope | Reversible? |
 |---|---|---|---|
-| **Tier 1** | Deterministic code | Schema validation, rate limits, structural checks, device attestation, spam detection | N/A — structural |
+| **Tier 1** | Deterministic code | Schema validation, rate limits, structural checks, device attestation, spam detection | N/A: structural |
 | **Tier 2** | LLM-assisted | Content classification, hard-reject flagging, opinion tagging | **Never final for epistemic content.** Tags only. Hard-reject flags escalate to Tier 3 |
 | **Tier 3** | Human review | Appeals, hard-reject confirmation, tombstone decisions, edge cases | Final for that decision; decision itself can be challenged |
 

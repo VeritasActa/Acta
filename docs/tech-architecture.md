@@ -1,4 +1,4 @@
-# Acta — Technical Architecture
+# Acta: Technical Architecture
 
 > This document describes the technical architecture of the Acta protocol,
 > its reference implementation, and key design decisions.
@@ -177,7 +177,7 @@ function validateResponse(type, payload) {
 
   switch (type) {
     case 'challenge':
-      // ASYMMETRIC FRICTION — stricter schema
+      // ASYMMETRIC FRICTION: stricter schema
       if (!payload.target_assertion) {
         errors.push({
           field: 'target_assertion',
@@ -267,17 +267,17 @@ function computeClaimState(claim, responses) {
 ## 4. Privacy-Preserving Identity
 
 Acta requires device attestation that is:
-- Privacy-preserving (the system should not know WHO is posting — only that this device has not exceeded its budget)
+- Privacy-preserving (the system should not know WHO is posting: only that this device has not exceeded its budget)
 - Sybil-resistant (one device = one voice = one budget)
 - Verifiable without the issuer learning which device is being verified
 
 VOPRF (Verifiable Oblivious Pseudorandom Function) combined with issuer-blind verification provides this. The verifier can confirm "this device has a valid attestation" without the issuer learning which device made which contribution. This is the technical foundation for the Charter's promise that provenance is recorded but anonymity is preserved.
 
 **Comparison with alternatives:**
-- **Account-based systems** (Reddit, X) — require PII, not anonymous
-- **Fully anonymous systems** (4chan, Nostr) — no sybil resistance
-- **Blockchain-based** (Farcaster) — wallet-based identity, expensive, not device-linked
-- **VOPRF-based** — device-linked, privacy-preserving, sybil-resistant, no PII
+- **Account-based systems** (Reddit, X): require PII, not anonymous
+- **Fully anonymous systems** (4chan, Nostr): no sybil resistance
+- **Blockchain-based** (Farcaster): wallet-based identity, expensive, not device-linked
+- **VOPRF-based**: device-linked, privacy-preserving, sybil-resistant, no PII
 
 ---
 
@@ -287,7 +287,7 @@ VOPRF (Verifiable Oblivious Pseudorandom Function) combined with issuer-blind ve
 |---|---|
 | **Blockchain / on-chain storage** | Unnecessary complexity and cost. Hash-chaining gives tamper-evidence without gas fees, consensus mechanisms, or scalability limits. Chain hashes can be anchored to a blockchain later as an additional trust layer |
 | **Traditional database (Postgres, etc.)** | Edge-native stacks give global distribution without managing servers. A database adds latency, infrastructure, and operational burden |
-| **Third-party auth (Auth0, Clerk)** | Device attestation via VOPRF is strictly better for this use case — anonymous, privacy-preserving |
+| **Third-party auth (Auth0, Clerk)** | Device attestation via VOPRF is strictly better for this use case: anonymous, privacy-preserving |
 | **Third-party moderation API** | Moderation tiers are custom. Tier 1 is deterministic code. Tier 2 is your own LLM prompt. No need for external moderation services |
 | **GraphQL** | Adds complexity without proportional benefit. REST with typed JSON payloads is simpler and sufficient |
 
