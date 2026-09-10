@@ -85,8 +85,15 @@ async function incrementCounter(env, category) {
     } catch { /* non-critical */ }
 }
 
-export default {
+const worker = {
     async fetch(request, env, ctx) {
+        // HEAD is GET without a body. The routes below match on GET, so a HEAD
+        // request used to fall through to 404 and link checkers, uptime probes
+        // and some crawlers reported the site down while GET returned 200.
+        if (request.method === 'HEAD') {
+            const res = await worker.fetch(new Request(request, { method: 'GET' }), env, ctx);
+            return new Response(null, { status: res.status, statusText: res.statusText, headers: res.headers });
+        }
         const url = new URL(request.url);
 
         if (request.method === 'OPTIONS') {
@@ -651,6 +658,8 @@ Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream sta
         ctx.waitUntil(handleScheduled(env));
     },
 };
+
+export default worker;
 
 // ── Privacy Page ────────────────────────────────────────────────
 
