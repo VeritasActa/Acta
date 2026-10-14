@@ -73,7 +73,7 @@ bindings or migrations as part of a presentation release. `npm run deploy` publi
 the Worker only after tests and visual checks pass.
 
 The browser verifier uses the same receipt engine as the CLI. It accepts an explicit
-external key and cannot fetch or upload receipt content: its route uses
+external key and does not fetch or upload receipt content: its route uses
 `connect-src 'none'` and no form submission. Loading the page still contacts the host;
 local computation does not make the hosting service an independent trust authority.
 

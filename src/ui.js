@@ -3070,7 +3070,7 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
           <p>We could have built a product. Instead we built a protocol: Apache-2.0, with two <a href="https://github.com/VeritasActa/drafts" style="color:var(--accent);">IETF Internet-Drafts</a>, open-source verification tools, and a <a href="/charter" style="color:var(--accent);">Charter</a> with permanent invariants that the operator cannot change.</p>
           <p style="margin-top:12px;">Why? Because evidence infrastructure needs to outlast any single company. The evidence layer for agent accountability should be as durable and vendor-neutral as TCP/IP is for networking.</p>
 
-          <p style="margin-top:16px;color:var(--text);font-weight:600;">Start with <a href="/" style="color:var(--accent);">the public record</a>. <a href="/verify" style="color:var(--accent);">Verify it yourself</a>. Build on top of it.</p>
+          <p style="margin-top:16px;color:var(--text);font-weight:600;">Start with <a href="/record" style="color:var(--accent);">the public record</a>. <a href="/verify" style="color:var(--accent);">Verify it yourself</a>. Build on top of it.</p>
         </div>
 
         <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:10px;color:var(--text-dim);">
