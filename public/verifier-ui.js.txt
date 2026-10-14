@@ -1,0 +1,108 @@
+import { verifyReceiptText } from '/assets/receipt-verifier.js';
+import { sample, key } from '/assets/receipt-sample.js';
+
+const $ = id => document.getElementById(id);
+let revision = 0;
+let sampleMode = false;
+function invalidate() {
+  revision++;
+  $('result').hidden = true;
+  $('verify').disabled = false;
+  $('verify').textContent = 'Verify receipt';
+}
+function mode(isSample) {
+  sampleMode = isSample;
+  $('sample-state').textContent = isSample ? 'Sample receipt' : 'Your receipt';
+  $('sample-note').hidden = !isSample;
+  $('tamper').hidden = !isSample;
+  $('clear').hidden = !isSample;
+}
+function show(result) {
+  $('result').hidden = false;
+  $('result').dataset.status = result.status;
+  $('result-title').textContent = result.status === 'valid' ? 'Signature verified' : result.status === 'invalid' ? 'Verification failed' : 'Not checked';
+  const missing = ['embedded_key_rejected', 'missing_public_key', 'no_public_key'].includes(result.error);
+  $('result-summary').textContent = result.status === 'valid'
+    ? 'The receipt passed the supported checks under the public key you supplied. This does not establish who controls that key or whether the claim is true.'
+    : result.status === 'invalid'
+      ? 'The receipt did not pass the checks under this key. A wrong key, altered record or invalid structure can cause this; failure alone is not proof of tampering.'
+      : missing ? 'Add a public key obtained through a separate trusted channel. A key included in the receipt is not accepted automatically.'
+        : result.detail || result.error || 'This input cannot be checked by the browser verifier.';
+  $('result-warning').textContent = [result.warning, sampleMode ? 'Sample result only. The example key is not an independent trust pin.' : ''].filter(Boolean).join(' ');
+  $('result-detail').textContent = JSON.stringify(result, null, 2);
+}
+async function verify() {
+  const current = ++revision;
+  $('verify').disabled = true;
+  $('verify').textContent = 'Checking…';
+  const result = await verifyReceiptText($('receipt').value, $('public-key').value);
+  if (current !== revision) return;
+  $('verify').disabled = false;
+  $('verify').textContent = 'Verify receipt';
+  show(result);
+}
+function loadSample() {
+  invalidate();
+  mode(true);
+  $('receipt').value = JSON.stringify(sample, null, 2);
+  $('public-key').value = key;
+  $('file-status').textContent = '';
+  $('receipt-file').value = '';
+  verify();
+}
+$('load-sample').addEventListener('click', loadSample);
+$('tamper').addEventListener('click', () => {
+  invalidate();
+  const changed = structuredClone(sample);
+  changed.payload.decision = changed.payload.decision === 'deny' ? 'allow' : 'deny';
+  $('receipt').value = JSON.stringify(changed, null, 2);
+  $('sample-state').textContent = 'Changed sample';
+  verify();
+});
+$('clear').addEventListener('click', () => {
+  invalidate();
+  mode(false);
+  $('receipt').value = '';
+  $('public-key').value = '';
+  $('file-status').textContent = '';
+  $('receipt-file').value = '';
+  $('receipt').focus();
+});
+$('verify').addEventListener('click', verify);
+$('receipt').addEventListener('input', () => {
+  invalidate();
+  if (sampleMode) $('sample-state').textContent = 'Edited sample';
+});
+// A pasted or imported receipt starts a new task, never inherits the sample's key.
+$('receipt').addEventListener('paste', () => {
+  invalidate();
+  if (sampleMode) $('public-key').value = '';
+  mode(false);
+});
+$('public-key').addEventListener('input', invalidate);
+async function openFile(file) {
+  invalidate();
+  if (sampleMode) $('public-key').value = '';
+  mode(false);
+  $('receipt').value = '';
+  if (file.size > 1048576) {
+    $('file-status').textContent = 'This file exceeds 1 MB. Use the CLI for larger inputs.';
+    return;
+  }
+  const current = revision;
+  try {
+    const text = await file.text();
+    if (revision !== current) return;
+    $('receipt').value = text;
+    $('file-status').textContent = `${file.name} · Opened locally, not uploaded.`;
+    $('public-key').focus();
+  } catch {
+    if (revision === current) $('file-status').textContent = 'Could not read the file. Try another JSON file or paste its contents.';
+  }
+}
+$('receipt-file').addEventListener('change', e => { if (e.target.files[0]) openFile(e.target.files[0]); });
+$('verifier').addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) e.preventDefault(); });
+$('verifier').addEventListener('drop', e => {
+  if (e.dataTransfer.files.length) { e.preventDefault(); openFile(e.dataTransfer.files[0]); }
+});
+if (new URLSearchParams(location.search).get('sample') === 'current') loadSample();

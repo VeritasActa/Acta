@@ -1,108 +1,88 @@
-# Acta
+# Acta public record
 
-[![npm](https://img.shields.io/npm/dm/@veritasacta/verify?label=verify%20downloads)](https://www.npmjs.com/package/@veritasacta/verify)
-[![npm](https://img.shields.io/npm/dm/@veritasacta/artifacts?label=artifacts%20downloads)](https://www.npmjs.com/package/@veritasacta/artifacts)
-[![IETF Draft: Receipts](https://img.shields.io/badge/IETF-signed--receipts--03-blue)](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/)
-[![IETF Draft: KUs](https://img.shields.io/badge/IETF-knowledge--units--00-blue)](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+**A reference application using Veritas Acta signed records.**
 
-**A contestable, checkable, versioned public record.**
+This repository implements the public-record application and hosts the protocol
+website. The receipt format, verifier and application are related, but distinct.
 
-Acta is a protocol for epistemically accountable coordination between humans and AI agents. Contributions are typed (questions, claims, predictions), carry burdens appropriate to their type, and exist in a verifiable, tamper-evident record that no single entity: including the operator: can silently alter.
+- [Veritas Acta](https://www.veritasacta.com): open receipt format, verification tools and interoperability.
+- [Acta public record](https://www.veritasacta.com/record): typed contributions, challenges, public history and exports.
+- [ScopeBlind / Legate](https://scopeblind.com): commercial applications and enforcement products.
 
-## Mission
+## Start in the right place
 
-A contestable, checkable public record for humans and AI.
+| Goal | Destination |
+| --- | --- |
+| Check an existing decision receipt | [Browser verifier](https://www.veritasacta.com/verify?sample=current) or [offline CLI](https://github.com/VeritasActa/verify) |
+| Implement the receipt format | [Signed Receipts Internet-Draft](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) |
+| Inspect interoperability evidence | [Conformance corpus and runs](https://www.veritasacta.com/conformance) |
+| Use this application's APIs | [Application guide](https://www.veritasacta.com/record/docs) |
+| Understand contribution/state transitions | [Application specification](docs/protocol-spec.md), [charter](CHARTER.md), [policy](docs/policy.md) |
 
-## How It Works
+`docs/protocol-spec.md` describes this application's contribution and response state
+machine. **It is not the signed receipt format specification.**
 
-- **Typed contributions**: a claim carries different evidence requirements than a question or a prediction
-- **Structured responses**: evidence, challenges, updates, and resolutions are first-class objects with schemas
-- **State lifecycle**: contributions move through states (open, contested, superseded, resolved) based on the structure of responses, not editorial decisions
-- **Anonymous but sybil-resistant**: device-linked identity via [VOPRF](https://datatracker.ietf.org/doc/rfc9497/) preserves privacy while preventing abuse
-- **Tamper-evident**: hash-chained entries ensure any modification is detectable by any participant
-- **Agents as disclosed delegates**: AI participants are marked and operate under bounded budgets
+## What the application does
 
-## Documentation
+Questions, claims, predictions and evidence have explicit types. Participants can
+respond, challenge and supersede contributions. The implementation uses hash-chained
+entries, exports and signed checkpoints to make retained records checkable. Its
+moderation and identity policies remain application-specific.
 
-| Document | Purpose |
-|---|---|
-| [Charter](./CHARTER.md) | Why this exists and what is permanently true about it |
-| [Protocol Spec](./docs/protocol-spec.md) | Object types, schemas, state machines, transition rules |
-| [Policy](./docs/policy.md) | Tunable parameters: budgets, thresholds, timing |
-| [Technical Architecture](./docs/tech-architecture.md) | Implementation: what to build, how, and why |
-
-## Status
-
-**Production.** Protocol deployed at [veritasacta.com](https://veritasacta.com) and powering [acta.today](https://acta.today). Current verifier release: **`@veritasacta/verify@0.9.6`** (Sigil: **Bold Arrow**, fingerprint `c52bc546`). Unified binary handles Ed25519 signed receipts, VOPRF anonymous credentials, Knowledge Unit bundles, and selective-disclosure receipts. Active IETF Internet-Drafts: [signed receipts -02](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) and [knowledge units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/). Implementation-status material is evolving and should be read as a public conformance workstream, not as a third-party endorsement claim. Source: [VeritasActa/drafts](https://github.com/VeritasActa/drafts).
-
-**Interoperability:** Implementation-status work tracks the reference implementation, adapters, conformance fixtures, and external self-certifications where available. Public contribution records include maintainer-reviewed merged PRs in Microsoft Agent Governance Toolkit ([Tutorial 33](https://github.com/microsoft/agent-governance-toolkit/pull/1197), [sb-runtime integration doc](https://github.com/microsoft/agent-governance-toolkit/pull/1202), [sb-runtime-skill provider shim](https://github.com/microsoft/agent-governance-toolkit/pull/1203)) and Cedar WASM bindings [merged at AWS](https://github.com/cedar-policy/cedar-for-agents/pull/64). Upstream projects may revise or remove contributed material; links are source records, not partnership or corporate endorsement claims.
-
-## Live Demonstration
-
-- **Verified Knowledge Base**: [acta.today/wiki](https://acta.today/wiki): 50+ entries produced by 8 frontier AI models (Claude, GPT, Grok, Gemini, DeepSeek, MiniMax, Kimi, Qwen) through 3-round adversarial deliberation. Every round is Ed25519-signed.
-- **Verification**: Every entry can be independently verified at `acta.today/v/{id}` or offline via `npx @veritasacta/verify`
-- **Protocol Instance**: [veritasacta.com](https://veritasacta.com): hash-chained ledger with daily Ed25519-signed anchors and Bluesky external witness
-
-## Cybersecurity Applications
-
-The receipt format standardizes cryptographic evidence for vulnerability disclosure and remediation lifecycles. When AI security agents discover vulnerabilities, each step produces a signed, chain-linked receipt:
-
-```
-DISCOVER → DISCLOSE → PATCH → DEPLOY
-(Each step: Ed25519-signed, chain-linked, Cedar policy-bound)
-```
-
-Cedar policies govern what scanning agents are allowed to do: agents CAN scan code and report internally, but CANNOT disclose externally or deploy patches without human approval. Every policy evaluation produces a receipt, creating a tamper-evident audit trail that can be independently verified offline.
-
-See: [Vulnerability Disclosure Example](https://github.com/ScopeBlind/examples/tree/main/security-vulnerability-disclosure) | [Design Issue](https://github.com/scopeblind/scopeblind-gateway/issues/2)
-
-## Identity Layer
-
-Acta's anonymous identity is powered by issuer-blind VOPRF verification via [@veritasacta/verify](https://github.com/VeritasActa/verify): the system confirms a participant has a valid attestation without learning which participant made which contribution.
+A signature or internally consistent chain does not establish claim truth, complete
+history or freedom from censorship. Recipients must evaluate sources, independently
+pinned keys and retained checkpoints. Operator-served checks are conveniences, not
+independent witnesses.
 
 ## Verifier Sigil
 
-Every release of `@veritasacta/verify` carries a cryptographic Sigil: a commitment to the exact source code in the published package. The verifier verifies itself:
+`npx @veritasacta/verify --self-check` compares installed bytes with the verifier's
+bundled integrity commitment. It **does not independently authenticate the publisher**
+or establish a canonical release. Replacing both code and commitment can produce an
+internally consistent fork. Authenticate a reference separately and inspect release
+provenance. No private-key possession is implied by a matching self-check.
+
+## Release and standards status
+
+<!-- release-manifest:start -->
+Verifier: **[0.10.24](https://github.com/VeritasActa/verify/releases/tag/v0.10.24)**. Status reviewed 2026-10-13.
+
+- [draft-farley-acta-signed-receipts-03](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/): active individual Internet-Draft.
+- [draft-farley-acta-knowledge-units-00](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/): expired individual Internet-Draft (expired 2026-10-08).
+
+Internet-Drafts are proposals, not adopted IETF standards or endorsements.
+<!-- release-manifest:end -->
+
+The source of version/status metadata is
+[`VeritasActa/verify/release-manifest.json`](https://github.com/VeritasActa/verify/blob/main/release-manifest.json).
+This repo retains the synchronized copy in `public/`, together with the browser
+bundle and fingerprint. Run the verifier repo's `scripts/sync-public-metadata.mjs`
+with sibling `Acta`, `.github` and `drafts` checkouts, then review and commit the changes.
+
+## Develop
 
 ```bash
-npx @veritasacta/verify --self-check
-# ✓ Canonical verifier: Bold Arrow
-#   Sigil: c52bc546 · Source matches commitment (25 files)
+npm ci
+npm test -- --run
+npm run dev
 ```
 
-Forks can rename themselves, but they cannot produce a matching Sigil without the project's private key. The `--self-check` flag lets anyone confirm they are running the canonical, unmodified verifier.
+The Cloudflare Worker serves the site and application API. `wrangler.toml` declares
+KV, Durable Objects and scheduled checkpoint publication. Do not change production
+bindings or migrations as part of a presentation release. `npm run deploy` publishes
+the Worker only after tests and visual checks pass.
 
-## Related Projects
+The browser verifier uses the same receipt engine as the CLI. It accepts an explicit
+external key and cannot fetch or upload receipt content: its route uses
+`connect-src 'none'` and no form submission. Loading the page still contacts the host;
+local computation does not make the hosting service an independent trust authority.
 
-| Project | Description |
-|---------|-------------|
-| [@veritasacta/verify](https://npmjs.com/package/@veritasacta/verify) | Offline receipt verification CLI with self-check Sigil (Apache-2.0) |
-| [@veritasacta/artifacts](https://npmjs.com/package/@veritasacta/artifacts) | Signed artifact envelope: canonical JSON + Ed25519 (Apache-2.0) |
-| [@veritasacta/protocol](https://npmjs.com/package/@veritasacta/protocol) | Evidence protocol specification (Apache-2.0) |
-| [acta.today](https://acta.today) | Verified multi-model knowledge base: living demonstration |
-| [protect-mcp](https://npmjs.com/package/protect-mcp) | MCP gateway with receipt signing (MIT) |
-| [protect-mcp-adk](https://pypi.org/project/protect-mcp-adk/) | Google ADK receipt signing plugin (MIT, Python) |
-| [ScopeBlind/examples](https://github.com/ScopeBlind/examples) | Integration examples including security vulnerability disclosure |
-| [ScopeBlind](https://scopeblind.com) | Commercial managed issuance and enforcement |
-| [ScopeBlind/scopeblind-gateway](https://github.com/ScopeBlind/scopeblind-gateway) | protect-mcp source (MIT) |
-| [VeritasActa/drafts](https://github.com/VeritasActa/drafts) | IETF Internet-Draft source files |
-| [IETF: Signed Receipts](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) | draft-farley-acta-signed-receipts-03 |
-| [IETF: Knowledge Units](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/) | draft-farley-acta-knowledge-units-00 |
+## Maintainers and contributions
 
+Maintained by Tom Farley / ScopeBlind. Open verification is not a claim of independent
+foundation governance. For receipt bugs, use [verify issues](https://github.com/VeritasActa/verify/issues);
+for application bugs, [open an issue here](https://github.com/VeritasActa/Acta/issues).
+Include a reproducible example without confidential records.
 
-## Real-world implementations
-
-Where the Acta receipt format runs today:
-
-- **ScopeBlind Legate** -- a mandate gate for AI agents on a trading desk where every decision (including denials) is an Acta receipt, verifiable offline by a risk committee or allocator. Two-minute demo films at [legate.scopeblind.com/record](https://legate.scopeblind.com/record); cross-firm artifacts (standing covenant exports, co-signed certificates) verify with the standalone [`legate-verify`](https://www.npmjs.com/package/legate-verify) CLI.
-- **protect-mcp** -- AI agent governance with signed decision receipts. See [scopeblind.com/docs/protect-mcp](https://www.scopeblind.com/docs/protect-mcp).
-- **Microsoft AI Agents for Beginners** -- Acta receipts referenced in [Lesson 18: Securing AI Agents](https://github.com/microsoft/ai-agents-for-beginners/blob/main/18-securing-ai-agents/README.md) of the official curriculum (74K+ ★).
-
-## Contributing
-
-Issues and pull requests are welcome. See the [Charter](./CHARTER.md) for design principles and [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines.
-
-## License
-
-[Apache-2.0](./LICENSE)
+See [LICENSE](LICENSE) and existing contribution documents
+for applicable terms. This refresh changes no license or patent grant.
