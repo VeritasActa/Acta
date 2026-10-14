@@ -21,7 +21,15 @@ import { checkDuplicate, recordSubmission } from './duplicate-detection.js';
 import { handleScheduled, getAnchorPublicKey } from './chain-publication.js';
 import { PROTOCOL_IDENTITY, INSTANCE_POLICY, DOCUMENT_URLS } from './protocol-identity.js';
 import { renderHTML } from './ui.js';
-import VERIFY_HTML from '../public/verify.html';
+import { protocolPage, protocolLayout } from './protocol-ui.js';
+import RELEASE from '../public/release-manifest.json';
+import BROWSER_BUILD from '../public/browser-build.json';
+import BROWSER_ENGINE from '../public/receipt-verifier.js.txt';
+import VERIFIER_UI from '../public/verifier-ui.js.txt';
+import RECEIPT_SAMPLE from '../public/receipt-sample.js.txt';
+import CURRENT_RECEIPT from '../public/current-receipt.json';
+import SAMPLE_KEY from '../public/current-receipt-key.txt';
+import VERIFIER_LICENSES from '../public/verifier-licenses.txt';
 
 // Re-export Durable Objects for wrangler
 export { LedgerChain } from './durable-objects/ledger-chain.js';
@@ -107,6 +115,30 @@ const worker = {
         }
 
         try {
+            if (request.method === 'GET') {
+                const assets = {
+                    '/assets/receipt-verifier.js': [BROWSER_ENGINE, 'text/javascript; charset=utf-8'],
+                    '/assets/verifier-ui.js': [VERIFIER_UI, 'text/javascript; charset=utf-8'],
+                    '/assets/receipt-sample.js': [RECEIPT_SAMPLE, 'text/javascript; charset=utf-8'],
+                    '/assets/browser-build.json': [JSON.stringify(BROWSER_BUILD), 'application/json'],
+                    '/assets/verifier-licenses.txt': [VERIFIER_LICENSES, 'text/plain; charset=utf-8'],
+                    '/.well-known/veritasacta-release.json': [JSON.stringify(RELEASE, null, 2), 'application/json'],
+                    '/samples/current-receipt.json': [JSON.stringify(CURRENT_RECEIPT, null, 2), 'application/json'],
+                    '/samples/current-receipt-key.txt': [SAMPLE_KEY, 'text/plain; charset=utf-8'],
+                };
+                if (Object.hasOwn(assets, url.pathname)) {
+                    const [body, type] = assets[url.pathname];
+                    return new Response(body, { headers: { 'Content-Type': type, 'Cache-Control': 'no-cache', 'X-Content-Type-Options': 'nosniff' } });
+                }
+                const page = protocolPage(url.pathname);
+                if (page) return corsHtml(page, { headers: {
+                    'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'",
+                    'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff',
+                    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+                    'Cache-Control': 'no-cache',
+                } });
+            }
+
             // ── Static assets ──
             if (request.method === 'GET' && url.pathname === '/logo.svg') {
                 return new Response(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><rect width="512" height="512" fill="#f4f4f0"/><text x="256" y="320" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="280" font-weight="700" fill="#1a1a2e" letter-spacing="-8">VA</text></svg>`, {
@@ -116,77 +148,33 @@ const worker = {
 
             // ── llms.txt (machine-readable index for AI coding assistants) ──
             if (request.method === 'GET' && url.pathname === '/llms.txt') {
-                return new Response(`# Veritas Acta: Open Protocol for Signed Decision Receipts
+                return new Response(`# Veritas Acta
 
-> Machine-readable index for AI coding assistants, crawlers, and integration discovery. Human-readable protocol overview at https://veritasacta.com
+Signed records that recipients can verify themselves.
 
-## Current release
+Verifier: @veritasacta/verify@${RELEASE.verifier.version}
+${RELEASE.self_check}
+${RELEASE.verification_boundary}
 
-- **Verifier:** @veritasacta/verify@0.5.0 (Sigil: Bold Arrow, fingerprint c52bc546)
-- **npm:** https://www.npmjs.com/package/@veritasacta/verify
-- **License:** Apache-2.0
-- **Self-check:** \`npx @veritasacta/verify --self-check\` proves the installed binary matches the canonical release (commits to 25 source files).
+## Start here
+- Verify an individual receipt locally: https://veritasacta.com/verify
+- Integrate: https://veritasacta.com/docs
+- Receipt specification: https://veritasacta.com/specification
+- Conformance evidence: https://veritasacta.com/conformance
+- Maintainers and governance: https://veritasacta.com/about
+- Release manifest: https://veritasacta.com/.well-known/veritasacta-release.json
 
-## What the verifier handles
+## Standards status (reviewed ${RELEASE.reviewed_at})
+${RELEASE.standards.map(s => '- ' + s.name + '-' + s.revision + ': ' + s.status + (s.expired_at ? ', expired ' + s.expired_at : '') + '. ' + s.url).join('\n')}
+${RELEASE.standards_notice}
 
-Unified binary, auto-detects input format, single offline CLI:
+## Separate applications
+Acta public record: https://veritasacta.com/record
+Application API and state machine: https://veritasacta.com/record/docs
+Application charter: https://veritasacta.com/charter
+ScopeBlind / Legate: commercial applications, https://scopeblind.com
 
-- **Ed25519 signed decision receipts**: tamper-evident tool-call auditing (draft-farley-acta-signed-receipts, IETF Internet-Draft)
-- **VOPRF anonymous credentials**: full Schnorr dual-DLEQ verification (issuer-blind, unlinkable, RFC 9497)
-- **Knowledge Unit bundles**: multi-model deliberation receipts (draft-farley-acta-knowledge-units)
-- **Selective-disclosure receipts**: salted SHA-256 commitments per AIP-0002
-
-## IETF Internet-Drafts
-
-- draft-farley-acta-signed-receipts-03: https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/
-- draft-farley-acta-knowledge-units-00: https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/
-
-## Implementation status (evolving public conformance workstream)
-
-- protect-mcp (ScopeBlind, reference): https://www.npmjs.com/package/protect-mcp
-- @veritasacta/verify (verifier): https://www.npmjs.com/package/@veritasacta/verify
-- @scopeblind/passport (identity SDK): https://www.npmjs.com/package/@scopeblind/passport
-- protect-mcp-adk (Google ADK): https://pypi.org/project/protect-mcp-adk/
-- sb-runtime (Rust runtime backend): https://github.com/ScopeBlind/sb-runtime
-- bindu-scopeblind (Bindu extension): https://github.com/ScopeBlind/bindu-scopeblind
-- hermes-decision-receipts (aeoess / APS bridge): https://github.com/ScopeBlind/hermes-decision-receipts
-- Signet (Prismer-AI, self-certified): https://github.com/Prismer-AI/signet
-- Microsoft Agent Governance Toolkit public PR record / AGT-style integration profile: https://github.com/microsoft/agent-governance-toolkit
-- AWS Cedar for Agents: https://github.com/cedar-policy/cedar-for-agents
-- Sigstore Rekor (transparency log anchor): https://rekor.sigstore.dev
-- plus 3 framework adapters (scopeblind-langchain, scopeblind-llamaindex, @scopeblind/vercel-ai)
-
-## Public Microsoft AGT contribution record
-
-Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream status should be checked in the Microsoft repository; these links are contribution records, not partnership or corporate endorsement claims:
-- Tutorial 33: https://github.com/microsoft/agent-governance-toolkit/pull/1197
-- sb-runtime integration doc: https://github.com/microsoft/agent-governance-toolkit/pull/1202
-- sb-runtime-skill provider shim: https://github.com/microsoft/agent-governance-toolkit/pull/1203
-- Worked example (open): https://github.com/microsoft/agent-governance-toolkit/pull/1205
-
-## Integration entry points
-
-- \`npx @veritasacta/verify init\`: zero-config onboarding, auto-detects 13 agent frameworks
-- \`npx @veritasacta/verify proxy --target "<cmd>"\`: transparent MCP proxy, signs every tool call, no code changes
-- \`npx @veritasacta/verify daemon\`: Unix socket signing API, language-agnostic
-
-## Normative documentation
-
-- Protocol identity: https://veritasacta.com/.well-known/acta-instance.json
-- Charter: https://github.com/VeritasActa/Acta/blob/main/CHARTER.md
-- AGT integration profile / implementation-status profile: https://github.com/VeritasActa/agt-integration-profile
-- Conformance test vectors: https://github.com/ScopeBlind/agent-governance-testvectors
-
-## Commercial (managed tier)
-
-- Managed receipts, compliance exports, retention: https://scopeblind.com
-- Two-tier positioning: verifier is open Apache-2.0; managed issuance and retention is proprietary ScopeBlind.
-
-## Discovery URLs
-
-- Sitemap: https://veritasacta.com/sitemap.xml
-- Federation manifest: https://veritasacta.com/.well-known/acta-instance.json
-- This file: https://veritasacta.com/llms.txt
+Verification does not require issuance, onboarding, a proxy or a daemon.
 `, {
                     headers: {
                         'Content-Type': 'text/plain; charset=utf-8',
@@ -209,6 +197,11 @@ Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream sta
   <url><loc>https://veritasacta.com/privacy</loc><lastmod>${today}</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
   <url><loc>https://veritasacta.com/blog</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veritasacta.com/.well-known/acta-instance.json</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://veritasacta.com/specification</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://veritasacta.com/conformance</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://veritasacta.com/record</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://veritasacta.com/record/docs</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://veritasacta.com/charter</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://veritasacta.com/llms.txt</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
 </urlset>`;
                 return new Response(sitemap, {
@@ -289,8 +282,8 @@ Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream sta
                 });
             }
 
-            // ── Web UI ──
-            if (request.method === 'GET' && url.pathname === '/') {
+            // ── Web UI: reference application ──
+            if (request.method === 'GET' && url.pathname === '/record') {
                 const [topics, anchor, latestWitness] = await Promise.all([
                     listTopics(env),
                     env.ACTA_KV?.get('anchor:latest', { type: 'json' }).catch(() => null),
@@ -401,18 +394,15 @@ Maintainer-reviewed public PR records authored by @tomjwxf. Current upstream sta
                 return corsHtml(await renderTopicPage(env, topic));
             }
 
-            if (request.method === 'GET' && url.pathname === '/about') {
+            if (request.method === 'GET' && url.pathname === '/charter') {
                 const charterData = await fetchCharter(env);
                 return corsHtml(renderHTML('about', charterData));
             }
 
-            if (request.method === 'GET' && url.pathname === '/docs') {
+            if (request.method === 'GET' && url.pathname === '/record/docs') {
                 return corsHtml(renderHTML('docs'));
             }
 
-            if (request.method === 'GET' && url.pathname === '/verify') {
-                return corsHtml(VERIFY_HTML);
-            }
 
             if (request.method === 'GET' && url.pathname === '/ontology') {
                 return corsHtml(renderHTML('ontology'));
@@ -664,33 +654,10 @@ export default worker;
 // ── Privacy Page ────────────────────────────────────────────────
 
 function renderPrivacyPage() {
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Privacy Policy: Veritas Acta</title>
-<style>
-:root{--bg:#f4f4f0;--text:#1a1a2e;--text-muted:#6b6b80;--brand-font:'Georgia',serif;--body-font:system-ui,-apple-system,sans-serif;--max:640px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--body-font);background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
-.header{padding:16px 20px;border-bottom:1px solid #d4d4d0}
-.header a{font-family:var(--brand-font);font-size:22px;font-weight:700;color:var(--text);text-decoration:none}
-.container{max-width:var(--max);margin:0 auto;padding:40px 20px}
-h1{font-family:var(--brand-font);font-size:28px;font-weight:700;margin-bottom:24px}
-h2{font-family:var(--brand-font);font-size:16px;font-weight:600;margin:28px 0 8px;color:#3d3d56}
-p{margin-bottom:12px;font-size:14px;color:#3d3d56}
-a{color:#1a7a7a;text-decoration:none}
-code{font-size:13px;background:#e8e8e4;padding:1px 4px;border-radius:2px}
-.footer{margin-top:40px;padding-top:20px;border-top:1px solid #d4d4d0;font-size:12px;color:var(--text-muted)}
-</style>
-</head>
-<body>
-<div class="header"><a href="/">Veritas Acta</a></div>
-<div class="container">
-<h1>Privacy Policy</h1>
+    return protocolLayout('Privacy', `<main id="main" class="va-wrap va-main"><h1>Privacy Policy</h1>
 
 <h2>What Veritas Acta collects</h2>
-<p>Veritas Acta is a public record protocol. Contributions to the public ledger are visible by design. The protocol collects:</p>
+<p>The Acta reference application is a public record. Contributions to the public ledger are visible by design. The protocol collects:</p>
 <p><strong>Public data:</strong> Topic pseudonyms, contribution content, timestamps, evidence links, and cryptographic signatures. These are intentionally public and permanent: that is the purpose of a public record.</p>
 <p><strong>Private data:</strong> Device identifiers (hashed) are used solely for budget enforcement (preventing spam). Device IDs are never published, never shared, and never correlated across topics. They exist only in the budget enforcement layer and are not stored in the public ledger.</p>
 
@@ -698,13 +665,13 @@ code{font-size:13px;background:#e8e8e4;padding:1px 4px;border-radius:2px}
 <p>No accounts. No email addresses. No passwords. No personal names (unless voluntarily included in contribution content). No tracking cookies. No analytics scripts. No advertising identifiers.</p>
 
 <h2>Verification tools</h2>
-<p>The offline verifier (<code>@veritasacta/verify</code>) runs entirely on your machine. It makes zero network requests. It does not phone home, report usage, or collect any data. It is pure cryptographic math.</p>
+<p>The browser verifier checks pasted or selected receipts locally. Receipt contents and supplied keys are not uploaded; the page enforces <code>connect-src 'none'</code> and has no form submission. Loading the page and scripts contacts this host. The CLI checks local files with locally supplied keys offline after installation. Installation, URL inputs and explicitly requested JWKS lookups use the network; signing/proxy services have their own data flows.</p>
 
 <h2>acta.today Knowledge Units</h2>
 <p>The acta.today wiki produces Knowledge Units through multi-model AI deliberation. The models are called via OpenRouter. Questions submitted for deliberation may be stored in a production queue. No personal data is associated with queued questions. Published Knowledge Units are public.</p>
 
 <h2>Third-party services</h2>
-<p>Veritas Acta is hosted on Cloudflare Workers. Cloudflare's privacy policy applies to infrastructure-level data (IP addresses, request metadata). Veritas Acta does not add any additional tracking beyond what Cloudflare provides by default.</p>
+<p>Veritas Acta is hosted on Cloudflare Workers. Cloudflare's privacy policy applies to infrastructure-level data (IP addresses, request metadata). The application also keeps coarse daily request counts by route category for up to 90 days. Those counters do not contain receipt contents, keys, IP addresses or device identifiers. No analytics script runs in the verifier.</p>
 
 <h2>Data retention</h2>
 <p>Public ledger entries are permanent by design: that is the core promise of the protocol. Device budget data is ephemeral and may be cleared at any time. There is no mechanism to delete public ledger entries because immutability is a feature, not a limitation.</p>
@@ -712,10 +679,7 @@ code{font-size:13px;background:#e8e8e4;padding:1px 4px;border-radius:2px}
 <h2>Contact</h2>
 <p>For privacy questions: <a href="mailto:hello@acta.today">hello@acta.today</a></p>
 
-<div class="footer">Last updated April 2026 · <a href="/">veritasacta.com</a></div>
-</div>
-</body>
-</html>`;
+<p class="va-note">Verification and counter disclosures updated 13 October 2026. Public-record policy retained.</p></main>`);
 }
 
 // ── Charter Fetching ─────────────────────────────────────────────
