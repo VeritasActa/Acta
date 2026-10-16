@@ -132,7 +132,7 @@ const worker = {
                 }
                 const page = protocolPage(url.pathname);
                 if (page) return corsHtml(page, { headers: {
-                    'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'",
+                    'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; font-src data:; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'",
                     'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff',
                     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
                     'Cache-Control': 'no-cache',
@@ -158,10 +158,10 @@ ${RELEASE.verification_boundary}
 
 ## Start here
 - Verify an individual receipt locally: https://veritasacta.com/verify
-- Integrate: https://veritasacta.com/docs
+- Integrate signed receipts: https://veritasacta.com/integrate
 - Receipt specification: https://veritasacta.com/specification
 - Conformance evidence: https://veritasacta.com/conformance
-- Maintainers and governance: https://veritasacta.com/about
+- Maintainers and governance: https://veritasacta.com/maintainers
 - Release manifest: https://veritasacta.com/.well-known/veritasacta-release.json
 
 ## Standards status (reviewed ${RELEASE.reviewed_at})
@@ -170,8 +170,8 @@ ${RELEASE.standards_notice}
 
 ## Separate applications
 Acta public record: https://veritasacta.com/record
-Application API and state machine: https://veritasacta.com/record/docs
-Application charter: https://veritasacta.com/charter
+Application API and state machine: https://veritasacta.com/docs
+Application charter: https://veritasacta.com/about
 ScopeBlind / Legate: commercial applications, https://scopeblind.com
 
 Verification does not require issuance, onboarding, a proxy or a daemon.
@@ -198,6 +198,8 @@ Verification does not require issuance, onboarding, a proxy or a daemon.
   <url><loc>https://veritasacta.com/blog</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veritasacta.com/.well-known/acta-instance.json</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>
   <url><loc>https://veritasacta.com/specification</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://veritasacta.com/integrate</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://veritasacta.com/maintainers</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://veritasacta.com/conformance</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://veritasacta.com/record</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://veritasacta.com/record/docs</loc><changefreq>monthly</changefreq></url>
@@ -283,7 +285,7 @@ Verification does not require issuance, onboarding, a proxy or a daemon.
             }
 
             // ── Web UI: reference application ──
-            if (request.method === 'GET' && url.pathname === '/record') {
+            if (request.method === 'GET' && (url.pathname === '/' || url.pathname === '/record')) {
                 const [topics, anchor, latestWitness] = await Promise.all([
                     listTopics(env),
                     env.ACTA_KV?.get('anchor:latest', { type: 'json' }).catch(() => null),
@@ -394,12 +396,12 @@ Verification does not require issuance, onboarding, a proxy or a daemon.
                 return corsHtml(await renderTopicPage(env, topic));
             }
 
-            if (request.method === 'GET' && url.pathname === '/charter') {
+            if (request.method === 'GET' && (url.pathname === '/about' || url.pathname === '/charter')) {
                 const charterData = await fetchCharter(env);
                 return corsHtml(renderHTML('about', charterData));
             }
 
-            if (request.method === 'GET' && url.pathname === '/record/docs') {
+            if (request.method === 'GET' && (url.pathname === '/docs' || url.pathname === '/record/docs')) {
                 return corsHtml(renderHTML('docs'));
             }
 
