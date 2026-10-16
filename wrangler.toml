@@ -47,7 +47,7 @@ zone_name = "veritasacta.com"
 # Module rules for importing static assets as text
 [[rules]]
 type = "Text"
-globs = ["**/*.html", "**/*.txt"]
+globs = ["**/*.html", "**/*.txt", "**/identity/**/*.md"]
 fallthrough = false
 
 [vars]
