@@ -2917,7 +2917,7 @@ node tools/verify.js https://veritasacta.com/api/export/ai-models-2026</pre>
 node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest --key YOUR_INDEPENDENTLY_OBTAINED_PUBLIC_KEY
 
 <span style="color:var(--panel-text-dim);"># Verify against a known public key</span>
-node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest --key YOUR_INDEPENDENTLY_OBTAINED_PUBLIC_KEY \\
+node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest \\
   --key 712e93b514966d66ecbcaef6200689e10a847c315951e824189d4abe70496991</pre>
           </div>
         </div>
