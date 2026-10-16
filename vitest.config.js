@@ -7,7 +7,7 @@ const htmlAsText = {
   name: 'html-as-text',
   enforce: 'pre',
   load(id) {
-    if (id.endsWith('.html') || id.endsWith('.txt')) return { code: `export default ${JSON.stringify(readFileSync(id, 'utf8'))};`, map: null };
+    if (id.endsWith('.html') || id.endsWith('.txt') || (id.includes('/docs/identity/') && id.endsWith('.md'))) return { code: `export default ${JSON.stringify(readFileSync(id, 'utf8'))};`, map: null };
   },
 };
 

@@ -28,10 +28,29 @@ export const INSTANCE_POLICY = {
 };
 
 // ── Document URLs ────────────────────────────────────────────────────
-// Where to find the source documents for independent hash verification.
+// Exact document bytes used by the existing identity and signed anchors.
+// Never point these URLs at a mutable branch: even an editorial punctuation
+// change produces different bytes. Local archival copies are checked in CI.
 
-export const DOCUMENT_URLS = {
-    charter: 'https://github.com/VeritasActa/Acta/blob/main/CHARTER.md',
-    protocol_spec: 'https://github.com/VeritasActa/Acta/blob/main/docs/protocol-spec.md',
-    policy: 'https://github.com/VeritasActa/Acta/blob/main/docs/policy.md',
+export const DOCUMENT_REVISION = '73b1815c81d527b7ef4d5d1eb775ec1cc80b4e23';
+
+const documentPaths = {
+    charter: 'CHARTER.md',
+    protocol_spec: 'docs/protocol-spec.md',
+    policy: 'docs/policy.md',
+};
+
+// The manifest links to raw bytes, not GitHub's rendered HTML wrapper.
+export const DOCUMENT_URLS = Object.fromEntries(Object.entries(documentPaths).map(
+    ([name, path]) => [name, `https://raw.githubusercontent.com/VeritasActa/Acta/${DOCUMENT_REVISION}/${path}`],
+));
+
+export const DOCUMENT_SOURCE_URLS = Object.fromEntries(Object.entries(documentPaths).map(
+    ([name, path]) => [name, `https://github.com/VeritasActa/Acta/blob/${DOCUMENT_REVISION}/${path}`],
+));
+
+export const IDENTITY_DOCUMENTS = {
+    charter: { sha256: PROTOCOL_IDENTITY.charter_hash, archive: 'docs/identity/v1.0.0/CHARTER.md' },
+    protocol_spec: { sha256: PROTOCOL_IDENTITY.protocol_spec_hash, archive: 'docs/identity/v1.0.0/protocol-spec.md' },
+    policy: { sha256: INSTANCE_POLICY.policy_hash, archive: 'docs/identity/v1.0.0/policy.md' },
 };

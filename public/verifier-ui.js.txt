@@ -14,21 +14,29 @@ function mode(isSample) {
   sampleMode = isSample;
   $('sample-state').textContent = isSample ? 'Sample receipt' : 'Your receipt';
   $('sample-note').hidden = !isSample;
+  $('sample-story').hidden = !isSample;
   $('tamper').hidden = !isSample;
   $('clear').hidden = !isSample;
+  $('receipt-inputs').open = !isSample;
+  $('inputs-label').textContent = isSample ? 'Inspect the receipt and example key' : 'Receipt and public key';
+  $('load-sample').textContent = isSample ? 'Reset sample' : 'Try a sample';
+  $('load-sample').classList.toggle('secondary', isSample);
+  $('tamper').classList.toggle('secondary', !isSample);
 }
 function show(result) {
   $('result').hidden = false;
   $('result').dataset.status = result.status;
   $('result-title').textContent = result.status === 'valid' ? 'Signature verified' : result.status === 'invalid' ? 'Verification failed' : 'Not checked';
   const missing = ['embedded_key_rejected', 'missing_public_key', 'no_public_key'].includes(result.error);
-  $('result-summary').textContent = result.status === 'valid'
+  $('result-summary').textContent = sampleMode && result.status === 'valid'
+    ? 'The signature is valid under the demonstration key. Try changing the decision without signing it again.'
+    : result.status === 'valid'
     ? 'The receipt passed the supported checks under the public key you supplied. This does not establish who controls that key or whether the claim is true.'
     : result.status === 'invalid'
       ? 'The receipt did not pass the checks under this key. A wrong key, altered record or invalid structure can cause this; failure alone is not proof of tampering.'
       : missing ? 'Add a public key obtained through a separate trusted channel. A key included in the receipt is not accepted automatically.'
         : result.detail || result.error || 'This input cannot be checked by the browser verifier.';
-  $('result-warning').textContent = [result.warning, sampleMode ? 'Sample result only. The example key is not an independent trust pin.' : ''].filter(Boolean).join(' ');
+  $('result-warning').textContent = result.warning || '';
   $('result-detail').textContent = JSON.stringify(result, null, 2);
 }
 async function verify() {
@@ -57,6 +65,8 @@ $('tamper').addEventListener('click', () => {
   changed.payload.decision = changed.payload.decision === 'deny' ? 'allow' : 'deny';
   $('receipt').value = JSON.stringify(changed, null, 2);
   $('sample-state').textContent = 'Changed sample';
+  $('load-sample').classList.remove('secondary');
+  $('tamper').classList.add('secondary');
   verify();
 });
 $('clear').addEventListener('click', () => {
@@ -79,7 +89,10 @@ $('receipt').addEventListener('paste', () => {
   if (sampleMode) $('public-key').value = '';
   mode(false);
 });
-$('public-key').addEventListener('input', invalidate);
+$('public-key').addEventListener('input', () => {
+  invalidate();
+  if (sampleMode) mode(false);
+});
 async function openFile(file) {
   invalidate();
   if (sampleMode) $('public-key').value = '';

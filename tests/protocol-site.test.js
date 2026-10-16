@@ -3,11 +3,11 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import worker from '../src/index.js';
 import release from '../public/release-manifest.json';
+import { DOCUMENT_SOURCE_URLS } from '../src/protocol-identity.js';
 
-const charter = readFileSync('CHARTER.md', 'utf8');
-// Supply the unchanged local Charter through its normal cache path; route tests
-// must not depend on GitHub's network availability or a later remote revision.
-const env = { ACTA_KV: { async get(key) { return key === 'charter:md' ? charter : null; }, async put() {} } };
+const charter = readFileSync('docs/identity/v1.0.0/CHARTER.md', 'utf8');
+// Old mutable caches must not override the protocol's archived edition.
+const env = { ACTA_KV: { async get(key) { return key === 'charter:md' ? '# Stale cached document' : null; }, async put() {} } };
 const request = (path, method = 'GET') => worker.fetch(new Request(`https://veritasacta.com${path}`, { method }), env, { waitUntil() {} });
 describe('protocol website and shared verifier', () => {
   for (const path of ['/', '/about', '/docs', '/verify', '/integrate', '/specification', '/conformance', '/maintainers']) {
@@ -17,8 +17,9 @@ describe('protocol website and shared verifier', () => {
       const html = await response.text();
       const nav = html.match(/<nav\b[^>]*>([\s\S]*?)<\/nav>/)?.[1];
       expect(nav).toBeDefined();
-      for (const [label, href] of [['Feed', '/'], ['Charter', '/about'], ['Moderation', '/moderation-log'], ['Docs', '/docs'], ['Verify', '/verify'], ['Blog', '/blog']]) {
-        expect(nav).toContain(`href="${href}">${label}</a>`);
+      for (const [label, href] of [['Home', '/'], ['Charter', '/about'], ['Public record', '/#topics'], ['Docs', '/docs'], ['Verify', '/verify'], ['Blog', '/blog']]) {
+        expect(nav).toContain(`href="${href}"`);
+        expect(nav).toContain(`>${label}</a>`);
       }
       expect(html).toContain(release.verifier.version);
       expect(html).not.toMatch(/-02 pending|0\.9\.6|no trust required/i);
@@ -47,14 +48,16 @@ describe('protocol website and shared verifier', () => {
     ]) expect(main).toContain(`>${heading}</div>`);
   });
   it('preserves the Charter document, published identity and original /about destination', async () => {
-    expect(createHash('sha256').update(charter).digest('hex')).toBe('9de4f9978652e20ffd65b409e985919e62fdadca44d0b257a78cce448f7511e6');
+    expect(createHash('sha256').update(charter).digest('hex')).toBe('3a0f734d87d5d156e550df1361988c398190e72eea40144af8c28379ab5727d9');
     const html = await (await request('/about')).text();
     const headings = [...charter.matchAll(/^\*\*(\d+\. .+)\*\*$/gm)].map(match => match[1]);
     expect(headings).toHaveLength(10);
     for (const heading of headings) expect(html).toContain(`<strong>${heading}</strong>`);
+    expect(html).not.toContain('Stale cached document');
+    expect(html).toContain(DOCUMENT_SOURCE_URLS.charter);
+    expect((html.match(/<h1\b/g) || [])).toHaveLength(1);
     const manifest = await (await request('/.well-known/acta-instance.json')).json();
-    // The historical published pin is preserved separately from document bytes;
-    // this presentation restoration does not migrate the protocol identity.
+    // The rendered edition and immutable source now match the historical pin.
     expect(manifest.charter_hash).toBe('3a0f734d87d5d156e550df1361988c398190e72eea40144af8c28379ab5727d9');
   });
   for (const [alias, canonical] of [['/charter', '/about'], ['/record/docs', '/docs'], ['/record', '/']]) {
@@ -100,11 +103,22 @@ describe('protocol website and shared verifier', () => {
     const csp = response.headers.get('content-security-policy');
     for (const directive of ["script-src 'self'", "connect-src 'none'", "form-action 'none'", "base-uri 'none'", "frame-ancestors 'none'"]) expect(csp).toContain(directive);
     const html = await response.text();
-    expect(html).not.toContain('Sample result'); // sample result is rendered only after checking
+    expect(html).toContain('id="result" class="va-result" hidden');
+    expect(html.indexOf('id="result"')).toBeLessThan(html.indexOf('id="receipt-inputs"')); // Outcome precedes raw JSON in sample mode.
     expect(html).toContain('<script type="module" src="/assets/verifier-ui.js"></script>');
     expect(html).not.toMatch(/<script(?:\s[^>]*)?>\s*(?:const|let|var|function|document\.)/);
     expect(html).not.toContain('fonts.googleapis.com');
     expect(html).not.toContain('api.scopeblind.com/api/npm-stats');
+  });
+  it('offers the sample and Charter first, and keeps the public record addressable', async () => {
+    const html = await (await request('/')).text();
+    expect(html).toContain('href="/verify?sample=current" class="home-action"');
+    expect(html).toContain('href="/about" class="home-action secondary"');
+    expect(html).toContain('id="topics"');
+    expect(html).toContain('href="/" aria-current="page"');
+    expect(html).toContain('href="#main">Skip to content');
+    expect(html).toContain('<main id="main"');
+    expect(html).not.toContain('Maintained by <a');
   });
   it('knowledge-unit expiry and self-check limits are visible', async () => {
     expect(await (await request('/specification')).text()).toContain('expired 2026-10-08');
