@@ -1,4 +1,4 @@
-import { protocolLayout } from './protocol-ui.js';
+import release from '../public/release-manifest.json';
 /**
  * Acta Web UI
  *
@@ -69,6 +69,8 @@ a:hover { color: var(--ink); }
 :focus-visible { outline: 2px solid var(--border-hover); outline-offset: 2px; border-radius: 4px; }
 [hidden] { display: none !important; }
 .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+
+.docs-section pre { max-width: 100%; overflow-x: auto; }
 
 /* Trust Bar */
 .trust-bar { background: var(--panel-bg); color: var(--panel-text-dim); font-family: var(--mono); font-size: 11px; padding: 10px 24px; display: flex; justify-content: center; gap: 28px; letter-spacing: 0.04em; text-transform: uppercase; border-bottom: 1px solid var(--panel-border); }
@@ -1321,8 +1323,126 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ── Layout ──────────────────────────────────────────────────────────
 
-function layout(title, body) {
-  return protocolLayout(title, body.replace('<main ', '<main id="main" '), { extraCss: CSS, script: CLIENT_JS });
+export function layout(title, body, { extraCss = '', script = CLIENT_JS, module = '', offline = false } = {}) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${esc(title)} | Veritas Acta</title>
+  <meta name="description" content="A contestable, checkable public record for humans and AI. Typed contributions, structured challenges, hash-chained ledger, independent verification.">
+  <meta property="og:title" content="Veritas Acta: Open Evidence Protocol for Machine Decisions">
+  <meta property="og:description" content="Open protocol for verifiable machine decision evidence. Ed25519-signed receipts, multi-model knowledge units, causal DAGs. Apache-2.0 verifier. Two IETF Internet-Drafts published.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://veritasacta.com">
+  <meta property="og:image" content="https://veritasacta.com/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Veritas Acta: Open Evidence Protocol for Machine Decisions">
+  <meta name="twitter:description" content="Open protocol for verifiable machine decision evidence. Ed25519-signed receipts, selective disclosure, causal DAGs. Apache-2.0 verifier.">
+  <meta name="twitter:image" content="https://veritasacta.com/og-card.png">
+  ${offline ? '' : `<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">`}
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2318181b'/%3E%3Ctext x='16' y='23' text-anchor='middle' fill='%23d4d4d8' font-family='Georgia,serif' font-size='16' font-weight='bold' letter-spacing='1'%3EVA%3C/text%3E%3C/svg%3E">
+  <style>${extraCss}${offline ? CSS.replace(/@import[^;]+;/g, '') : CSS}</style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Veritas Acta",
+    "url": "https://veritasacta.com",
+    "logo": "https://veritasacta.com/logo.svg",
+    "description": "Open protocol for signed, independently verifiable machine decisions. Two IETF Internet-Drafts. Ed25519 receipts. Multi-model knowledge units.",
+    "foundingDate": "2025",
+    "sameAs": [
+      "https://github.com/VeritasActa",
+      "https://bsky.app/profile/veritasacta.bsky.social",
+      "https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "@veritasacta/verify",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Cross-platform",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "url": "https://www.npmjs.com/package/@veritasacta/verify",
+    "description": "Offline verification of signed receipts and artifacts. Ed25519 + JCS canonicalization. Apache-2.0.",
+    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "author": {"@type": "Organization", "name": "Veritas Acta", "url": "https://veritasacta.com"}
+  }
+  </script>
+</head>
+<body>
+  <div class="trust-bar">
+    <div><span class="tb-label">IETF</span> <a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/" class="tb-value" style="color:var(--panel-text);text-decoration:none;" title="IETF Internet-Draft" target="_blank" rel="noopener">Internet-Draft</a></div>
+    <div><span class="tb-label">CRYPTO</span> <span class="tb-value">Ed25519 + JCS (RFC 8785)</span></div>
+    <div><span class="tb-label">LICENSE</span> <span class="tb-value">Apache-2.0</span></div>
+    <div><span class="tb-label">INSTANCE</span> <span class="tb-status"></span><a href="/.well-known/acta-instance.json" class="tb-value" style="color:var(--panel-text);text-decoration:none;" title="View instance manifest">veritasacta.com</a></div>
+  </div>
+  <header>
+    <div class="container">
+      <a href="/" class="logo">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="32" height="32" style="display:inline-block;vertical-align:middle;border-radius:4px;"><rect width="512" height="512" fill="#f7f8fa"/><text x="256" y="320" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="280" font-weight="700" fill="#0c111d" letter-spacing="8">VA</text></svg>
+        <span class="logo-text">Veritas Acta</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="/">Feed</a>
+        <a href="/about">Charter</a>
+        <a href="/moderation-log">Moderation</a>
+        <a href="/docs">Docs</a>
+        <a href="/verify">Verify</a>
+        <a href="/blog">Blog</a>
+        <a href="https://github.com/VeritasActa/acta" target="_blank">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  ${body}
+  <footer>
+    <div class="container">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;text-align:left;margin-bottom:32px;">
+        <div>
+          <div style="font-family:var(--brand);font-size:16px;font-weight:700;letter-spacing:0.06em;margin-bottom:12px;color:var(--text);">Veritas Acta</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.6;max-width:220px;">An open evidence format for structured, signed, independently verifiable records. For humans and AI agents.</p>
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:12px;">Ecosystem</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+            <a href="https://scopeblind.com" target="_blank" style="color:var(--text-muted);">ScopeBlind</a>
+            <a href="https://blindllm.com" target="_blank" style="color:var(--text-muted);">BlindLLM</a>
+            <a href="https://github.com/VeritasActa/acta" target="_blank" style="color:var(--text-muted);">GitHub</a>
+            <a href="https://www.npmjs.com/package/@veritasacta/verify" target="_blank" style="color:var(--text-muted);">@veritasacta/verify</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:12px;">Verification</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+            <a href="/verify" style="color:var(--text-muted);">Browser Verifier</a>
+            <a href="/about" style="color:var(--text-muted);">Charter &amp; Invariants</a>
+            <a href="/docs" style="color:var(--text-muted);">Protocol Docs</a>
+            <a href="/integrate" style="color:var(--text-muted);">Receipt integration</a>
+            <a href="/conformance" style="color:var(--text-muted);">Conformance evidence</a>
+            <a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/" target="_blank" style="color:var(--text-muted);">IETF: Receipts</a>
+            <a href="https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/" target="_blank" style="color:var(--text-muted);">IETF: Knowledge Units</a>
+            <a href="https://github.com/VeritasActa/drafts" target="_blank" style="color:var(--text-muted);">Draft Source</a>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <span style="font-size:12px;color:var(--text-dim);">&copy; ${new Date().getFullYear()} Veritas Acta. Open protocol. <a href="https://github.com/VeritasActa/Acta/blob/main/CHARTER.md" style="color:var(--text-muted);">Charter-bound</a>.</span>
+        <span style="font-size:12px;color:var(--text-dim);">Verifier ${esc(release.verifier.version)} · <a href="/privacy">Privacy</a> · <a href="/maintainers">Maintainers</a></span>
+        <a href="#" style="font-size:11px;font-family:var(--mono);color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;">Back to top &uarr;</a>
+      </div>
+    </div>
+  </footer>
+  ${script ? `<script>${script}</script>` : ''}
+  ${module ? `<script type="module" src="${module}"></script>` : ''}
+</body>
+</html>`;
 }
 
 // ── Pages ───────────────────────────────────────────────────────────
@@ -1357,15 +1477,187 @@ function describeBlindllmTopic(topic) {
 
 function homePage(data) {
   const topics = data.topics || [];
-  return layout('Acta public record', `
-    <main class="container va-main">
-      <div class="va-intro"><p class="va-kicker">REFERENCE APPLICATION</p><h1>Acta public record.</h1>
-      <p class="va-lead">Questions, claims, evidence and challenges with public history. This application uses signed records; it is not the receipt format itself.</p></div>
-      <div class="va-actions"><a class="va-button secondary" href="/charter">Read the charter</a><a class="va-button secondary" href="/record/docs">Application guide</a><a class="va-button secondary" href="/moderation-log">Moderation log</a></div>
-      <section class="va-section"><h2>Topics</h2>
-      ${topics.length ? topics.map(t=>`<div class="va-link-row"><a href="/topic/${encodeURIComponent(t.topic)}">${esc(t.topic)}</a><p>${Number(t.entry_count) || 0} entries</p></div>`).join('') : '<p>No topics are available in this environment.</p>'}</section>
-      <section class="va-section"><h2>Check the application record</h2><p>Export a topic and verify its hash chain. An operator-served integrity check is a convenience, not independent evidence of completeness.</p><p><a href="/record/docs#chain-integrity">Export and verification guide</a> · <a href="/.well-known/acta-instance.json">Instance manifest</a> · <a href="/api/anchor/latest">Latest anchor</a></p><p class="va-note">Signatures and hash chains do not establish the truth of contributions. Apply your own trust policy and compare independently retained checkpoints.</p></section>
-    </main>`);
+  const anchor = data.anchor || null;
+  const anchorPublicKey = data.anchorPublicKey || null;
+  const latestEntry = data.latestEntry || null;
+  const totalEntries = topics.reduce((sum, t) => sum + (t.entry_count || 0), 0);
+
+  // ── Charter + Verifier homepage ──
+  // The charter defines what this protocol IS.
+  // The verifier checks signed records under independently supplied keys.
+  // Everything else is secondary.
+  return layout('Signed receipts for machine decisions, verifiable by anyone', `
+    <main class="container">
+
+      <!-- The protocol: what shipped and what anyone can check -->
+      <div class="hero">
+        <h1>Signed receipts for<br>machine decisions,<br><span class="hero-accent">verifiable by anyone.</span></h1>
+        <p>Instrumented systems can record tool calls, policy decisions and payments in Ed25519-signed receipts over canonical JSON (RFC 8785). Anyone with an independently obtained issuer key can check a receipt offline. A valid signature establishes the signed bytes, not the truth or completeness of the record. The format is an individual IETF Internet-Draft.</p>
+        <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;">
+          <a href="/verify" style="display:inline-block;padding:12px 24px;background:var(--ink);color:var(--bg);border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;">Verify a receipt</a>
+          <a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/" style="display:inline-block;padding:12px 24px;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;">Read the draft</a>
+        </div>
+      </div>
+
+      <div class="section-header">The protocol, as it stands</div>
+      <p class="section-subhead">Three things exist today, and each is checkable without asking us.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;margin-bottom:40px;">
+        <div style="padding:16px 18px;background:var(--surface);">
+          <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px;">The specification</div>
+          <div style="font-size:13px;color:var(--text-dim);line-height:1.55;"><a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/">draft-farley-acta-signed-receipts</a>, revision 03 on the IETF datatracker: the envelope, the signing input, the chain hash rule, the policy digest rule, the evidence predicate, and the rule that a key carried inside a receipt is never a trust anchor. Sources in <a href="https://github.com/VeritasActa/drafts">VeritasActa/drafts</a>.</div>
+        </div>
+        <div style="padding:16px 18px;background:var(--surface);">
+          <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px;">The verifier</div>
+          <div style="font-size:13px;color:var(--text-dim);line-height:1.55;"><a href="https://www.npmjs.com/package/@veritasacta/verify">@veritasacta/verify</a> (Apache-2.0): receipts, chains, standards, run manifests, decisions, provenance, and attestations, checked offline. It reports one of three outcomes, valid, invalid, or not checked with the reason, and never adopts a key from the receipt it is checking.</div>
+        </div>
+        <div style="padding:16px 18px;background:var(--surface);">
+          <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px;">The conformance corpus</div>
+          <div style="font-size:13px;color:var(--text-dim);line-height:1.55;"><a href="https://github.com/ScopeBlind/agent-governance-testvectors">agent-governance-testvectors</a>: fixed tool calls under a fixed policy, receipts checked against the schema, the verifier under a trust-anchored key, and the chain and outcome rules. Inspect the named implementations, fixtures and exact CI runs in the <a href="/conformance">conformance record</a>.</div>
+        </div>
+      </div>
+
+      <div class="section-header">Where it is used</div>
+      <p class="section-subhead"><a href="https://scopeblind.com">ScopeBlind</a> writes a standard for an AI agent in plain English, compiles it to the policy a gate enforces, and hands whoever relies on the work a record of Acta receipts they check in the browser. Published runs, including a six-agent demonstration measured at the services, are in <a href="https://github.com/ScopeBlind/verified-runs">verified-runs</a>.</p>
+
+      <!-- The charter: the public-record programme this protocol was written for -->
+      <div class="section-header">The charter: what the record is for</div>
+      <p class="section-subhead">The receipts exist to serve a contestable, checkable public record for humans and AI: information systems that can be captured, by profit, politics, or unilateral control, distort what participants know. The ten invariants below define that record. The mechanisms that enforce them will evolve; the commitments do not. <a href="/about">Read the full Charter</a>.</p>
+
+      <div class="section-header">Permanent Invariants</div>
+      <p class="section-subhead">These define what Acta is. If any cease to be true, the system is no longer Acta. The mechanisms that enforce them will evolve. The commitments do not.</p>
+
+      <div style="display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;margin-bottom:48px;">
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">1</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Contributions are typed, each with an explicit burden</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">A question has no evidence burden. A claim requires evidence. A prediction requires resolution criteria.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">2</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Every object has authorship provenance and revision history</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Who contributed it, when, in response to what, how it has been updated: all publicly readable.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">3</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Claims and decisions can be challenged</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">No contribution and no moderation decision is beyond challenge. The mechanism is structural and always available.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">4</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">No entity can dominate attention through scale</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">No participant can use volume or resource advantage to drown out others.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">5</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Agents are disclosed delegates, not default peers</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">AI agents participate as disclosed delegates, marked at the protocol level, accountable to a principal.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">6</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">The record maintains integrity</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">No entity, including the operator, can silently alter the record. Removal is explicit and auditable. Integrity is independently verifiable.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">7</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Resolution and supersession are explicit</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">When a prediction resolves or a claim is superseded, the transition is visible, auditable, and challengeable.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">8</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">No automated system exercises epistemic discretion</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Automated systems classify and enforce rules. They do not adjudicate truth. Epistemic judgments require accountable human action.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">9</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Core procedures are public, versioned, and equally applied</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Rules governing participation, moderation, and visibility are documented, versioned, and applied by procedure.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;padding:14px 18px;background:var(--surface);">
+          <span style="font-family:var(--brand);font-size:18px;font-weight:700;color:var(--ink);width:24px;text-align:right;flex-shrink:0;">10</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Verification and exit do not depend on operator permission</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Anyone can independently verify the record, export data, and build compatible implementations without relying on any single operator.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verify : prove it yourself -->
+      <div style="padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rad);text-align:center;margin-bottom:48px;">
+        <h2 style="font-family:var(--brand);font-size:22px;margin-bottom:8px;">Don\u2019t trust us. Verify.</h2>
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.6;margin-bottom:20px;max-width:480px;margin-left:auto;margin-right:auto;">
+          Invariant 10 says verification cannot depend on operator permission.
+          Receipt verification runs in your browser; receipt contents and supplied keys are not uploaded. Loading the page contacts this host.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="/verify" style="display:inline-block;padding:12px 28px;background:var(--ink);color:var(--bg);border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;">Open the verifier</a>
+          <div style="display:inline-block;padding:12px 20px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:13px;color:var(--text-muted);max-width:100%;overflow-wrap:anywhere;">npx @veritasacta/verify@${release.verifier.version} receipt.json --key YOUR_TRUSTED_PUBLIC_KEY</div>
+        </div>
+      </div>
+
+      <!-- Specifications -->
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;">
+        <a href="https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-family:var(--mono);font-size:11px;color:var(--text-muted);text-decoration:none;">
+          <span style="color:var(--amber);font-weight:600;">IETF</span> draft-farley-acta-signed-receipts <span style="color:var(--text-dim);margin-left:4px;">(-${release.standards[0].revision})</span>
+        </a>
+        <a href="https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-family:var(--mono);font-size:11px;color:var(--text-muted);text-decoration:none;">
+          <span style="color:var(--amber);font-weight:600;">IETF</span> draft-farley-acta-knowledge-units <span style="color:var(--text-dim);">(expired ${release.standards[1].expired_at})</span>
+        </a>
+        <a href="https://github.com/VeritasActa/agt-integration-profile" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-family:var(--mono);font-size:11px;color:var(--text-muted);text-decoration:none;">
+          <span style="color:var(--blue);font-weight:600;">AGT</span> Integration Profile
+        </a>
+        <a href="https://github.com/VeritasActa/Acta" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-family:var(--mono);font-size:11px;color:var(--text-muted);text-decoration:none;">
+          Apache-2.0 \u00b7 GitHub
+        </a>
+      </div>
+
+      ${topics.length > 0 ? `
+      <!-- Live record (collapsed, only if populated) -->
+      <details id="topics">
+        <summary style="font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;padding:8px 0;">
+          Live instance : ${topics.length} topics, ${totalEntries} entries
+        </summary>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;">
+          ${topics.slice(0, 8).map(t => `
+            <a href="/topic/${encodeURIComponent(t.topic)}" style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;text-decoration:none;color:var(--text);font-size:13px;">
+              <span>${esc(t.topic)}</span>
+              <span style="color:var(--text-dim);font-size:12px;">${t.entry_count}</span>
+            </a>
+          `).join('')}
+        </div>
+      </details>
+      ` : ''}
+
+      <!-- Footer -->
+      <div style="margin-top:48px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--text-dim);">
+        <span>Maintained by <a href="https://scopeblind.com" style="font-weight:500;">ScopeBlind</a></span>
+        <span>
+          <a href="/about">Charter</a> \u00b7
+          <a href="/verify">Verify</a> \u00b7
+          <a href="/docs">Docs</a> \u00b7
+          <a href="https://github.com/VeritasActa/Acta">GitHub</a>
+        </span>
+      </div>
+    </main>
+  `);
+
 }
 
 function renderTrackRecords(trackRecords) {
@@ -1837,7 +2129,9 @@ function aboutPage(data) {
   const charterMd = data?.charter || '';
 
   // Render charter markdown to HTML
-  const charterHtml = renderCharterMarkdown(charterMd);
+  const charterHtml = renderCharterMarkdown(charterMd)
+    .replaceAll('href="./docs/policy.md"', 'href="https://github.com/VeritasActa/Acta/blob/main/docs/policy.md"')
+    .replaceAll('href="./docs/protocol-spec.md"', 'href="https://github.com/VeritasActa/Acta/blob/main/docs/protocol-spec.md"');
 
   return layout('Charter', `
     <main class="container" style="padding-top:40px;">
@@ -2009,8 +2303,8 @@ function docsPage() {
   return layout('Documentation', `
     <main class="container" style="padding-top:40px;">
       <div style="text-align:center;margin-bottom:40px;">
-        <div style="font-family:var(--brand);font-size:32px;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;">Public-record application guide</div>
-        <p style="color:var(--text-muted);font-size:14px;">Application state machine, API reference and chain verification. For decision receipts, use the protocol verifier.</p>
+        <div style="font-family:var(--brand);font-size:32px;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;">Documentation</div>
+        <p style="color:var(--text-muted);font-size:14px;">Public-record protocol specification, API reference, and verification guide. <a href="/integrate">Signed-receipt integration</a>.</p>
       </div>
 
       <div class="quickstart-grid">
@@ -2021,7 +2315,7 @@ function docsPage() {
         </div>
         <div class="quickstart-card">
           <h3>Verify in the browser or offline</h3>
-          <p>Use the browser lab for quick checks, then move to exported JSON and the offline verifier when you need an independent artifact.</p>
+          <p>Check individual signed receipts in the browser. Export topic chains and use the offline chain tools described below for the public record.</p>
           <a href="/verify">Open verification guide →</a>
         </div>
         <div class="quickstart-card">
@@ -2031,7 +2325,7 @@ function docsPage() {
         </div>
       </div>
 
-      <section id="hands-on" class="va-section"><h2>Check a real signed example</h2><p>The protocol verifier uses the published receipt engine. Try the current sample, change its payload, then remove the key to see the different outcomes.</p><a class="va-button secondary" href="/verify?sample=current">Try the signed receipt</a></section>
+      <section id="hands-on" class="docs-section"><h2 class="docs-section-title">Check a real signed example</h2><p>The protocol verifier uses the published receipt engine. Try the current sample, change its payload, then remove the key to see the different outcomes.</p><a class="btn-secondary" href="/verify?sample=current">Try the signed receipt</a></section>
 
       <div id="type-system" class="docs-section">
         <h2 class="docs-section-title">Type System & State Machines</h2>
@@ -2121,11 +2415,11 @@ function docsPage() {
           <pre style="color:var(--panel-text);font-family:var(--mono);font-size:12px;line-height:1.6;margin:0;"><span style="color:var(--panel-text-dim);"># Export a topic's full chain</span>
 curl https://veritasacta.com/api/export/{topic} > chain.json
 
-<span style="color:var(--panel-text-dim);"># Verify every hash offline (no trust in operator)</span>
+<span style="color:var(--panel-text-dim);"># Check internal hash consistency offline</span>
 node tools/verify.js chain.json
 
 <span style="color:var(--panel-text-dim);"># Verify the anchor signature</span>
-node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest
+node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest --key YOUR_INDEPENDENTLY_OBTAINED_PUBLIC_KEY
 
 <span style="color:var(--panel-text-dim);"># Run conformance checks against any instance</span>
 node tools/conformance.js https://veritasacta.com</pre>
@@ -2620,10 +2914,10 @@ node tools/verify.js https://veritasacta.com/api/export/ai-models-2026</pre>
           <div style="font-weight:700;font-size:14px;margin-bottom:12px;">2. Verify the signed anchor (independent)</div>
           <div style="background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:var(--rad);padding:16px;">
             <pre style="color:var(--panel-text);font-family:var(--mono);font-size:12px;line-height:1.6;margin:0;"><span style="color:var(--panel-text-dim);"># Verify anchor signature + Merkle root</span>
-node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest
+node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest --key YOUR_INDEPENDENTLY_OBTAINED_PUBLIC_KEY
 
 <span style="color:var(--panel-text-dim);"># Verify against a known public key</span>
-node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest \\
+node tools/verify.js --anchor https://veritasacta.com/api/anchor/latest --key YOUR_INDEPENDENTLY_OBTAINED_PUBLIC_KEY \\
   --key 712e93b514966d66ecbcaef6200689e10a847c315951e824189d4abe70496991</pre>
           </div>
         </div>
@@ -3067,7 +3361,7 @@ node scripts/inspect-receipt.mjs examples/x-feed-demo.receipt.json</code></pre>
           </ul>
 
           <h3 style="font-size:17px;font-weight:700;color:var(--text);margin:24px 0 8px;">The protocol approach</h3>
-          <p>We could have built a product. Instead we built a protocol: Apache-2.0, with two <a href="https://github.com/VeritasActa/drafts" style="color:var(--accent);">IETF Internet-Drafts</a>, open-source verification tools, and a <a href="/charter" style="color:var(--accent);">Charter</a> with permanent invariants that the operator cannot change.</p>
+          <p>We could have built a product. Instead we built a protocol: Apache-2.0, with two <a href="https://github.com/VeritasActa/drafts" style="color:var(--accent);">IETF Internet-Drafts</a>, open-source verification tools, and a <a href="/about" style="color:var(--accent);">Charter</a> with permanent invariants that the operator cannot change.</p>
           <p style="margin-top:12px;">Why? Because evidence infrastructure needs to outlast any single company. The evidence layer for agent accountability should be as durable and vendor-neutral as TCP/IP is for networking.</p>
 
           <p style="margin-top:16px;color:var(--text);font-weight:600;">Start with <a href="/record" style="color:var(--accent);">the public record</a>. <a href="/verify" style="color:var(--accent);">Verify it yourself</a>. Build on top of it.</p>

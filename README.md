@@ -14,9 +14,10 @@ website. The receipt format, verifier and application are related, but distinct.
 | Goal | Destination |
 | --- | --- |
 | Check an existing decision receipt | [Browser verifier](https://www.veritasacta.com/verify?sample=current) or [offline CLI](https://github.com/VeritasActa/verify) |
+| Read the Charter and ten permanent invariants | [Charter](https://www.veritasacta.com/about) |
 | Implement the receipt format | [Signed Receipts Internet-Draft](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/) |
 | Inspect interoperability evidence | [Conformance corpus and runs](https://www.veritasacta.com/conformance) |
-| Use this application's APIs | [Application guide](https://www.veritasacta.com/record/docs) |
+| Use this application's APIs | [Application guide](https://www.veritasacta.com/docs) |
 | Understand contribution/state transitions | [Application specification](docs/protocol-spec.md), [charter](CHARTER.md), [policy](docs/policy.md) |
 
 `docs/protocol-spec.md` describes this application's contribution and response state
