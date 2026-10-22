@@ -1,7 +1,12 @@
 # Acta: Technical Architecture
 
-> This document describes the technical architecture of the Acta protocol,
-> its reference implementation, and key design decisions.
+> Historical design notes for the Acta public-record application, including
+> illustrative pseudocode and planned components. These are not the Veritas Acta
+> signed-receipt format specification or a statement that every component below
+> is deployed. For the current implementation and local workflow, start with
+> [CONTRIBUTING.md](../CONTRIBUTING.md), `src/` and `wrangler.toml`. Do not copy the
+> illustrative hashing code below into a receipt implementation; use the
+> [receipt specification and verifier](../README.md#start-in-the-right-place).
 
 ---
 

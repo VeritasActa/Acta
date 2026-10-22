@@ -1,0 +1,35 @@
+# Local contributor preview only. Never deploy this configuration.
+# Production bindings and routes remain in wrangler.toml.
+name = "acta-local"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+workers_dev = false
+
+[dev]
+ip = "127.0.0.1"
+port = 8787
+local_protocol = "http"
+
+[[durable_objects.bindings]]
+name = "LEDGER_CHAIN"
+class_name = "LedgerChain"
+
+[[durable_objects.bindings]]
+name = "DEVICE_BUDGET"
+class_name = "DeviceBudget"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["LedgerChain", "DeviceBudget"]
+
+[[kv_namespaces]]
+binding = "ACTA_KV"
+id = "local-acta-kv"
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html", "**/*.txt", "**/identity/**/*.md"]
+fallthrough = false
+
+[vars]
+ENVIRONMENT = "development"

@@ -65,13 +65,19 @@ with sibling `Acta`, `.github` and `drafts` checkouts, then review and commit th
 ```bash
 npm ci
 npm test -- --run
-npm run dev
+npm run dev:local
 ```
 
-The Cloudflare Worker serves the site and application API. `wrangler.toml` declares
-KV, Durable Objects and scheduled checkpoint publication. Do not change production
-bindings or migrations as part of a presentation release. `npm run deploy` publishes
-the Worker only after tests and visual checks pass.
+Open `http://127.0.0.1:8787`. The local contributor configuration uses local KV and
+Durable Objects without a Cloudflare account, production routes, remote AI or a
+remote identity service. Use synthetic records: development identity and moderation
+behavior differ from production. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup,
+test commands and the source map.
+
+The Cloudflare Worker serves the site and application API. `wrangler.toml` remains
+the production configuration, including scheduled checkpoint publication.
+`npm run deploy` publishes to Cloudflare and is a separate maintainer action, not
+part of the local contributor workflow.
 
 The browser verifier uses the same receipt engine as the CLI. It accepts an explicit
 external key and does not fetch or upload receipt content: its route uses
@@ -85,5 +91,6 @@ foundation governance. For receipt bugs, use [verify issues](https://github.com/
 for application bugs, [open an issue here](https://github.com/VeritasActa/Acta/issues).
 Include a reproducible example without confidential records.
 
-See [LICENSE](LICENSE) and existing contribution documents
-for applicable terms. This refresh changes no license or patent grant.
+See [CONTRIBUTING.md](CONTRIBUTING.md), [GOVERNANCE.md](GOVERNANCE.md),
+[SECURITY.md](SECURITY.md) and [LICENSE](LICENSE) for contribution, reporting and
+licensing terms.
