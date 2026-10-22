@@ -174,7 +174,7 @@ ${RELEASE.standards_notice}
 Acta public record: https://veritasacta.com/record
 Application API and state machine: https://veritasacta.com/docs
 Application charter: https://veritasacta.com/about
-ScopeBlind / Legate: commercial applications, https://scopeblind.com
+ScopeBlind: commercial applications, https://scopeblind.com
 
 Verification does not require issuance, onboarding, a proxy or a daemon.
 `, {
