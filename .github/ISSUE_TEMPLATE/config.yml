@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a vulnerability privately
+    url: https://github.com/VeritasActa/Acta/blob/main/SECURITY.md
+    about: Use the private reporting channel; do not post sensitive details here.
+  - name: Receipt verification or CLI issue
+    url: https://github.com/VeritasActa/verify/issues
+    about: Receipt-engine and CLI issues are maintained in the verifier repository.
+  - name: Receipt format or Internet-Draft discussion
+    url: https://github.com/VeritasActa/drafts/issues
+    about: Discuss protocol-format changes in the drafts repository.

@@ -1,48 +1,60 @@
 # Security Policy
 
-## Reporting Vulnerabilities
+## Reporting vulnerabilities
 
-If you discover a security vulnerability in any Veritas Acta project, please report it responsibly.
+For security issues in the Acta public-record application or the Veritas Acta
+website, email **tjf@veritasacta.com**. PGP details are available on request.
+Do not post private records, credentials or exploit details in a public issue.
 
-**Email:** tjf@veritasacta.com
-**PGP:** Available on request
+Include the affected commit or deployed route, a minimal reproduction using
+synthetic data, expected and actual behavior, and the potential impact. Do not
+probe other people's records or production infrastructure to demonstrate an issue.
 
-Please include:
-- Description of the vulnerability
-- Steps to reproduce
-- Affected versions
-- Potential impact
+Tom Farley maintains this repository. Reports are reviewed privately and fixes,
+release notes and disclosure timing are coordinated with the reporter. Response
+and remediation times depend on the issue; this project does not offer a paid
+incident-response SLA. Do not assume that a report or its acknowledgement has a
+cryptographically signed receipt.
 
-We will acknowledge receipt within 48 hours and provide an initial assessment within 7 days.
+## Repository and support scope
 
-## Supported Versions
+This policy covers the application Worker in `src/`, its stored-record and
+identity handling, the website, and the topic-export/anchor verification tool in
+`tools/verify.js`. Report problems affecting the current `main` branch or deployed
+site; include the older commit if that is where you reproduced the issue. There
+is no separately maintained long-term-support branch.
 
-| Package | Version | Supported |
-|---------|---------|-----------|
-| @veritasacta/verify | 0.2.x | Yes |
-| @veritasacta/artifacts | 0.2.x | Yes |
-| @veritasacta/protocol | 0.1.x | Yes |
-| protect-mcp | 0.5.x | Yes |
-| protect-mcp-adk | 0.1.x | Yes |
+Other projects maintain their own security policies:
 
-## Security Model
+- [Receipt verifier and CLI](https://github.com/VeritasActa/verify/blob/main/SECURITY.md),
+  including the receipt engine bundled into this website.
+- [protect-mcp gateway](https://github.com/ScopeBlind/scopeblind-gateway/blob/main/SECURITY.md).
 
-The Veritas Acta protocol is designed so that security does not depend on trusting the operator:
+If the component is unclear, use the email above and describe where the issue
+appears. This repository's package version is not the version of either project.
 
-- **Ed25519 signatures** (RFC 8032) provide tamper-evidence
-- **JCS canonicalization** (RFC 8785) ensures deterministic serialization
-- **Chain linking** (previousReceiptHash) provides ordering integrity
-- **Offline verification** requires zero network calls and zero trust in the issuer
+## Security boundaries and verification limits
 
-The verifier (@veritasacta/verify) is Apache-2.0 and can be audited by any party.
+Public requests, uploaded receipt data and imported exports are untrusted inputs.
+Identity checks, contribution validation, storage and publication are separate
+application boundaries. Report a reproducible failure to preserve those boundaries,
+including unauthorized mutation, disclosure of private identity material, or
+acceptance of an invalid record or signature.
 
-## Coordinated Disclosure
+Signatures and hash links can establish integrity relative to a key or retained
+checkpoint. They do not establish claim truth, complete history, signer authority
+or absence of censorship. An embedded key is not an independent trust anchor;
+recipients must establish which issuer key and retained checkpoints they rely on.
+An operator-served status page is not an independent witness.
 
-We follow coordinated vulnerability disclosure:
-1. Report received and acknowledged (48 hours)
-2. Vulnerability confirmed and assessed (7 days)
-3. Fix developed and tested (30 days)
-4. Fix released with advisory (90 days max)
-5. Public disclosure after patch is available
+The browser receipt verifier performs its receipt checks locally. Loading its
+page still contacts the host. The public-record application and the standalone
+anchor tool have their own storage and network behavior; they must not be described
+as universally offline or as removing all trust in the issuer.
 
-Every step in our disclosure process produces a receipt-signed artifact following our own IETF draft (draft-farley-acta-signed-receipts).
+The local contributor configuration in `wrangler.local.toml` uses synthetic data,
+local storage and development identities with AI classification disabled. It is
+not a production security configuration. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+These statements describe the intended boundaries and limits; they are not a
+security audit, certification or exclusion of other reproducible findings.
