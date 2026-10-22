@@ -7,7 +7,7 @@ website. The receipt format, verifier and application are related, but distinct.
 
 - [Veritas Acta](https://www.veritasacta.com): open receipt format, verification tools and interoperability.
 - [Acta public record](https://www.veritasacta.com/record): typed contributions, challenges, public history and exports.
-- [ScopeBlind / Legate](https://scopeblind.com): commercial applications and enforcement products.
+- [ScopeBlind](https://scopeblind.com): commercial applications and enforcement products.
 
 ## Start in the right place
 
@@ -46,7 +46,7 @@ provenance. No private-key possession is implied by a matching self-check.
 ## Release and standards status
 
 <!-- release-manifest:start -->
-Verifier: **[0.10.26](https://github.com/VeritasActa/verify/releases/tag/v0.10.26)**. Status reviewed 2026-10-20.
+Verifier: **[0.10.27](https://github.com/VeritasActa/verify/releases/tag/v0.10.27)**. Status reviewed 2026-10-21.
 
 - [draft-farley-acta-signed-receipts-03](https://datatracker.ietf.org/doc/draft-farley-acta-signed-receipts/): active individual Internet-Draft.
 - [draft-farley-acta-knowledge-units-00](https://datatracker.ietf.org/doc/draft-farley-acta-knowledge-units/): expired individual Internet-Draft (expired 2026-10-08).

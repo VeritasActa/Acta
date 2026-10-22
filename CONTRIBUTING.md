@@ -14,15 +14,11 @@ Thank you for your interest in contributing to the Veritas Acta protocol.
 - Integration examples are at [ScopeBlind/examples](https://github.com/ScopeBlind/examples)
 
 ### Interoperability
-We welcome new implementations of the IETF draft receipt format. Four independent implementations currently produce interoperable receipts:
-1. protect-mcp (TypeScript)
-2. Agent Passport System (TypeScript)
-3. protect-mcp-adk (Python)
-4. asqav (Python)
+We welcome new implementations of the IETF draft receipt format. The shared conformance suite, [ScopeBlind/agent-governance-testvectors](https://github.com/ScopeBlind/agent-governance-testvectors), runs each implementation's driver in CI. Four implementations pass it, as its README's status table records: protect-mcp (TypeScript), maintained by the draft's author, and three independent ones, nobulex (Python), the APS governance hook (Python) and cryptovalid-opencore (Python). asqav's own Internet-Draft, draft-marques-asqav-compliance-receipts, draws on this one.
 
-To validate interoperability, your receipts should verify at exit 0 against:
+To check your receipts, verify each at exit 0 with the reference verifier and the issuer's public key, then add a driver to the suite so it runs in CI:
 ```bash
-npx @veritasacta/verify@0.3.0 your-receipt.json --key <public-key-hex>
+npx @veritasacta/verify your-receipt.json --key <public-key-hex>
 ```
 
 ### Cedar Policies

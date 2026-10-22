@@ -1,13 +1,13 @@
 {
   "schema": "veritasacta.public-release.v1",
-  "reviewed_at": "2026-10-20",
+  "reviewed_at": "2026-10-21",
   "project": "Veritas Acta",
   "maintainer": "Tom Farley / ScopeBlind",
   "verifier": {
     "package": "@veritasacta/verify",
-    "version": "0.10.26",
-    "release_url": "https://github.com/VeritasActa/verify/releases/tag/v0.10.26",
-    "source_url": "https://github.com/VeritasActa/verify/tree/v0.10.26",
+    "version": "0.10.27",
+    "release_url": "https://github.com/VeritasActa/verify/releases/tag/v0.10.27",
+    "source_url": "https://github.com/VeritasActa/verify/tree/v0.10.27",
     "browser_formats": ["ed25519-passport", "ed25519-receipt-v2", "ed25519-receipt-v1", "ed25519-browser-legacy"],
     "browser_limit_bytes": 1048576
   },
