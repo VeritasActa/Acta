@@ -418,14 +418,15 @@ describe('Merkle Root', () => {
       { topic: 'a-topic', chain_head_hash: 'a'.repeat(64), chain_length: 3 },
     ];
 
-    // Sort by topic name
-    const sorted = [...heads].sort((a, b) => a.topic.localeCompare(b.topic));
+    // Sort by topic name (UTF-16 code unit order, as tools/verify.js does)
+    const byTopic = (a, b) => (a.topic < b.topic ? -1 : a.topic > b.topic ? 1 : 0);
+    const sorted = [...heads].sort(byTopic);
     const leaves = sorted.map(h => sha256(jcsSerialize(h)));
     const root = sha256(leaves[0] + leaves[1]);
 
     // Same heads in different order should produce same root
     const heads2 = [heads[1], heads[0]];
-    const sorted2 = [...heads2].sort((a, b) => a.topic.localeCompare(b.topic));
+    const sorted2 = [...heads2].sort(byTopic);
     const leaves2 = sorted2.map(h => sha256(jcsSerialize(h)));
     const root2 = sha256(leaves2[0] + leaves2[1]);
 

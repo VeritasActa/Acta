@@ -199,10 +199,11 @@ export async function handleScheduled(env) {
 
 /**
  * Compute a simple Merkle root from chain heads.
- * Sorted by topic name for determinism.
+ * Sorted by topic name for determinism, by UTF-16 code unit: localeCompare
+ * would make the root depend on the runtime's locale.
  */
 async function computeMerkleRoot(chainHeads) {
-    const sorted = [...chainHeads].sort((a, b) => a.topic.localeCompare(b.topic));
+    const sorted = [...chainHeads].sort((a, b) => (a.topic < b.topic ? -1 : a.topic > b.topic ? 1 : 0));
 
     const leaves = [];
     for (const head of sorted) {
