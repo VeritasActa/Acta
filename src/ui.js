@@ -2680,7 +2680,7 @@ function ontologyPage() {
         <div style="font-family:var(--brand);font-size:32px;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;">Ontology v0.1</div>
         <p style="color:var(--text-muted);font-size:14px;">The evidence protocol for machine decisions.</p>
         <p style="color:var(--text-dim);font-size:12px;margin-top:6px;font-family:var(--mono);">
-          Source: <a href="https://github.com/VeritasActa/Acta">@veritasacta/protocol</a> · MIT License
+          Source: <a href="https://github.com/VeritasActa/Acta">@veritasacta/protocol</a> · Apache-2.0
         </p>
       </div>
 

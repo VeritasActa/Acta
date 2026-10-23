@@ -5,7 +5,7 @@
  * hashes and detects chain tampering — without using any code from
  * the Worker itself.
  *
- * @license MIT
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import { describe, it, expect } from 'vitest';

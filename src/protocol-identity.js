@@ -8,7 +8,7 @@
  *   - PROTOCOL_IDENTITY: Charter + Protocol Spec: defines the protocol itself
  *   - INSTANCE_POLICY: Policy: operator-tunable, expected to change per instance
  *
- * @license MIT
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 // ── Protocol Identity ────────────────────────────────────────────────

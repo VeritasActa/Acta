@@ -16,7 +16,7 @@
  *   node tools/verify.js --anchor <url-or-file>         Verify a signed anchor
  *   node tools/verify.js --anchor <url> --key <hex>     Verify against specific public key
  *
- * @license MIT
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import { createHash } from 'node:crypto';

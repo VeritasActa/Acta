@@ -23,7 +23,7 @@
  * Secrets required:
  *   ANCHOR_SIGNING_KEY: Ed25519 private key (64 hex chars = 32 bytes)
  *
- * @license MIT
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import { ed25519 } from '@noble/curves/ed25519';
