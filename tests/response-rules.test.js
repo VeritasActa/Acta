@@ -137,6 +137,21 @@ describe('resolutions', () => {
         expect(await trackRecord(t, author)).toEqual({ resolved: 1, incorrect: 1 });
     });
 
+    it('any participant may propose an alternative source for a prediction, and only that', async () => {
+        const t = topicClient('alternative-source');
+        const p = (await t.contribute('prediction', prediction(Date.now() + 30 * DAY), alice)).json;
+        expect((await t.respond('update', updateOf(p.entry_id, 'alternative_source'), mallory)).status).toBe(201);
+        expect(await t.state(p.entry_id)).toBe('open');
+        expect((await t.respond('update', updateOf(p.entry_id, 'correction'), mallory)).json.error).toBe('not_author');
+
+        // On a claim, or as an answer to a challenge, it is an update like any other.
+        const c = (await t.contribute('claim', claim, carol)).json;
+        const ch = (await t.respond('challenge', challengeOf(c.entry_id), bob)).json;
+        expect((await t.respond('update', updateOf(c.entry_id, 'alternative_source'), mallory)).json.error).toBe('not_author');
+        expect((await t.respond('update', updateOf(ch.entry_id, 'alternative_source'), mallory)).json.error).toBe('not_author');
+        expect(await t.state(c.entry_id)).toBe('contested');
+    });
+
     it('a challenged prediction resolution makes the prediction contested', async () => {
         const t = topicClient('contested-prediction');
         const p = (await t.contribute('prediction', prediction(Date.now() + DAY), alice)).json;

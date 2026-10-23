@@ -969,8 +969,12 @@ async function handleRespond(request, env, ctx) {
         }
 
         // Only an entry's author may update it. An update that answers a
-        // challenge speaks for the entry the challenge disputes.
-        if (type === 'update') {
+        // challenge speaks for the entry the challenge disputes. The one
+        // exception is the protocol's: any participant may propose an
+        // alternative resolution source for a prediction (spec 3.4, step 5).
+        const proposesSource = payload.update_type === 'alternative_source' &&
+            target.type === 'contribution' && target.subtype === 'prediction';
+        if (type === 'update' && !proposesSource) {
             const owner = target.type === 'response' ? await getChainEntry(chainDO, target.linked_to?.[0]) : target;
             if (owner?.author?.topic_pseudonym !== topicPseudonym) {
                 return corsJson({
