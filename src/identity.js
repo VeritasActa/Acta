@@ -193,9 +193,10 @@ export async function resolveIdentity(request, env, topic = null) {
         };
     }
 
-    // 3. Fallback: header-based device ID (development only)
+    // 3. Fallback: header-based device ID (development only). Anyone can send
+    // any value, so in production it would mint unlimited pseudonyms and budgets.
     const headerDeviceId = request.headers.get('x-device-id');
-    if (headerDeviceId) {
+    if (headerDeviceId && env.ENVIRONMENT === 'development') {
         return {
             type: 'human',
             method: 'header',

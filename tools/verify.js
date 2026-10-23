@@ -16,7 +16,7 @@
  *   node tools/verify.js --anchor <url-or-file>         Verify a signed anchor
  *   node tools/verify.js --anchor <url> --key <hex>     Verify against specific public key
  *
- * @license MIT
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import { createHash } from 'node:crypto';
@@ -184,10 +184,11 @@ function verifyExport(data) {
 }
 
 // ── Merkle Root Recomputation ───────────────────────────────────────
-// Replicates the Merkle tree from chain-publication.js.
+// Replicates the Merkle tree from chain-publication.js. Topics sort by UTF-16
+// code unit, so the result does not depend on the verifier's locale.
 
 function computeMerkleRoot(chainHeads) {
-  const sorted = [...chainHeads].sort((a, b) => a.topic.localeCompare(b.topic));
+  const sorted = [...chainHeads].sort((a, b) => (a.topic < b.topic ? -1 : a.topic > b.topic ? 1 : 0));
 
   const leaves = sorted.map(head => sha256(jcsSerialize(head)));
 

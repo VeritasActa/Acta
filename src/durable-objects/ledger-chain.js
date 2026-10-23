@@ -36,6 +36,10 @@ export class LedgerChain {
       return this.handleGetEntries(url);
     }
 
+    if (request.method === 'GET' && url.pathname === '/entry') {
+      return this.handleGetEntry(url);
+    }
+
     if (request.method === 'GET' && url.pathname === '/verify') {
       return this.handleVerifyChain();
     }
@@ -150,6 +154,18 @@ export class LedgerChain {
       limit,
       has_more: offset + limit < chainLength,
     });
+  }
+
+  /**
+   * Get one entry by ID.
+   * ?id={entry_id}
+   */
+  async handleGetEntry(url) {
+    const entry = await this.state.storage.get(`entry:${url.searchParams.get('id')}`);
+    if (!entry) {
+      return Response.json({ error: 'entry_not_found' }, { status: 404 });
+    }
+    return Response.json(entry);
   }
 
   /**

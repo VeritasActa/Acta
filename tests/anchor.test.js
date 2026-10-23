@@ -9,7 +9,7 @@
  *
  * Uses @noble/curves/ed25519 directly — same library as the Worker.
  *
- * @license MIT
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import { describe, it, expect } from 'vitest';

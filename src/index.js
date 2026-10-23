@@ -13,7 +13,7 @@
  *   - Shot clock with configurable decay for challenge state
  */
 
-import { validateContribution, validateResponse, validateResponseTarget, computeState, TOKEN_COSTS } from './validators/schema.js';
+import { validateContribution, validateResponse, validateResponseTarget, computeState, isResolutionDue, TOKEN_COSTS } from './validators/schema.js';
 import { replicateToKV, getEntryFromKV, getTopicForEntry, listTopics, getFeedFromKV } from './kv-index.js';
 import { classifyContent, createRejectionReceipt, logSilentDrop, queueForHumanReview } from './moderation.js';
 import { resolveIdentity } from './identity.js';
@@ -956,6 +956,42 @@ async function handleRespond(request, env, ctx) {
         // If target not found in KV (eventual consistency), allow: DO is source of truth
     }
 
+    // Updates and resolutions are checked against the target as the ledger holds
+    // it: the KV index can lag, and it has neither the author nor the payload.
+    if (type === 'update' || type === 'resolution') {
+        const chainDO = getChainDO(env, normalizedTopic);
+        const target = await getChainEntry(chainDO, payload.target_id);
+        const matrixCheck = target
+            ? validateResponseTarget(type, target)
+            : { valid: false, error: 'Target not found in this topic.' };
+        if (!matrixCheck.valid) {
+            return corsJson({ error: 'invalid_response_target', message: matrixCheck.error }, { status: 422 });
+        }
+
+        // Only an entry's author may update it. An update that answers a
+        // challenge speaks for the entry the challenge disputes. The one
+        // exception is the protocol's: any participant may propose an
+        // alternative resolution source for a prediction (spec 3.4, step 5).
+        const proposesSource = payload.update_type === 'alternative_source' &&
+            target.type === 'contribution' && target.subtype === 'prediction';
+        if (type === 'update' && !proposesSource) {
+            const owner = target.type === 'response' ? await getChainEntry(chainDO, target.linked_to?.[0]) : target;
+            if (owner?.author?.topic_pseudonym !== topicPseudonym) {
+                return corsJson({
+                    error: 'not_author',
+                    message: 'Only the author of the entry being updated can post an update.',
+                }, { status: 403 });
+            }
+        }
+
+        if (type === 'resolution' && target.subtype === 'prediction' && !isResolutionDue(target)) {
+            return corsJson({
+                error: 'resolution_not_due',
+                message: `This prediction cannot be resolved before its resolution_date (${target.payload?.resolution_date ?? 'not set'}).`,
+            }, { status: 422 });
+        }
+    }
+
     const entry = {
         type: 'response',
         subtype: type,
@@ -1039,15 +1075,16 @@ async function handleGetEntry(env, entryId) {
 
     if (meta.topic) {
         const chainDO = getChainDO(env, meta.topic);
-        const resp = await chainDO.fetch(new Request('http://internal/entries?offset=0&limit=200&order=asc'));
-        const data = await resp.json();
-        const allEntries = data.entries || [];
+        const allEntries = await getAllEntries(chainDO);
 
         const responses = allEntries.filter(e =>
             e.type === 'response' && (e.linked_to || []).includes(entryId)
         );
 
-        const computed = computeState(meta, responses, { challenge_decay_hours: CHALLENGE_DECAY_HOURS });
+        // State needs the full entry (a prediction's resolution_date is in its
+        // payload, which the KV index does not carry) and the replies.
+        const entry = allEntries.find(e => e.entry_id === entryId) || meta;
+        const computed = computeState(entry, withReplies(allEntries, responses), { challenge_decay_hours: CHALLENGE_DECAY_HOURS });
 
         return corsJson({
             ...meta,
@@ -1062,16 +1099,14 @@ async function handleGetEntry(env, entryId) {
 
 async function getTopicFeedWithState(env, topic) {
     const chainDO = getChainDO(env, topic);
-    const resp = await chainDO.fetch(new Request('http://internal/entries?offset=0&limit=200&order=asc'));
-    const data = await resp.json();
-    const allEntries = data.entries || [];
+    const allEntries = await getAllEntries(chainDO);
 
     const contributions = allEntries.filter(e => e.type === 'contribution');
     const responses = allEntries.filter(e => e.type === 'response');
 
     for (const c of contributions) {
         const linked = responses.filter(r => (r.linked_to || []).includes(c.entry_id));
-        const computed = computeState(c, linked, { challenge_decay_hours: CHALLENGE_DECAY_HOURS });
+        const computed = computeState(c, withReplies(responses, linked), { challenge_decay_hours: CHALLENGE_DECAY_HOURS });
         c.computed_state = computed.state;
         c.display_hint = computed.display_hint;
         c.response_count = linked.length;
@@ -1148,19 +1183,20 @@ async function getChainHeads(env) {
  */
 async function handleExport(env, topic) {
     const chainDO = getChainDO(env, topic);
-    const resp = await chainDO.fetch(new Request('http://internal/entries?offset=0&limit=200&order=asc'));
-    const data = await resp.json();
 
-    // Also get chain head
+    // Read the chain head first, then only the entries it covers: the chain
+    // is append-only, so an entry appended mid-export cannot make the export
+    // disagree with its own head.
     const headResp = await chainDO.fetch(new Request('http://internal/chain-head'));
     const head = await headResp.json();
+    const entries = (await getAllEntries(chainDO)).slice(0, head.chain_length);
 
     return corsJson({
         topic,
         exported_at: new Date().toISOString(),
         chain_head: head,
-        entries: data.entries || [],
-        total: data.total || 0,
+        entries,
+        total: entries.length,
         note: 'This export can be independently verified by recomputing all entry hashes. Payload hashes are computed via JCS-SHA256 (RFC 8785 canonicalization).',
     });
 }
@@ -1306,6 +1342,37 @@ async function handleConformance(env) {
 function getChainDO(env, topic) {
     const id = env.LEDGER_CHAIN.idFromName(topic);
     return env.LEDGER_CHAIN.get(id);
+}
+
+// The ledger serves at most 200 entries per request. Read every page, so a
+// topic longer than one page is not cut short.
+async function getAllEntries(chainDO) {
+    const entries = [];
+    let offset = 0;
+    while (true) {
+        const resp = await chainDO.fetch(new Request(`http://internal/entries?offset=${offset}&limit=200&order=asc`));
+        const data = await resp.json();
+        entries.push(...(data.entries || []));
+        if (!data.has_more) return entries;
+        offset += data.limit;
+    }
+}
+
+async function getChainEntry(chainDO, entryId) {
+    if (!entryId) return null;
+    const resp = await chainDO.fetch(new Request(`http://internal/entry?id=${encodeURIComponent(entryId)}`));
+    return resp.ok ? resp.json() : null;
+}
+
+// A reply to a response (evidence answering a challenge, a challenge of a
+// resolution) is linked to that response, not to the contribution, but the
+// contribution's state depends on it. Add those replies to its responses.
+function withReplies(allEntries, responses) {
+    const ids = new Set(responses.map(r => r.entry_id));
+    const replies = allEntries.filter(e =>
+        e.type === 'response' && !ids.has(e.entry_id) && (e.linked_to || []).some(id => ids.has(id))
+    );
+    return responses.concat(replies);
 }
 
 async function checkBudget(env, deviceId, authorType, cost) {
