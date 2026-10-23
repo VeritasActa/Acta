@@ -1071,9 +1071,7 @@ async function handleGetEntry(env, entryId) {
 
     if (meta.topic) {
         const chainDO = getChainDO(env, meta.topic);
-        const resp = await chainDO.fetch(new Request('http://internal/entries?offset=0&limit=200&order=asc'));
-        const data = await resp.json();
-        const allEntries = data.entries || [];
+        const allEntries = await getAllEntries(chainDO);
 
         const responses = allEntries.filter(e =>
             e.type === 'response' && (e.linked_to || []).includes(entryId)
@@ -1097,9 +1095,7 @@ async function handleGetEntry(env, entryId) {
 
 async function getTopicFeedWithState(env, topic) {
     const chainDO = getChainDO(env, topic);
-    const resp = await chainDO.fetch(new Request('http://internal/entries?offset=0&limit=200&order=asc'));
-    const data = await resp.json();
-    const allEntries = data.entries || [];
+    const allEntries = await getAllEntries(chainDO);
 
     const contributions = allEntries.filter(e => e.type === 'contribution');
     const responses = allEntries.filter(e => e.type === 'response');
@@ -1183,19 +1179,20 @@ async function getChainHeads(env) {
  */
 async function handleExport(env, topic) {
     const chainDO = getChainDO(env, topic);
-    const resp = await chainDO.fetch(new Request('http://internal/entries?offset=0&limit=200&order=asc'));
-    const data = await resp.json();
 
-    // Also get chain head
+    // Read the chain head first, then only the entries it covers: the chain
+    // is append-only, so an entry appended mid-export cannot make the export
+    // disagree with its own head.
     const headResp = await chainDO.fetch(new Request('http://internal/chain-head'));
     const head = await headResp.json();
+    const entries = (await getAllEntries(chainDO)).slice(0, head.chain_length);
 
     return corsJson({
         topic,
         exported_at: new Date().toISOString(),
         chain_head: head,
-        entries: data.entries || [],
-        total: data.total || 0,
+        entries,
+        total: entries.length,
         note: 'This export can be independently verified by recomputing all entry hashes. Payload hashes are computed via JCS-SHA256 (RFC 8785 canonicalization).',
     });
 }
@@ -1341,6 +1338,20 @@ async function handleConformance(env) {
 function getChainDO(env, topic) {
     const id = env.LEDGER_CHAIN.idFromName(topic);
     return env.LEDGER_CHAIN.get(id);
+}
+
+// The ledger serves at most 200 entries per request. Read every page, so a
+// topic longer than one page is not cut short.
+async function getAllEntries(chainDO) {
+    const entries = [];
+    let offset = 0;
+    while (true) {
+        const resp = await chainDO.fetch(new Request(`http://internal/entries?offset=${offset}&limit=200&order=asc`));
+        const data = await resp.json();
+        entries.push(...(data.entries || []));
+        if (!data.has_more) return entries;
+        offset += data.limit;
+    }
 }
 
 async function getChainEntry(chainDO, entryId) {
