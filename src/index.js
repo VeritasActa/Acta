@@ -13,7 +13,7 @@
  *   - Shot clock with configurable decay for challenge state
  */
 
-import { validateContribution, validateResponse, validateResponseTarget, computeState, TOKEN_COSTS } from './validators/schema.js';
+import { validateContribution, validateResponse, validateResponseTarget, computeState, isResolutionDue, TOKEN_COSTS } from './validators/schema.js';
 import { replicateToKV, getEntryFromKV, getTopicForEntry, listTopics, getFeedFromKV } from './kv-index.js';
 import { classifyContent, createRejectionReceipt, logSilentDrop, queueForHumanReview } from './moderation.js';
 import { resolveIdentity } from './identity.js';
@@ -956,6 +956,38 @@ async function handleRespond(request, env, ctx) {
         // If target not found in KV (eventual consistency), allow: DO is source of truth
     }
 
+    // Updates and resolutions are checked against the target as the ledger holds
+    // it: the KV index can lag, and it has neither the author nor the payload.
+    if (type === 'update' || type === 'resolution') {
+        const chainDO = getChainDO(env, normalizedTopic);
+        const target = await getChainEntry(chainDO, payload.target_id);
+        const matrixCheck = target
+            ? validateResponseTarget(type, target)
+            : { valid: false, error: 'Target not found in this topic.' };
+        if (!matrixCheck.valid) {
+            return corsJson({ error: 'invalid_response_target', message: matrixCheck.error }, { status: 422 });
+        }
+
+        // Only an entry's author may update it. An update that answers a
+        // challenge speaks for the entry the challenge disputes.
+        if (type === 'update') {
+            const owner = target.type === 'response' ? await getChainEntry(chainDO, target.linked_to?.[0]) : target;
+            if (owner?.author?.topic_pseudonym !== topicPseudonym) {
+                return corsJson({
+                    error: 'not_author',
+                    message: 'Only the author of the entry being updated can post an update.',
+                }, { status: 403 });
+            }
+        }
+
+        if (type === 'resolution' && target.subtype === 'prediction' && !isResolutionDue(target)) {
+            return corsJson({
+                error: 'resolution_not_due',
+                message: `This prediction cannot be resolved before its resolution_date (${target.payload?.resolution_date ?? 'not set'}).`,
+            }, { status: 422 });
+        }
+    }
+
     const entry = {
         type: 'response',
         subtype: type,
@@ -1047,7 +1079,10 @@ async function handleGetEntry(env, entryId) {
             e.type === 'response' && (e.linked_to || []).includes(entryId)
         );
 
-        const computed = computeState(meta, responses, { challenge_decay_hours: CHALLENGE_DECAY_HOURS });
+        // State needs the full entry (a prediction's resolution_date is in its
+        // payload, which the KV index does not carry) and the replies.
+        const entry = allEntries.find(e => e.entry_id === entryId) || meta;
+        const computed = computeState(entry, withReplies(allEntries, responses), { challenge_decay_hours: CHALLENGE_DECAY_HOURS });
 
         return corsJson({
             ...meta,
@@ -1071,7 +1106,7 @@ async function getTopicFeedWithState(env, topic) {
 
     for (const c of contributions) {
         const linked = responses.filter(r => (r.linked_to || []).includes(c.entry_id));
-        const computed = computeState(c, linked, { challenge_decay_hours: CHALLENGE_DECAY_HOURS });
+        const computed = computeState(c, withReplies(responses, linked), { challenge_decay_hours: CHALLENGE_DECAY_HOURS });
         c.computed_state = computed.state;
         c.display_hint = computed.display_hint;
         c.response_count = linked.length;
@@ -1306,6 +1341,23 @@ async function handleConformance(env) {
 function getChainDO(env, topic) {
     const id = env.LEDGER_CHAIN.idFromName(topic);
     return env.LEDGER_CHAIN.get(id);
+}
+
+async function getChainEntry(chainDO, entryId) {
+    if (!entryId) return null;
+    const resp = await chainDO.fetch(new Request(`http://internal/entry?id=${encodeURIComponent(entryId)}`));
+    return resp.ok ? resp.json() : null;
+}
+
+// A reply to a response (evidence answering a challenge, a challenge of a
+// resolution) is linked to that response, not to the contribution, but the
+// contribution's state depends on it. Add those replies to its responses.
+function withReplies(allEntries, responses) {
+    const ids = new Set(responses.map(r => r.entry_id));
+    const replies = allEntries.filter(e =>
+        e.type === 'response' && !ids.has(e.entry_id) && (e.linked_to || []).some(id => ids.has(id))
+    );
+    return responses.concat(replies);
 }
 
 async function checkBudget(env, deviceId, authorType, cost) {

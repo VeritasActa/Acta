@@ -337,6 +337,11 @@ describe('validateResponseTarget', () => {
         expect(result.valid).toBe(true);
     });
 
+    it('allows evidence and updates targeting a challenge response (to answer it)', () => {
+        expect(validateResponseTarget('evidence', { type: 'response', subtype: 'challenge' }).valid).toBe(true);
+        expect(validateResponseTarget('update', { type: 'response', subtype: 'challenge' }).valid).toBe(true);
+    });
+
     it('rejects evidence targeting a resolution response', () => {
         const result = validateResponseTarget('evidence', { type: 'response', subtype: 'resolution' });
         expect(result.valid).toBe(false);
@@ -357,20 +362,25 @@ describe('computeState', () => {
         expect(result.state).toBe('open');
     });
 
+    // Responses in the shape the API stores them: the target is in linked_to
+    // and payload.target_id, and the ledger sets the timestamp. Callers pass a
+    // contribution's responses together with the replies to them.
+    const DAY = 24 * 60 * 60 * 1000;
+    const ago = days => new Date(Date.now() - days * DAY).toISOString();
+    const response = (entry_id, subtype, target_id, payload = {}, timestamp = ago(0)) => ({
+        entry_id, type: 'response', subtype, linked_to: [target_id], payload: { target_id, ...payload }, timestamp,
+    });
+
     it('returns contested when an unaddressed challenge exists', () => {
         const claim = { entry_id: 'c1', subtype: 'claim', state: 'open' };
-        const responses = [
-            { entry_id: 'ch1', subtype: 'challenge', target_id: 'c1' },
-        ];
+        const responses = [response('ch1', 'challenge', 'c1')];
         const result = computeState(claim, responses);
         expect(result.state).toBe('contested');
     });
 
     it('returns open with supported hint when evidence exists and no challenges', () => {
         const claim = { entry_id: 'c1', subtype: 'claim', state: 'open' };
-        const responses = [
-            { entry_id: 'e1', subtype: 'evidence', target_id: 'c1', payload: { stance: 'supporting' } },
-        ];
+        const responses = [response('e1', 'evidence', 'c1', { stance: 'supporting' })];
         const result = computeState(claim, responses);
         expect(result.state).toBe('open');
         expect(result.display_hint).toBe('supported');
@@ -379,31 +389,44 @@ describe('computeState', () => {
     it('returns contested when challenge is within shot clock', () => {
         const claim = { entry_id: 'c1', subtype: 'claim', state: 'open' };
         const responses = [
-            { entry_id: 'ch1', subtype: 'challenge', target_id: 'c1', timestamp: new Date().toISOString() },
-            { entry_id: 'e1', subtype: 'evidence', target_id: 'ch1', timestamp: new Date().toISOString() },
+            response('ch1', 'challenge', 'c1'),
+            response('e1', 'evidence', 'ch1', { stance: 'refuting' }),
         ];
-        // Within shot clock (default 168h) — still contested because response is fresh
+        // Within shot clock (default 168h): still contested because the answer is fresh
         const result = computeState(claim, responses, { challenge_decay_hours: 168 });
         expect(result.state).toBe('contested');
     });
 
     it('returns open when shot clock expires (challenge decays to stale)', () => {
         const claim = { entry_id: 'c1', subtype: 'claim', state: 'open' };
-        // Response is 8 days old (beyond 7-day default shot clock)
-        const oldDate = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString();
+        // The answer is 8 days old (beyond the 7-day default shot clock)
         const responses = [
-            { entry_id: 'ch1', subtype: 'challenge', target_id: 'c1', timestamp: oldDate },
-            { entry_id: 'e1', subtype: 'evidence', target_id: 'ch1', timestamp: oldDate },
+            response('ch1', 'challenge', 'c1', {}, ago(9)),
+            response('e1', 'evidence', 'ch1', { stance: 'refuting' }, ago(8)),
         ];
         const result = computeState(claim, responses, { challenge_decay_hours: 168 });
         expect(result.state).toBe('open');
     });
 
+    it('does not treat evidence supporting a challenge as an answer to it', () => {
+        const claim = { entry_id: 'c1', subtype: 'claim', state: 'open' };
+        const responses = [
+            response('ch1', 'challenge', 'c1', {}, ago(9)),
+            response('e1', 'evidence', 'ch1', { stance: 'supporting' }, ago(8)),
+        ];
+        expect(computeState(claim, responses, { challenge_decay_hours: 168 }).state).toBe('contested');
+    });
+
+    it('supersedes a claim only by an update aimed at the claim itself', () => {
+        const claim = { entry_id: 'c1', subtype: 'claim', state: 'open' };
+        const answer = [response('ch1', 'challenge', 'c1'), response('u1', 'update', 'ch1', { update_type: 'scope_change' })];
+        expect(computeState(claim, answer).state).toBe('contested');
+        expect(computeState(claim, [response('u2', 'update', 'c1', { update_type: 'scope_change' })]).state).toBe('superseded');
+    });
+
     it('returns resolved for a question with a resolution', () => {
         const question = { entry_id: 'q1', subtype: 'question', state: 'open' };
-        const responses = [
-            { entry_id: 'r1', subtype: 'resolution', target_id: 'q1' },
-        ];
+        const responses = [response('r1', 'resolution', 'q1', { resolution_type: 'answered' })];
         const result = computeState(question, responses);
         expect(result.state).toBe('resolved');
     });
@@ -411,20 +434,34 @@ describe('computeState', () => {
     it('returns open when a resolution is challenged', () => {
         const question = { entry_id: 'q1', subtype: 'question', state: 'open' };
         const responses = [
-            { entry_id: 'r1', subtype: 'resolution', target_id: 'q1' },
-            { entry_id: 'ch1', subtype: 'challenge', target_id: 'r1' },
+            response('r1', 'resolution', 'q1', { resolution_type: 'answered' }),
+            response('ch1', 'challenge', 'r1'),
         ];
         const result = computeState(question, responses);
         expect(result.state).toBe('open');
     });
 
+    const prediction = { entry_id: 'p1', subtype: 'prediction', state: 'open', payload: { resolution_date: ago(2) } };
+
     it('returns resolved_confirmed for prediction with confirmed resolution', () => {
-        const prediction = { entry_id: 'p1', subtype: 'prediction', state: 'open', payload: {} };
-        const responses = [
-            { entry_id: 'r1', subtype: 'resolution', target_id: 'p1', payload: { resolution_type: 'confirmed' } },
-        ];
+        const responses = [response('r1', 'resolution', 'p1', { resolution_type: 'confirmed' }, ago(1))];
         const result = computeState(prediction, responses);
         expect(result.state).toBe('resolved_confirmed');
+    });
+
+    it('returns contested when a prediction resolution is challenged', () => {
+        const responses = [
+            response('r1', 'resolution', 'p1', { resolution_type: 'refuted' }, ago(1)),
+            response('ch1', 'challenge', 'r1'),
+        ];
+        expect(computeState(prediction, responses).state).toBe('contested');
+    });
+
+    it('ignores a resolution posted before the resolution date', () => {
+        const responses = [response('r1', 'resolution', 'p1', { resolution_type: 'refuted' }, ago(3))];
+        expect(computeState(prediction, responses)).toEqual({ state: 'open', display_hint: 'awaiting_resolution' });
+        const undated = { ...prediction, payload: {} };
+        expect(computeState(undated, [response('r2', 'resolution', 'p1', { resolution_type: 'confirmed' })]).state).toBe('open');
     });
 });
 
@@ -468,7 +505,8 @@ describe('RESPONSE_TARGET_MATRIX', () => {
         expect(RESPONSE_TARGET_MATRIX.challenge.response).toContain('resolution');
     });
 
-    it('does not allow evidence to target responses', () => {
-        expect(RESPONSE_TARGET_MATRIX.evidence.response).toHaveLength(0);
+    it('allows evidence and updates to target a challenge, and no other response', () => {
+        expect(RESPONSE_TARGET_MATRIX.evidence.response).toEqual(['challenge']);
+        expect(RESPONSE_TARGET_MATRIX.update.response).toEqual(['challenge']);
     });
 });

@@ -32,15 +32,17 @@ export const TOKEN_COSTS = {
 
 // ── Response Target Matrix ──────────────────────────────────────────
 // Explicit rules for what response types can target which contribution types.
-// - evidence: can target any contribution
+// - evidence: can target any contribution OR a challenge (to answer it)
 // - challenge: can target any contribution OR a resolution response
-// - update: can target any contribution (same-author enforcement is at the API layer)
+// - update: can target any contribution OR a challenge (to answer it).
+//   Same-author enforcement is at the API layer: the author of the contribution,
+//   or of the challenged entry when the update answers a challenge.
 // - resolution: can target question or prediction ONLY (claims never resolve)
 
 export const RESPONSE_TARGET_MATRIX = {
-    evidence: { contribution: ['question', 'claim', 'prediction'], response: [] },
+    evidence: { contribution: ['question', 'claim', 'prediction'], response: ['challenge'] },
     challenge: { contribution: ['question', 'claim', 'prediction'], response: ['resolution'] },
-    update: { contribution: ['question', 'claim', 'prediction'], response: [] },
+    update: { contribution: ['question', 'claim', 'prediction'], response: ['challenge'] },
     resolution: { contribution: ['question', 'prediction'], response: [] },
     // NOTE: 'claim' is deliberately excluded from resolution targets.
     // The protocol shows argument structure; it never declares a claim true or false.
@@ -510,6 +512,17 @@ function targetsEntry(response, entryId) {
     return false;
 }
 
+/**
+ * A prediction can be resolved only once its resolution_date has passed.
+ * A missing or unparseable date never comes due.
+ *
+ * @param {object} prediction - the prediction entry (with its payload)
+ * @param {number} at - time of the resolution, in ms since the epoch
+ */
+export function isResolutionDue(prediction, at = Date.now()) {
+    return at >= Date.parse(prediction.payload?.resolution_date);
+}
+
 export function computeState(contribution, responses, options = {}) {
     const type = contribution.subtype;
     const decayHours = options.challenge_decay_hours || DEFAULT_CHALLENGE_DECAY_HOURS;
@@ -528,12 +541,14 @@ export function computeState(contribution, responses, options = {}) {
 
 function computeQuestionState(question, responses) {
     // Check for resolution
-    const resolutions = responses.filter(r => r.subtype === 'resolution');
+    const resolutions = responses.filter(
+        r => r.subtype === 'resolution' && targetsEntry(r, question.entry_id)
+    );
     if (resolutions.length > 0) {
         // Check if any resolution has been challenged
         const lastResolution = resolutions[resolutions.length - 1];
         const resolutionChallenged = responses.some(
-            r => r.subtype === 'challenge' && r.target_id === lastResolution.entry_id
+            r => r.subtype === 'challenge' && targetsEntry(r, lastResolution.entry_id)
         );
         if (!resolutionChallenged) {
             return { state: 'resolved', display_hint: null };
@@ -550,13 +565,16 @@ function computeQuestionState(question, responses) {
 function computeClaimState(claim, responses, decayHours) {
     // Claims NEVER resolve. They can be: open, contested, superseded, tombstoned.
     //
-    // NOTE: `responses` is pre-filtered by the caller to entries whose
-    // linked_to includes claim.entry_id. The target_id of a response lives
+    // NOTE: the caller passes the responses whose linked_to includes
+    // claim.entry_id plus the replies to them (an answer to a challenge is
+    // linked to the challenge, not the claim), so each check below names the
+    // entry its responses must target. The target_id of a response lives
     // in linked_to[0] or payload.target_id, NOT as a top-level field.
 
     // Check for supersession
     const superseded = responses.some(
-        r => r.subtype === 'update' && r.payload?.update_type === 'scope_change'
+        r => r.subtype === 'update' && r.payload?.update_type === 'scope_change' &&
+            targetsEntry(r, claim.entry_id)
     );
     if (superseded) {
         return { state: 'superseded', display_hint: null };
@@ -570,13 +588,12 @@ function computeClaimState(claim, responses, decayHours) {
     // Check which challenges are active (not stale via shot clock)
     const now = Date.now();
     const activeChallenges = challenges.filter(challenge => {
-        // Find refuting evidence responses to this challenge
-        // NOTE: responses to the challenge have linked_to=[challenge.entry_id],
-        // which may not be in the pre-filtered array. If not found,
-        // the challenge is treated as active (unanswered).
+        // Find the responses that answer this challenge: refuting evidence, or
+        // an update from the claim's author (the API enforces the author).
+        // Evidence supporting the challenge does not answer it.
         const refutingResponses = responses.filter(
             r => targetsEntry(r, challenge.entry_id) &&
-                (r.subtype === 'evidence' || r.subtype === 'update')
+                ((r.subtype === 'evidence' && r.payload?.stance === 'refuting') || r.subtype === 'update')
         );
 
         if (refutingResponses.length === 0) {
@@ -617,7 +634,7 @@ function computeClaimState(claim, responses, decayHours) {
     // Check if claim started as unsubstantiated and now has evidence
     if (claim.state === 'unsubstantiated') {
         const supportingEvidence = responses.filter(
-            r => r.subtype === 'evidence' && r.payload?.stance === 'supporting'
+            r => r.subtype === 'evidence' && r.payload?.stance === 'supporting' && targetsEntry(r, claim.entry_id)
         );
         if (supportingEvidence.length === 0) {
             return { state: 'unsubstantiated', display_hint: null };
@@ -626,7 +643,7 @@ function computeClaimState(claim, responses, decayHours) {
 
     // Compute display hint
     const supportingEvidence = responses.filter(
-        r => r.subtype === 'evidence' && r.payload?.stance === 'supporting'
+        r => r.subtype === 'evidence' && r.payload?.stance === 'supporting' && targetsEntry(r, claim.entry_id)
     );
     const displayHint = supportingEvidence.length > 0 && challenges.length === 0
         ? 'supported'
@@ -636,7 +653,12 @@ function computeClaimState(claim, responses, decayHours) {
 }
 
 function computePredictionState(prediction, responses) {
-    const resolutions = responses.filter(r => r.subtype === 'resolution');
+    // A resolution posted before the resolution_date does not resolve the
+    // prediction (the API also rejects it; this covers entries already stored).
+    const resolutions = responses.filter(
+        r => r.subtype === 'resolution' && targetsEntry(r, prediction.entry_id) &&
+            isResolutionDue(prediction, Date.parse(r.timestamp))
+    );
     if (resolutions.length > 0) {
         const lastResolution = resolutions[resolutions.length - 1];
 
@@ -672,7 +694,7 @@ function computePredictionState(prediction, responses) {
     }
 
     // Check evidence for display hint
-    const evidence = responses.filter(r => r.subtype === 'evidence');
+    const evidence = responses.filter(r => r.subtype === 'evidence' && targetsEntry(r, prediction.entry_id));
     let displayHint = null;
     if (evidence.length > 0) {
         const supporting = evidence.filter(r => r.payload?.stance === 'supporting').length;

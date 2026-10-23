@@ -2414,7 +2414,7 @@ node tools/verify.js chain.json</pre>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type"><span class="badge badge-evidence">evidence</span></span>
-            <span class="docs-cell-desc">Claims, predictions, questions</span>
+            <span class="docs-cell-desc">Claims, predictions, questions, or a challenge (to answer it)</span>
             <span class="docs-cell-states">Source URL, stance (supporting / refuting / contextual)</span>
           </div>
           <div class="docs-row">
@@ -2424,16 +2424,16 @@ node tools/verify.js chain.json</pre>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type"><span class="badge badge-update">update</span></span>
-            <span class="docs-cell-desc">Claims, predictions</span>
-            <span class="docs-cell-states">Update type (correction / additional_context / scope_change)</span>
+            <span class="docs-cell-desc">Your own claims and predictions, or a challenge to one of them (to answer it)</span>
+            <span class="docs-cell-states">Author only. Update type (correction / additional_context / scope_change)</span>
           </div>
           <div class="docs-row">
             <span class="docs-cell-type"><span class="badge badge-resolution">resolution</span></span>
             <span class="docs-cell-desc">Questions, predictions</span>
-            <span class="docs-cell-states">Outcome, source, resolution type (confirmed / refuted / answered)</span>
+            <span class="docs-cell-states">Outcome, source, resolution type (confirmed / refuted / answered). A prediction only on or after its resolution date</span>
           </div>
         </div>
-        <p class="docs-section-body" style="margin-top:12px;">Challenges have a 7-day shot clock. If the original contributor doesn't respond, the claim transitions to "unsubstantiated." Claims never resolve: they can only be superseded or contested. This is by design: factual claims don't have binary outcomes.</p>
+        <p class="docs-section-body" style="margin-top:12px;">Challenges have a 7-day shot clock. An unanswered challenge keeps the claim contested. Once it is answered with refuting evidence or an update from the claim's author, it stops counting 7 days later. Claims never resolve: they can only be superseded or contested. This is by design: factual claims don't have binary outcomes.</p>
       </div>
 
       <div id="chain-integrity" class="docs-section">
